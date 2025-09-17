@@ -1,0 +1,22 @@
+{
+  "name": "roq/bitget/json/ModifyOrderAck",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "code",
+      "type": "std/int32"
+    },
+    {
+      "name": "msg",
+      "type": "std/string_view"
+    },
+    {
+      "name": "requestTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "data",
+      "type": "roq/bitget/json/ModifyOrderAckData"
+    }
+  ]
+}

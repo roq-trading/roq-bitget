@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/json/PosSide",
+  "type": "enum",
+  "values": [
+    {
+      "name": "long"
+    },
+    {
+      "name": "short"
+    },
+    {
+      "name": "net"
+    }
+  ]
+}

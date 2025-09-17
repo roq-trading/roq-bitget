@@ -1,0 +1,12 @@
+{
+  "name": "roq/bitget/json/Side",
+  "type": "enum",
+  "values": [
+    {
+      "name": "buy"
+    },
+    {
+      "name": "sell"
+    }
+  ]
+}

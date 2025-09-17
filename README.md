@@ -1,1 +1,1 @@
-Bitget Futures
+Bitget (UTA)

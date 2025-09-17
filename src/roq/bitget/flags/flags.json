@@ -1,0 +1,25 @@
+{
+  "name": "roq/bitget/flags/Flags",
+  "type": "flags",
+  "values": [
+    {
+      "name": "exchange",
+      "type": "std/string",
+      "required": true,
+      "default": "bitget",
+      "description": "Exchange identifier"
+    },
+    {
+      "name": "api",
+      "type": "std/string",
+      "required": true,
+      "description": "API (:code:`USDT-FUTURES`, :code:`USDC-FUTURES`, :code:`COIN-FUTURES`)"
+    },
+    {
+      "name": "margin_coin",
+      "type": "std/string",
+      "required": true,
+      "description": "Margin coin"
+    }
+  ]
+}

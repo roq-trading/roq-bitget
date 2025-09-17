@@ -1,0 +1,14 @@
+{
+  "name": "roq/bitget/json/BooksItem",
+  "type": "by_index",
+  "values": [
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "size",
+      "type": "std/double"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "roq/bitget/json/Action",
+  "type": "enum",
+  "values": [
+    {
+      "name": "snapshot"
+    },
+    {
+      "name": "update"
+    }
+  ]
+}

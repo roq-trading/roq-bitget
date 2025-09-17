@@ -1,0 +1,30 @@
+{
+  "name": "roq/bitget/json/SymbolStatus",
+  "type": "enum",
+  "values": [
+    {
+      "name": "listed",
+      "comment": "Listing symbol"
+    },
+    {
+      "name": "normal",
+      "comment": "trade normal"
+    },
+    {
+      "name": "maintain",
+      "comment": "can't open/close position"
+    },
+    {
+      "name": "limit_open",
+      "comment": " can't place orders(can close position)"
+    },
+    {
+      "name": "restrictedAPI",
+      "comment": "can't place orders with API"
+    },
+    {
+      "name": "off",
+      "comment": " offline"
+    }
+  ]
+}

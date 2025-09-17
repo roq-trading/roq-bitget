@@ -2,10 +2,10 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/bitget_futures/json/encoder.hpp"
+#include "roq/bitget/json/encoder.hpp"
 
 using namespace roq;
-using namespace roq::bitget_futures;
+using namespace roq::bitget;
 
 using namespace std::literals;
 

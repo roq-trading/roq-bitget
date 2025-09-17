@@ -1,0 +1,42 @@
+{
+  "name": "roq/bitget/json/Message",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "event",
+      "type": "roq/bitget/json/Event"
+    },
+    {
+      "name": "code",
+      "type": "std/int64"
+    },
+    {
+      "name": "msg",
+      "type": "std/string_view"
+    },
+    {
+      "name": "requestTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "arg",
+      "type": "roq/bitget/json/Arg"
+    },
+    {
+      "name": "action",
+      "type": "roq/bitget/json/Action"
+    },
+    {
+      "name": "data"
+    },
+    {
+      "name": "ts",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "op",
+      "type": "std/string_view",
+      "comment": "error"
+    }
+  ]
+}

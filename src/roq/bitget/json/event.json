@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/json/Event",
+  "type": "enum",
+  "values": [
+    {
+      "name": "error"
+    },
+    {
+      "name": "subscribe"
+    },
+    {
+      "name": "login"
+    }
+  ]
+}

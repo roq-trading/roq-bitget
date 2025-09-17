@@ -4,10 +4,10 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget_futures/json/message.hpp"
+#include "roq/bitget/json/message.hpp"
 
 using namespace roq;
-using namespace roq::bitget_futures;
+using namespace roq::bitget;
 
 using namespace std::literals;
 using namespace std::chrono_literals;

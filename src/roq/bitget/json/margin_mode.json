@@ -1,0 +1,12 @@
+{
+  "name": "roq/bitget/json/MarginMode",
+  "type": "enum",
+  "values": [
+    {
+      "name": "crossed"
+    },
+    {
+      "name": "isolated"
+    }
+  ]
+}

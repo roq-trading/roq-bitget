@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/RestState",
+  "type": "enum",
+  "values": [
+    {
+      "name": "currencies"
+    },
+    {
+      "name": "contracts"
+    },
+    {
+      "name": "done"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "roq/bitget/json/Order",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "arg",
+      "type": "roq/bitget/json/Arg"
+    },
+    {
+      "name": "action",
+      "type": "roq/bitget/json/Action"
+    },
+    {
+      "name": "data",
+      "type": "roq/bitget/json/OrderDataItem",
+      "array": "std/span"
+    },
+    {
+      "name": "ts",
+      "type": "std/milliseconds"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "name": "roq/bitget/json/FillDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOrderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "tradeId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/json/Side"
+    },
+    {
+      "name": "orderType",
+      "type": "roq/bitget/json/OrderType"
+    },
+    {
+      "name": "posMode",
+      "type": "roq/bitget/json/PosMode"
+    },
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "baseVolume",
+      "type": "std/double"
+    },
+    {
+      "name": "quoteVolume",
+      "type": "std/double"
+    },
+    {
+      "name": "profit",
+      "type": "std/double"
+    },
+    {
+      "name": "tradeSide",
+      "type": "roq/bitget/json/TradeSide"
+    },
+    {
+      "name": "tradeScope",
+      "type": "roq/bitget/json/TradeScope"
+    },
+    {
+      "name": "feeDetails"
+    },
+    {
+      "name": "cTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "uTime",
+      "type": "std/milliseconds"
+    }
+  ]
+}

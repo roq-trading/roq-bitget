@@ -16,7 +16,7 @@ message("Using GIT_REPO_VERSION=${GIT_REPO_VERSION}")
 
 # project
 
-project(roq-bitget-futures VERSION ${GIT_REPO_VERSION})
+project(roq-bitget VERSION ${GIT_REPO_VERSION})
 
 # language
 
@@ -83,7 +83,7 @@ include_directories(
 
 # sub-projects
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/roq/bitget_futures)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/roq/bitget)
 
 if(BUILD_TESTING)
   add_subdirectory(${CMAKE_SOURCE_DIR}/test)

@@ -1,0 +1,14 @@
+{
+  "name": "roq/bitget/json/PlaceOrderAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOid",
+      "type": "std/string_view"
+    }
+  ]
+}

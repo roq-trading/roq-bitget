@@ -1,0 +1,9 @@
+{
+  "name": "roq/bitget/json/HoldSide",
+  "type": "enum",
+  "values": [
+    {
+      "name": "short"
+    }
+  ]
+}

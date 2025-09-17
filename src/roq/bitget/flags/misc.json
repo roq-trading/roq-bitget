@@ -1,0 +1,45 @@
+{
+  "name": "roq/bitget/flags/Misc",
+  "type": "flags",
+  "values": [
+    {
+      "name": "request_limit",
+      "type": "std/uint32",
+      "default": "80",
+      "description": "Request limit per interval"
+    },
+    {
+      "name": "request_limit_interval",
+      "type": "std/nanoseconds",
+      "validator": "roq/flags/validators/TimePeriod",
+      "default": "10s",
+      "description": "Request limit monitor interval"
+    },
+    {
+      "name": "self_trade_prevention",
+      "type": "std/string",
+      "default": "CN",
+      "description": "Self-trade prevention: CN, CO, CB, DC"
+    },
+    {
+      "name": "encode_buffer_size",
+      "type": "std/uint32",
+      "required": true,
+      "default": 1048576,
+      "description": "Encode buffer size"
+    },
+    {
+      "name": "decode_buffer_size",
+      "type": "std/uint32",
+      "required": true,
+      "default": 10485760,
+      "description": "Decode buffer size"
+    },
+    {
+      "name": "mbp_allow_price_inversion",
+      "type": "std/bool",
+      "default": false,
+      "description": "Allow price inversion?"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "roq/bitget/json/Arg",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "instType",
+      "type": "std/string_view"
+    },
+    {
+      "name": "channel",
+      "type": "roq/bitget/json/Channel"
+    },
+    {
+      "name": "instId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "coin",
+      "type": "std/string_view"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "roq/bitget/json/CancelAllOrdersAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "successList",
+      "type": "roq/bitget/json/CancelAllOrdersAckDataSuccessListItem",
+      "array": "std/span"
+    },
+    {
+      "name": "failureList",
+      "type": "roq/bitget/json/CancelAllOrdersAckDataFailureListItem",
+      "array": "std/span"
+    }
+  ]
+}

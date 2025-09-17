@@ -1,0 +1,376 @@
+/* Copyright (c) 2017-2025, Hans Erik Thrane */
+
+#include "roq/bitget/json/map.hpp"
+
+using namespace std::literals;
+
+namespace roq {
+
+namespace {
+template <typename... Args>
+using Helper = detail::MapHelper<Args...>;
+}
+
+// bitget::json => roq
+
+// bitget::json::AssetMode => roq::MarginMode
+
+template <>
+template <>
+constexpr Helper<bitget::json::AssetMode>::operator std::optional<roq::MarginMode>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::AssetMode::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::MarginMode::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::MarginMode::UNDEFINED;
+    case SINGLE:
+      return roq::MarginMode::ISOLATED;
+    case UNION:
+      return roq::MarginMode::CROSS;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::UNDEFINED_INTERNAL}} == roq::MarginMode::UNDEFINED);
+static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::SINGLE}} == roq::MarginMode::ISOLATED);
+static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::UNION}} == roq::MarginMode::CROSS);
+
+template <>
+template <>
+std::optional<roq::MarginMode> Map<bitget::json::AssetMode>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::Force => roq::TimeInForce
+
+template <>
+template <>
+constexpr Helper<bitget::json::Force>::operator std::optional<roq::TimeInForce>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::Force::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::TimeInForce::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::TimeInForce::UNDEFINED;
+    case GTC:
+      return roq::TimeInForce::GTC;
+    case POST_ONLY:
+      return roq::TimeInForce::GTC;
+    case FOK:
+      return roq::TimeInForce::FOK;
+    case IOC:
+      return roq::TimeInForce::IOC;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL}} == roq::TimeInForce::UNDEFINED);
+static_assert(Helper{bitget::json::Force{bitget::json::Force::GTC}} == roq::TimeInForce::GTC);
+static_assert(Helper{bitget::json::Force{bitget::json::Force::POST_ONLY}} == roq::TimeInForce::GTC);
+static_assert(Helper{bitget::json::Force{bitget::json::Force::FOK}} == roq::TimeInForce::FOK);
+static_assert(Helper{bitget::json::Force{bitget::json::Force::IOC}} == roq::TimeInForce::IOC);
+
+template <>
+template <>
+std::optional<roq::TimeInForce> Map<bitget::json::Force>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::MarginMode => roq::MarginMode
+
+template <>
+template <>
+constexpr Helper<bitget::json::MarginMode>::operator std::optional<roq::MarginMode>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::MarginMode::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::MarginMode::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::MarginMode::UNDEFINED;
+    case CROSSED:
+      return roq::MarginMode::CROSS;
+    case ISOLATED:
+      return roq::MarginMode::ISOLATED;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::MarginMode{bitget::json::MarginMode::UNDEFINED_INTERNAL}} == roq::MarginMode::UNDEFINED);
+static_assert(Helper{bitget::json::MarginMode{bitget::json::MarginMode::CROSSED}} == roq::MarginMode::CROSS);
+static_assert(Helper{bitget::json::MarginMode{bitget::json::MarginMode::ISOLATED}} == roq::MarginMode::ISOLATED);
+
+template <>
+template <>
+std::optional<roq::MarginMode> Map<bitget::json::MarginMode>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::OrderStatus => roq::OrderStatus
+
+template <>
+template <>
+constexpr Helper<bitget::json::OrderStatus>::operator std::optional<roq::OrderStatus>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::OrderStatus::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::OrderStatus::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::OrderStatus::UNDEFINED;
+    case LIVE:
+      return roq::OrderStatus::WORKING;
+    case PARTIALLY_FILLED:
+      return roq::OrderStatus::WORKING;
+    case FILLED:
+      return roq::OrderStatus::COMPLETED;
+    case CANCELED:
+      return roq::OrderStatus::CANCELED;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::UNDEFINED_INTERNAL}} == roq::OrderStatus::UNDEFINED);
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::LIVE}} == roq::OrderStatus::WORKING);
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::PARTIALLY_FILLED}} == roq::OrderStatus::WORKING);
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::FILLED}} == roq::OrderStatus::COMPLETED);
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::CANCELED}} == roq::OrderStatus::CANCELED);
+
+template <>
+template <>
+std::optional<roq::OrderStatus> Map<bitget::json::OrderStatus>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::OrderType => roq::OrderType
+
+template <>
+template <>
+constexpr Helper<bitget::json::OrderType>::operator std::optional<roq::OrderType>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::OrderType::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::OrderType::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::OrderType::UNDEFINED;
+    case MARKET:
+      return roq::OrderType::MARKET;
+    case LIMIT:
+      return roq::OrderType::LIMIT;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::OrderType{bitget::json::OrderType::UNDEFINED_INTERNAL}} == roq::OrderType::UNDEFINED);
+static_assert(Helper{bitget::json::OrderType{bitget::json::OrderType::MARKET}} == roq::OrderType::MARKET);
+static_assert(Helper{bitget::json::OrderType{bitget::json::OrderType::LIMIT}} == roq::OrderType::LIMIT);
+
+template <>
+template <>
+std::optional<roq::OrderType> Map<bitget::json::OrderType>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::Side => roq::Side
+
+template <>
+template <>
+constexpr Helper<bitget::json::Side>::operator std::optional<roq::Side>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::Side::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::Side::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::Side::UNDEFINED;
+    case BUY:
+      return roq::Side::BUY;
+    case SELL:
+      return roq::Side::SELL;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::Side{bitget::json::Side::UNDEFINED_INTERNAL}} == roq::Side::UNDEFINED);
+static_assert(Helper{bitget::json::Side{bitget::json::Side::BUY}} == roq::Side::BUY);
+static_assert(Helper{bitget::json::Side{bitget::json::Side::SELL}} == roq::Side::SELL);
+
+template <>
+template <>
+std::optional<roq::Side> Map<bitget::json::Side>::helper() const {
+  return Helper{args_};
+}
+
+// roq => bitget::json
+
+// roq::MarginMode => bitget::json::MarginMode
+
+template <>
+template <>
+constexpr Helper<roq::MarginMode>::operator std::optional<bitget::json::MarginMode>() const {
+  switch (std::get<0>(args_)) {
+    using enum roq::MarginMode;
+    case UNDEFINED:
+      return bitget::json::MarginMode::UNDEFINED_INTERNAL;
+    case CROSS:
+      return bitget::json::MarginMode::CROSSED;
+    case ISOLATED:
+      return bitget::json::MarginMode::ISOLATED;
+    case PORTFOLIO:
+      return bitget::json::MarginMode::UNDEFINED_INTERNAL;
+  }
+  return {};
+}
+
+static_assert(Helper{roq::MarginMode::UNDEFINED} == bitget::json::MarginMode{bitget::json::MarginMode::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::MarginMode::CROSS} == bitget::json::MarginMode{bitget::json::MarginMode::CROSSED});
+static_assert(Helper{roq::MarginMode::ISOLATED} == bitget::json::MarginMode{bitget::json::MarginMode::ISOLATED});
+static_assert(Helper{roq::MarginMode::PORTFOLIO} == bitget::json::MarginMode{bitget::json::MarginMode::UNDEFINED_INTERNAL});
+
+template <>
+template <>
+std::optional<bitget::json::MarginMode> Map<roq::MarginMode>::helper() const {
+  return Helper{args_};
+}
+
+// roq::OrderType => bitget::json::OrderType
+
+template <>
+template <>
+constexpr Helper<roq::OrderType>::operator std::optional<bitget::json::OrderType>() const {
+  switch (std::get<0>(args_)) {
+    using enum roq::OrderType;
+    case UNDEFINED:
+      return bitget::json::OrderType::UNDEFINED_INTERNAL;
+    case MARKET:
+      return bitget::json::OrderType::MARKET;
+    case LIMIT:
+      return bitget::json::OrderType::LIMIT;
+  }
+  return {};
+}
+
+static_assert(Helper{roq::OrderType::UNDEFINED} == bitget::json::OrderType{bitget::json::OrderType::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::OrderType::MARKET} == bitget::json::OrderType{bitget::json::OrderType::MARKET});
+static_assert(Helper{roq::OrderType::LIMIT} == bitget::json::OrderType{bitget::json::OrderType::LIMIT});
+
+template <>
+template <>
+std::optional<bitget::json::OrderType> Map<roq::OrderType>::helper() const {
+  return Helper{args_};
+}
+
+// roq::PositionEffect => bitget::json::TradeSide
+
+template <>
+template <>
+constexpr Helper<roq::PositionEffect>::operator std::optional<bitget::json::TradeSide>() const {
+  switch (std::get<0>(args_)) {
+    using enum roq::PositionEffect;
+    case UNDEFINED:
+      return bitget::json::TradeSide::UNDEFINED_INTERNAL;
+    case OPEN:
+      return bitget::json::TradeSide::OPEN;
+    case CLOSE:
+      return bitget::json::TradeSide::CLOSE;
+  }
+  return {};
+}
+
+static_assert(Helper{roq::PositionEffect::UNDEFINED} == bitget::json::TradeSide{bitget::json::TradeSide::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::PositionEffect::OPEN} == bitget::json::TradeSide{bitget::json::TradeSide::OPEN});
+static_assert(Helper{roq::PositionEffect::CLOSE} == bitget::json::TradeSide{bitget::json::TradeSide::CLOSE});
+
+template <>
+template <>
+std::optional<bitget::json::TradeSide> Map<roq::PositionEffect>::helper() const {
+  return Helper{args_};
+}
+
+// roq::Side => bitget::json::Side
+
+template <>
+template <>
+constexpr Helper<roq::Side>::operator std::optional<bitget::json::Side>() const {
+  switch (std::get<0>(args_)) {
+    using enum roq::Side;
+    case UNDEFINED:
+      return bitget::json::Side::UNDEFINED_INTERNAL;
+    case BUY:
+      return bitget::json::Side::BUY;
+    case SELL:
+      return bitget::json::Side::SELL;
+  }
+  return {};
+}
+
+static_assert(Helper{roq::Side::UNDEFINED} == bitget::json::Side{bitget::json::Side::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::Side::BUY} == bitget::json::Side{bitget::json::Side::BUY});
+static_assert(Helper{roq::Side::SELL} == bitget::json::Side{bitget::json::Side::SELL});
+
+template <>
+template <>
+std::optional<bitget::json::Side> Map<roq::Side>::helper() const {
+  return Helper{args_};
+}
+
+// roq::TimeInForce => bitget::json::Force
+
+// POST_ONLY ???
+template <>
+template <>
+constexpr Helper<roq::TimeInForce>::operator std::optional<bitget::json::Force>() const {
+  switch (std::get<0>(args_)) {
+    using enum roq::TimeInForce;
+    case UNDEFINED:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GFD:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GTC:
+      return bitget::json::Force::GTC;
+    case OPG:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case IOC:
+      return bitget::json::Force::IOC;
+    case FOK:
+      return bitget::json::Force::FOK;
+    case GTX:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GTD:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case AT_THE_CLOSE:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GOOD_THROUGH_CROSSING:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case AT_CROSSING:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GOOD_FOR_TIME:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GFA:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+    case GFM:
+      return bitget::json::Force::UNDEFINED_INTERNAL;
+  }
+  return {};
+}
+
+static_assert(Helper{roq::TimeInForce::UNDEFINED} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GFD} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GTC} == bitget::json::Force{bitget::json::Force::GTC});
+static_assert(Helper{roq::TimeInForce::OPG} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::IOC} == bitget::json::Force{bitget::json::Force::IOC});
+static_assert(Helper{roq::TimeInForce::FOK} == bitget::json::Force{bitget::json::Force::FOK});
+static_assert(Helper{roq::TimeInForce::GTX} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GTD} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::AT_THE_CLOSE} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GOOD_THROUGH_CROSSING} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::AT_CROSSING} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GOOD_FOR_TIME} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GFA} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GFM} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+
+template <>
+template <>
+std::optional<bitget::json::Force> Map<roq::TimeInForce>::helper() const {
+  return Helper{args_};
+}
+
+}  // namespace roq
