@@ -1,0 +1,21 @@
+{
+  "name": "roq/bitget_futures/OrderEntryState",
+  "type": "enum",
+  "values": [
+    {
+      "name": "accounts"
+    },
+    {
+      "name": "positions"
+    },
+    {
+      "name": "orders"
+    },
+    {
+      "name": "fills"
+    },
+    {
+      "name": "done"
+    }
+  ]
+}

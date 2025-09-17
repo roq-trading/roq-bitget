@@ -1,0 +1,58 @@
+{
+  "name": "roq/bitget_futures/json/AccountDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "marginCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "frozen",
+      "type": "std/double"
+    },
+    {
+      "name": "available",
+      "type": "std/double"
+    },
+    {
+      "name": "maxOpenPosAvailable",
+      "type": "std/double"
+    },
+    {
+      "name": "maxTransferOut",
+      "type": "std/double"
+    },
+    {
+      "name": "equity",
+      "type": "std/double"
+    },
+    {
+      "name": "usdtEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "crossedRiskRate",
+      "type": "std/double"
+    },
+    {
+      "name": "unrealizedPL",
+      "type": "std/double"
+    },
+    {
+      "name": "unionTotalMargin",
+      "type": "std/double"
+    },
+    {
+      "name": "unionAvailable",
+      "type": "std/double"
+    },
+    {
+      "name": "unionMm",
+      "type": "std/double"
+    },
+    {
+      "name": "assetsMode",
+      "type": "roq/bitget_futures/json/AssetMode"
+    }
+  ]
+}

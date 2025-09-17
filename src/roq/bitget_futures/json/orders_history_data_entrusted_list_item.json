@@ -1,0 +1,110 @@
+{
+  "name": "roq/bitget_futures/json/OrdersHistoryDataEntrustedListItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "size",
+      "type": "std/double"
+    },
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "baseVolume",
+      "type": "std/double"
+    },
+    {
+      "name": "fee",
+      "type": "std/double"
+    },
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "priceAvg",
+      "type": "std/double"
+    },
+    {
+      "name": "status",
+      "type": "roq/bitget_futures/json/OrderStatus"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget_futures/json/Side"
+    },
+    {
+      "name": "force",
+      "type": "roq/bitget_futures/json/Force"
+    },
+    {
+      "name": "totalProfits",
+      "type": "std/double"
+    },
+    {
+      "name": "posSide",
+      "type": "roq/bitget_futures/json/PosSide"
+    },
+    {
+      "name": "marginCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "quoteVolume",
+      "type": "std/double"
+    },
+    {
+      "name": "leverage",
+      "type": "std/int32"
+    },
+    {
+      "name": "marginMode",
+      "type": "roq/bitget_futures/json/MarginMode"
+    },
+    {
+      "name": "enterPointSource",
+      "type": "std/string_view"
+    },
+    {
+      "name": "tradeSide",
+      "type": "roq/bitget_futures/json/TradeSide"
+    },
+    {
+      "name": "posMode",
+      "type": "roq/bitget_futures/json/PosMode"
+    },
+    {
+      "name": "orderType",
+      "type": "roq/bitget_futures/json/OrderType"
+    },
+    {
+      "name": "orderSource",
+      "type": "roq/bitget_futures/json/OrderSource"
+    },
+    {
+      "name": "cTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "uTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "presetStopSurplusPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "presetStopLossPrice",
+      "type": "std/double"
+    }
+  ]
+}

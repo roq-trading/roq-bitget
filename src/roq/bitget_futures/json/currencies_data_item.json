@@ -1,0 +1,29 @@
+{
+  "name": "roq/bitget_futures/json/CurrenciesDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "coinId",
+      "type": "std/int32"
+    },
+    {
+      "name": "coin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "coinDisplayName",
+      "type": "std/string_view"
+    },
+    {
+      "name": "transfer",
+      "type": "std/bool"
+    },
+    {
+      "name": "chains"
+    },
+    {
+      "name": "areaCoin",
+      "type": "std/string_view"
+    }
+  ]
+}

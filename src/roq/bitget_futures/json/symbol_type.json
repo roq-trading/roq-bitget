@@ -1,0 +1,12 @@
+{
+  "name": "roq/bitget_futures/json/SymbolType",
+  "type": "enum",
+  "values": [
+    {
+      "name": "perpetual"
+    },
+    {
+      "name": "delivery"
+    }
+  ]
+}

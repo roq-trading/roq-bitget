@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget_futures/json/OrderFillDetailsData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "fillList",
+      "type": "roq/bitget_futures/json/OrderFillDetailsDataFillList",
+      "array": "std/span"
+    },
+    {
+      "name": "endId",
+      "type": "std/int32"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "roq/bitget_futures/json/TradeScope",
+  "type": "enum",
+  "values": [
+    {
+      "name": "taker"
+    },
+    {
+      "name": "maker"
+    },
+    {
+      "raw": "T",
+      "name": "taker_1"
+    },
+    {
+      "raw": "M",
+      "name": "marker_1"
+    }
+  ]
+}

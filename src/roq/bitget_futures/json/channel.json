@@ -1,0 +1,33 @@
+{
+  "name": "roq/bitget_futures/json/Channel",
+  "type": "enum",
+  "values": [
+    {
+      "name": "ticker"
+    },
+    {
+      "name": "trade"
+    },
+    {
+      "name": "books"
+    },
+    {
+      "name": "books5"
+    },
+    {
+      "name": "books15"
+    },
+    {
+      "name": "account"
+    },
+    {
+      "name": "positions"
+    },
+    {
+      "name": "orders"
+    },
+    {
+      "name": "fill"
+    }
+  ]
+}

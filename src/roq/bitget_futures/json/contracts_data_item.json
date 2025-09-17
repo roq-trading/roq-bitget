@@ -1,0 +1,145 @@
+{
+  "name": "roq/bitget_futures/json/ContractsDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "baseCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "quoteCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "buyLimitPriceRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "sellLimitPriceRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "feeRateUpRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "makerFeeRate",
+      "type": "std/double"
+    },
+    {
+      "name": "takerFeeRate",
+      "type": "std/double"
+    },
+    {
+      "name": "openCostUpRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "supportMarginCoins"
+    },
+    {
+      "name": "minTradeNum",
+      "type": "std/double"
+    },
+    {
+      "name": "priceEndStep",
+      "type": "std/double"
+    },
+    {
+      "name": "volumePlace",
+      "type": "std/double"
+    },
+    {
+      "name": "pricePlace",
+      "type": "std/double"
+    },
+    {
+      "name": "sizeMultiplier",
+      "type": "std/double"
+    },
+    {
+      "name": "symbolType",
+      "type": "roq/bitget_futures/json/SymbolType"
+    },
+    {
+      "name": "minTradeUSDT",
+      "type": "std/double"
+    },
+    {
+      "name": "maxSymbolOrderNum",
+      "type": "std/uint32"
+    },
+    {
+      "name": "maxProductOrderNum",
+      "type": "std/uint32"
+    },
+    {
+      "name": "maxPositionNum",
+      "type": "std/uint32"
+    },
+    {
+      "name": "symbolStatus",
+      "type": "roq/bitget_futures/json/SymbolStatus"
+    },
+    {
+      "name": "offTime",
+      "type": "std/int32"
+    },
+    {
+      "name": "limitOpenTime",
+      "type": "std/int32"
+    },
+    {
+      "name": "deliveryTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryStartTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryPeriod",
+      "type": "std/string_view"
+    },
+    {
+      "name": "launchTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "fundInterval",
+      "type": "std/string_view"
+    },
+    {
+      "name": "minLever",
+      "type": "std/double"
+    },
+    {
+      "name": "maxLever",
+      "type": "std/double"
+    },
+    {
+      "name": "posLimit",
+      "type": "std/double"
+    },
+    {
+      "name": "maintainTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "openTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxMarketOrderQty",
+      "type": "std/double"
+    },
+    {
+      "name": "maxOrderQty",
+      "type": "std/double"
+    }
+  ]
+}
