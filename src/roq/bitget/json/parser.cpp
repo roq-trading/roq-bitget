@@ -64,8 +64,8 @@ bool Parser::dispatch(
       dispatch_helper<Login>(handler, message, buffer_stack, trace_info);
       return true;
   }
-  switch (message_2.arg.channel) {
-    using enum Channel::type_t;
+  switch (message_2.arg.topic) {
+    using enum Topic::type_t;
     case UNDEFINED_INTERNAL:
       break;
     case UNKNOWN_INTERNAL:
@@ -73,8 +73,8 @@ bool Parser::dispatch(
     case TICKER:
       dispatch_helper<Ticker>(handler, message, buffer_stack, trace_info);
       return true;
-    case TRADE:
-      dispatch_helper<Trade>(handler, message, buffer_stack, trace_info);
+    case PUBLIC_TRADE:
+      dispatch_helper<PublicTrade>(handler, message, buffer_stack, trace_info);
       return true;
     case BOOKS:
     case BOOKS5:
@@ -86,10 +86,10 @@ bool Parser::dispatch(
     case ACCOUNT:
       dispatch_helper<Account>(handler, message, buffer_stack, trace_info);
       return true;
-    case POSITIONS:
+    case POSITION:
       dispatch_helper<Position>(handler, message, buffer_stack, trace_info);
       return true;
-    case ORDERS:
+    case ORDER:
       dispatch_helper<Order>(handler, message, buffer_stack, trace_info);
       return true;
     case FILL:

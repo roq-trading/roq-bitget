@@ -61,7 +61,7 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
   void operator()(Trace<json::Error> const &) override;
 
   void operator()(Trace<json::Ticker> const &) override;
-  void operator()(Trace<json::Trade> const &) override;
+  void operator()(Trace<json::PublicTrade> const &) override;
   void operator()(Trace<json::Books> const &) override;
 
   void operator()(Trace<json::Login> const &) override;
@@ -77,7 +77,7 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
 
   void subscribe();
 
-  void subscribe(std::string_view const &channel);
+  void subscribe(std::string_view const &topic);
 
   void parse(std::string_view const &message);
 

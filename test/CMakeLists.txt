@@ -3,16 +3,16 @@ include(RoqAutogen)
 set(TARGET_NAME "${PROJECT_NAME}-test")
 
 set(SOURCES
+    json_account.cpp
     json_books.cpp
     json_cancel_all_orders.cpp
     json_cancel_order.cpp
-    json_contracts.cpp
-    json_currencies.cpp
+    json_instruments.cpp
     json_message.cpp
     json_modify_order.cpp
     json_place_order.cpp
+    json_public_trade.cpp
     json_ticker.cpp
-    json_trade.cpp
     main.cpp)
 
 roq_gitignore(OUTPUT .gitignore SOURCES "${TARGET_NAME}")

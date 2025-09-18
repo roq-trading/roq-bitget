@@ -8,11 +8,14 @@
 #include "roq/order_status.hpp"
 #include "roq/order_type.hpp"
 #include "roq/position_effect.hpp"
+#include "roq/security_type.hpp"
 #include "roq/side.hpp"
 #include "roq/time_in_force.hpp"
 
 #include "roq/bitget/json/asset_mode.hpp"
+#include "roq/bitget/json/category.hpp"
 #include "roq/bitget/json/force.hpp"
+#include "roq/bitget/json/futures_type.hpp"
 #include "roq/bitget/json/margin_mode.hpp"
 #include "roq/bitget/json/order_status.hpp"
 #include "roq/bitget/json/order_type.hpp"
@@ -26,6 +29,10 @@ namespace roq {
 template <>
 template <>
 std::optional<MarginMode> Map<bitget::json::AssetMode>::helper() const;
+
+template <>
+template <>
+std::optional<SecurityType> Map<bitget::json::Category, bitget::json::FuturesType>::helper() const;
 
 template <>
 template <>

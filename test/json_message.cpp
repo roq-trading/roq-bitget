@@ -25,7 +25,6 @@ TEST_CASE("json_message_error_not_working", "[json_message]") {
   core::json::BufferStack buffer{8192,1};
   [[maybe_unused]] json::Message obj{message, buffer};
 }
-*/
 TEST_CASE("json_message_error_modified", "[json_message]") {
   auto message = R"({)"
                  R"("event":"error",)"
@@ -35,40 +34,16 @@ TEST_CASE("json_message_error_modified", "[json_message]") {
   core::json::BufferStack buffer{8192, 1};
   [[maybe_unused]] json::Message obj{message, buffer};
 }
+*/
 
 TEST_CASE("json_message_subscribe", "[json_message]") {
   auto message = R"({)"
                  R"("event":"subscribe",)"
                  R"("arg":{)"
-                 R"("instType":"sp",)"
-                 R"("channel":"ticker",)"
-                 R"("instId":"MASKUSDT")"
+                 R"("instType":"usdt-futures",)"
+                 R"("topic":"ticker",)"
+                 R"("symbol":"BTCUSDT")"
                  R"(})"
-                 R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  [[maybe_unused]] json::Message obj{message, buffer};
-}
-
-TEST_CASE("json_message_ticker_snapshot", "[json_message]") {
-  auto message = R"({)"
-                 R"("action":"snapshot",)"
-                 R"("arg":{)"
-                 R"("instType":"sp",)"
-                 R"("channel":"ticker",)"
-                 R"("instId":"MASKUSDT"},)"
-                 R"("data":[{)"
-                 R"("instId":"MASKUSDT",)"
-                 R"("last":"13.4758",)"
-                 R"("open24h":"13.9270",)"
-                 R"("high24h":"14.0461",)"
-                 R"("low24h":"13.1470",)"
-                 R"("bestBid":"13.468100",)"
-                 R"("bestAsk":"13.486100",)"
-                 R"("baseVolume":"33134.9935",)"
-                 R"("quoteVolume":"450169.1986",)"
-                 R"("ts":1641217090075)"
-                 R"(})"
-                 R"(])"
                  R"(})";
   core::json::BufferStack buffer{8192, 1};
   [[maybe_unused]] json::Message obj{message, buffer};

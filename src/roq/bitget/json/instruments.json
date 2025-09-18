@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/Contracts",
+  "name": "roq/bitget/json/Instruments",
   "type": "dictionary",
   "values": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "name": "data",
-      "type": "roq/bitget/json/ContractsDataItem",
+      "type": "roq/bitget/json/InstrumentsDataItem",
       "array": "std/span"
     }
   ]

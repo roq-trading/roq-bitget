@@ -1,0 +1,12 @@
+{
+  "name": "roq/bitget/json/DeliveryPeriod",
+  "type": "enum",
+  "values": [
+    {
+      "name": "this_quarter"
+    },
+    {
+      "name": "next_quarter"
+    }
+  ]
+}

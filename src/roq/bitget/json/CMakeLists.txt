@@ -5,6 +5,7 @@ set(SOURCES encoder.cpp map.cpp parser.cpp utils.cpp)
 include(RoqAutogen)
 
 set(AUTOGEN_SCHEMAS
+    account_data_item_coin_item.json
     account_data_item.json
     account.json
     action.json
@@ -24,17 +25,17 @@ set(AUTOGEN_SCHEMAS
     cancel_all_orders_ack.json
     cancel_order_ack_data.json
     cancel_order_ack.json
-    channel.json
-    contracts_data_item.json
-    contracts.json
-    currencies_data_item.json
-    currencies.json
+    category.json
+    delivery_period.json
     error.json
     event.json
     fill_data_item.json
     fill.json
     force.json
+    futures_type.json
     hold_side.json
+    instruments_data_item.json
+    instruments.json
     login.json
     margin_mode.json
     message.json
@@ -57,16 +58,18 @@ set(AUTOGEN_SCHEMAS
     position.json
     pos_mode.json
     pos_side.json
+    public_trade_data_item.json
+    public_trade.json
     side.json
     stp_mode.json
     symbol_status.json
     symbol_type.json
     ticker_data_item.json
     ticker.json
-    trade_data_item.json
-    trade.json
+    topic.json
     trade_scope.json
-    trade_side.json)
+    trade_side.json
+    trading_status.json)
 
 roq_autogen_hpp(
   OUTPUT

@@ -1,0 +1,24 @@
+{
+  "name": "roq/bitget/json/Category",
+  "type": "enum",
+  "values": [
+    {
+      "name": "SPOT"
+    },
+    {
+      "name": "MARGIN"
+    },
+    {
+      "raw": "USDT-FUTURES",
+      "name": "USDT_FUTURES"
+    },
+    {
+      "raw": "USDC-FUTURES",
+      "name": "USDC_FUTURES"
+    },
+    {
+      "raw": "COIN-FUTURES",
+      "name": "COIN_FUTURES"
+    }
+  ]
+}

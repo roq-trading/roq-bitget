@@ -32,7 +32,7 @@ auto const SUPPORTS = Mask{
 
 auto const PING = "ping"sv;
 
-size_t const MAX_DECODE_BUFFER_DEPTH = 1;
+size_t const MAX_DECODE_BUFFER_DEPTH = 2;
 }  // namespace
 
 // === HELPERS ===
@@ -195,27 +195,23 @@ void DropCopy::login() {
 
 void DropCopy::subscribe() {
   subscribe("account"sv);
-  subscribe("positions"sv);
-  subscribe("orders"sv);
+  subscribe("position"sv);
+  subscribe("order"sv);
   subscribe("fill"sv);
 }
 
-void DropCopy::subscribe(std::string_view const &channel) {
-  log::info(R"(Subscribe channel="{}")"sv, channel);
-  auto tmp = channel == "account"sv ? "coin"sv : "instId"sv;
+void DropCopy::subscribe(std::string_view const &topic) {
+  log::info(R"(Subscribe topic="{}")"sv, topic);
   auto message = fmt::format(
       R"({{)"
-      R"("op": "subscribe",)"
+      R"("op":"subscribe",)"
       R"("args":[{{)"
-      R"("instType":"{}",)"
-      R"("channel":"{}",)"
-      R"("{}":"default")"
+      R"("instType":"UTA",)"
+      R"("topic":"{}")"
       R"(}})"
       R"(])"
       R"(}})"sv,
-      shared_.api.inst_type,
-      channel,
-      tmp);
+      topic);
   log::debug("message={}"sv, message);
   (*connection_).send_text(message);
 }
@@ -244,7 +240,7 @@ void DropCopy::operator()(Trace<json::Ticker> const &) {
   log::fatal("Unexpected"sv);
 }
 
-void DropCopy::operator()(Trace<json::Trade> const &) {
+void DropCopy::operator()(Trace<json::PublicTrade> const &) {
   log::fatal("Unexpected"sv);
 }
 
@@ -268,21 +264,23 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
   log::info<2>("account={}"sv, account);
   log::warn("DEBUG account={}"sv, account);
   for (auto &item : account.data) {
-    auto funds_update = FundsUpdate{
-        .stream_id = stream_id_,
-        .account = account_.name,
-        .currency = item.margin_coin,
-        .margin_mode = {},
-        .balance = item.available,
-        .hold = item.frozen,
-        .borrowed = NaN,
-        .external_account = {},
-        .update_type = UpdateType::INCREMENTAL,
-        .exchange_time_utc = {},
-        .exchange_sequence = {},
-        .sending_time_utc = {},
-    };
-    create_trace_and_dispatch(handler_, trace_info, funds_update, true);
+    for (auto &item_2 : item.coin) {
+      auto funds_update = FundsUpdate{
+          .stream_id = stream_id_,
+          .account = account_.name,
+          .currency = item_2.coin,
+          .margin_mode = {},
+          .balance = item_2.balance,
+          .hold = item_2.locked,
+          .borrowed = NaN,
+          .external_account = {},
+          .update_type = UpdateType::INCREMENTAL,
+          .exchange_time_utc = {},
+          .exchange_sequence = {},
+          .sending_time_utc = account.ts,
+      };
+      create_trace_and_dispatch(handler_, trace_info, funds_update, true);
+    }
   }
 }
 

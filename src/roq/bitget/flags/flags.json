@@ -13,7 +13,7 @@
       "name": "api",
       "type": "std/string",
       "required": true,
-      "description": "API (:code:`USDT-FUTURES`, :code:`USDC-FUTURES`, :code:`COIN-FUTURES`)"
+      "description": "API (:code:`SPOT`, :code:`MARGIN`, :code:`USDT-FUTURES`, :code:`USDC-FUTURES`, :code:`COIN-FUTURES`)"
     },
     {
       "name": "margin_coin",

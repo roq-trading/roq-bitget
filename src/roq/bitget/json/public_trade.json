@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/Trade",
+  "name": "roq/bitget/json/PublicTrade",
   "type": "dictionary",
   "values": [
     {
@@ -12,7 +12,7 @@
     },
     {
       "name": "data",
-      "type": "roq/bitget/json/TradeDataItem",
+      "type": "roq/bitget/json/PublicTradeDataItem",
       "array": "std/span"
     },
     {

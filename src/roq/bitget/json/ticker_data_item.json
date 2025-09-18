@@ -3,43 +3,55 @@
   "type": "dictionary",
   "values": [
     {
-      "name": "instId",
-      "type": "std/string_view"
-    },
-    {
-      "name": "lastPr",
+      "name": "highPrice24h",
       "type": "std/double"
     },
     {
-      "name": "bidPr",
+      "name": "lowPrice24h",
       "type": "std/double"
     },
     {
-      "name": "askPr",
+      "name": "openPrice24h",
       "type": "std/double"
     },
     {
-      "name": "bidSz",
+      "name": "lastPrice",
       "type": "std/double"
     },
     {
-      "name": "askSz",
+      "name": "turnover24h",
       "type": "std/double"
     },
     {
-      "name": "open24h",
+      "name": "volume24h",
       "type": "std/double"
     },
     {
-      "name": "high24h",
+      "name": "bid1Price",
       "type": "std/double"
     },
     {
-      "name": "low24h",
+      "name": "ask1Price",
       "type": "std/double"
     },
     {
-      "name": "change24h",
+      "name": "bid1Size",
+      "type": "std/double"
+    },
+    {
+      "name": "ask1Size",
+      "type": "std/double"
+    },
+    {
+      "name": "price24hPcnt",
+      "type": "std/double"
+    },
+    {
+      "name": "indexPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "markPrice",
       "type": "std/double"
     },
     {
@@ -48,47 +60,23 @@
     },
     {
       "name": "nextFundingTime",
-      "type": "std/milliseconds"
-    },
-    {
-      "name": "markPrice",
-      "type": "std/double"
-    },
-    {
-      "name": "indexPrice",
-      "type": "std/double"
-    },
-    {
-      "name": "holdingAmount",
-      "type": "std/double"
-    },
-    {
-      "name": "baseVolume",
-      "type": "std/double"
-    },
-    {
-      "name": "quoteVolume",
-      "type": "std/double"
-    },
-    {
-      "name": "openUtc",
-      "type": "std/double"
-    },
-    {
-      "name": "symbolType",
-      "type": "std/int32"
-    },
-    {
-      "name": "symbol",
       "type": "std/string_view"
     },
     {
-      "name": "deliveryPrice",
+      "name": "openInterest",
       "type": "std/double"
     },
     {
-      "name": "ts",
-      "type": "std/milliseconds"
+      "name": "deliveryTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryStartTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryStatus",
+      "type": "std/string_view"
     }
   ]
 }

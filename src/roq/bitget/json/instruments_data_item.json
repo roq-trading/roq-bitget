@@ -1,0 +1,174 @@
+{
+  "name": "roq/bitget/json/InstrumentsDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "category",
+      "type": "roq/bitget/json/Category"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "baseCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "quoteCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "buyLimitPriceRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "sellLimitPriceRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "feeRateUpRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "makerFeeRate",
+      "type": "std/double"
+    },
+    {
+      "name": "takerFeeRate",
+      "type": "std/double"
+    },
+    {
+      "name": "openCostUpRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "minOrderQty",
+      "type": "std/double"
+    },
+    {
+      "name": "maxOrderQty",
+      "type": "std/double"
+    },
+    {
+      "name": "minOrderAmount",
+      "type": "std/double"
+    },
+    {
+      "name": "pricePrecision",
+      "type": "std/int32"
+    },
+    {
+      "name": "quantityPrecision",
+      "type": "std/int32"
+    },
+    {
+      "name": "quotePrecision",
+      "type": "std/int32"
+    },
+    {
+      "name": "priceMultiplier",
+      "type": "std/double"
+    },
+    {
+      "name": "quantityMultiplier",
+      "type": "std/double"
+    },
+    {
+      "name": "type",
+      "type": "roq/bitget/json/FuturesType"
+    },
+    {
+      "name": "maxSymbolOrderNum",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxProductOrderNum",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxPositionNum",
+      "type": "std/string_view"
+    },
+    {
+      "name": "status",
+      "type": "roq/bitget/json/TradingStatus"
+    },
+    {
+      "name": "offTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "limitOpenTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryStartTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "deliveryPeriod",
+      "type": "roq/bitget/json/DeliveryPeriod"
+    },
+    {
+      "name": "launchTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "fundInterval",
+      "type": "std/int32"
+    },
+    {
+      "name": "minLeverage",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxLeverage",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maintainTime",
+      "type": "std/string_view"
+    },
+    {
+      "name": "isIsolatedBaseBorrowable",
+      "type": "std/string_view"
+    },
+    {
+      "name": "isIsolatedQuotedBorrowable",
+      "type": "std/string_view"
+    },
+    {
+      "name": "warningRiskRatio",
+      "type": "std/string_view"
+    },
+    {
+      "name": "liquidationRiskRatio",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxCrossedLeverage",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxIsolatedLeverage",
+      "type": "std/string_view"
+    },
+    {
+      "name": "userMinBorrow",
+      "type": "std/string_view"
+    },
+    {
+      "name": "areaSymbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "maxMarketOrderQty",
+      "type": "std/string_view"
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
-  "name": "roq/bitget/json/Channel",
+  "name": "roq/bitget/json/Topic",
   "type": "enum",
   "values": [
     {
       "name": "ticker"
     },
     {
-      "name": "trade"
+      "name": "publicTrade"
     },
     {
       "name": "books"
@@ -21,10 +21,10 @@
       "name": "account"
     },
     {
-      "name": "positions"
+      "name": "position"
     },
     {
-      "name": "orders"
+      "name": "order"
     },
     {
       "name": "fill"

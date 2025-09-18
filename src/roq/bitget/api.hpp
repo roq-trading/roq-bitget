@@ -12,8 +12,7 @@ namespace bitget {
 struct API final {
   std::string_view inst_type;
   struct {
-    std::string_view currencies;
-    std::string_view contracts;
+    std::string_view instruments;
   } market_data;
 
   struct {

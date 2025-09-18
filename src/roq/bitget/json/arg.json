@@ -7,15 +7,11 @@
       "type": "std/string_view"
     },
     {
-      "name": "channel",
-      "type": "roq/bitget/json/Channel"
+      "name": "topic",
+      "type": "roq/bitget/json/Topic"
     },
     {
-      "name": "instId",
-      "type": "std/string_view"
-    },
-    {
-      "name": "coin",
+      "name": "symbol",
       "type": "std/string_view"
     }
   ]

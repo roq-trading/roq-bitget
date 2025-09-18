@@ -1,0 +1,36 @@
+{
+  "name": "roq/bitget/json/PublicTradeDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "raw": "i",
+      "name": "trade_id",
+      "type": "std/string_view"
+    },
+    {
+      "raw": "L",
+      "name": "seqno",
+      "type": "std/int64"
+    },
+    {
+      "raw": "p",
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "raw": "v",
+      "name": "size",
+      "type": "std/double"
+    },
+    {
+      "raw": "S",
+      "name": "side",
+      "type": "roq/bitget/json/Side"
+    },
+    {
+      "raw": "T",
+      "name": "timestamp",
+      "type": "std/milliseconds"
+    }
+  ]
+}

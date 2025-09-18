@@ -91,7 +91,7 @@ MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_i
           .parse = create_metrics(shared.settings, name_, "parse"sv),
           .error = create_metrics(shared.settings, name_, "error"sv),
           .ticker = create_metrics(shared.settings, name_, "ticker"sv),
-          .trade = create_metrics(shared.settings, name_, "trade"sv),
+          .public_trade = create_metrics(shared.settings, name_, "public_trade"sv),
           .books = create_metrics(shared.settings, name_, "books"sv),
       },
       latency_{
@@ -127,7 +127,7 @@ void MarketData::operator()(metrics::Writer &writer) const {
       .write(profile_.parse, metrics::Type::PROFILE)
       .write(profile_.error, metrics::Type::PROFILE)
       .write(profile_.ticker, metrics::Type::PROFILE)
-      .write(profile_.trade, metrics::Type::PROFILE)
+      .write(profile_.public_trade, metrics::Type::PROFILE)
       .write(profile_.books, metrics::Type::PROFILE)
       // latency
       .write(latency_.ping, metrics::Type::LATENCY);
@@ -201,13 +201,13 @@ void MarketData::subscribe(std::span<Symbol const> const &symbols) {
     return;
   }
   subscribe("ticker"sv, symbols);
-  subscribe("trade"sv, symbols);
+  subscribe("publicTrade"sv, symbols);
   subscribe("books"sv, symbols);
 }
 
-void MarketData::subscribe(std::string_view const &channel, std::span<Symbol const> const &symbols) {
+void MarketData::subscribe(std::string_view const &topic, std::span<Symbol const> const &symbols) {
   assert(!std::empty(symbols));
-  auto prefix = fmt::format(R"({{"instType":"{}","channel":"{}","instId":")", shared_.api.inst_type, channel);
+  auto prefix = fmt::format(R"({{"instType":"{}","topic":"{}","symbol":")", shared_.api.inst_type, topic);
   auto separator = fmt::format(R"("}},{})", prefix);
   auto message = fmt::format(
       R"({{)"
@@ -248,35 +248,29 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
       auto top_of_book = TopOfBook{
           .stream_id = stream_id_,
           .exchange = shared_.settings.exchange,
-          .symbol = item.inst_id,
+          .symbol = ticker.arg.symbol,
           .layer{
-              .bid_price = item.bid_pr,
-              .bid_quantity = item.bid_sz,
-              .ask_price = item.ask_pr,
-              .ask_quantity = item.ask_sz,
+              .bid_price = item.bid1_price,
+              .bid_quantity = item.bid1_size,
+              .ask_price = item.ask1_price,
+              .ask_quantity = item.ask1_size,
           },
           .update_type = UpdateType::INCREMENTAL,
-          .exchange_time_utc = item.ts,
+          .exchange_time_utc = ticker.ts,
           .exchange_sequence = {},
-          .sending_time_utc = item.ts,
+          .sending_time_utc = ticker.ts,
       };
       create_trace_and_dispatch(handler_, trace_info, top_of_book, true);
-      std::array<Statistics, 6> statistics{{
-          {
-              .type = StatisticsType::SETTLEMENT_PRICE,
-              .value = item.mark_price,
-              .begin_time_utc = {},
-              .end_time_utc = {},
-          },
+      std::array<Statistics, 4> statistics{{
           {
               .type = StatisticsType::HIGHEST_TRADED_PRICE,
-              .value = item.high24h,
+              .value = item.high_price24h,
               .begin_time_utc = {},
               .end_time_utc = {},
           },
           {
               .type = StatisticsType::LOWEST_TRADED_PRICE,
-              .value = item.low24h,
+              .value = item.low_price24h,
               .begin_time_utc = {},
               .end_time_utc = {},
           },
@@ -287,14 +281,8 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
               .end_time_utc = {},
           },
           {
-              .type = StatisticsType::FUNDING_RATE,
-              .value = item.funding_rate,
-              .begin_time_utc = {},
-              .end_time_utc = {},
-          },
-          {
               .type = StatisticsType::TRADE_VOLUME,
-              .value = item.quote_volume,  // note! not sure...
+              .value = item.volume24h,  // note! not sure...
               .begin_time_utc = {},
               .end_time_utc = {},
           },
@@ -302,10 +290,10 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
       auto statistics_update = StatisticsUpdate{
           .stream_id = stream_id_,
           .exchange = shared_.settings.exchange,
-          .symbol = item.inst_id,
+          .symbol = ticker.arg.symbol,
           .statistics = statistics,
           .update_type = UpdateType::INCREMENTAL,
-          .exchange_time_utc = item.ts,
+          .exchange_time_utc = ticker.ts,
           .exchange_sequence = {},
           .sending_time_utc = {},
       };
@@ -315,16 +303,16 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
 }
 
 // XXX TODO should we rather split by trade_item.ts => exchange_time_utc ?
-void MarketData::operator()(Trace<json::Trade> const &event) {
-  profile_.trade([&]() {
-    auto &[trace_info, trade] = event;
-    if (trade.action != json::Action::UPDATE) {  // note! drop snapshot
+void MarketData::operator()(Trace<json::PublicTrade> const &event) {
+  profile_.public_trade([&]() {
+    auto &[trace_info, public_trade] = event;
+    if (public_trade.action != json::Action::UPDATE) {  // note! drop snapshot
       return;
     }
     auto &trades = shared_.trades;
     trades.clear();
-    decltype(json::TradeDataItem::ts) timestamp = {};
-    for (auto &item : trade.data) {
+    decltype(json::PublicTradeDataItem::timestamp) timestamp = {};
+    for (auto &item : public_trade.data) {
       auto item_2 = Trade{
           .side = map(item.side),
           .price = item.price,
@@ -334,17 +322,17 @@ void MarketData::operator()(Trace<json::Trade> const &event) {
           .maker_order_id = {},
       };
       trades.emplace_back(std::move(item_2));
-      utils::update_max(timestamp, item.ts);
+      utils::update_max(timestamp, item.timestamp);
     }
     if (!std::empty(trades)) {
       auto trade_summary = TradeSummary{
           .stream_id = stream_id_,
           .exchange = shared_.settings.exchange,
-          .symbol = trade.arg.inst_id,
+          .symbol = public_trade.arg.symbol,
           .trades = trades,
           .exchange_time_utc = timestamp,
           .exchange_sequence = {},
-          .sending_time_utc = trade.ts,
+          .sending_time_utc = public_trade.ts,
       };
       create_trace_and_dispatch(handler_, trace_info, trade_summary, true);
     }
@@ -352,7 +340,7 @@ void MarketData::operator()(Trace<json::Trade> const &event) {
 }
 
 void MarketData::operator()(Trace<json::Books> const &event) {
-  profile_.trade([&]() {
+  profile_.books([&]() {
     auto &[trace_info, books] = event;
     auto &bids = shared_.bids;
     auto &asks = shared_.asks;
@@ -401,7 +389,7 @@ void MarketData::operator()(Trace<json::Books> const &event) {
       auto market_by_price_update = MarketByPriceUpdate{
           .stream_id = stream_id_,
           .exchange = shared_.settings.exchange,
-          .symbol = books.arg.inst_id,
+          .symbol = books.arg.symbol,
           .bids = bids,
           .asks = asks,
           .update_type = update_type,

@@ -3,11 +3,13 @@
   "type": "dictionary",
   "values": [
     {
+      "raw": "a",
       "name": "asks",
       "type": "roq/bitget/json/BooksItem",
       "array": "std/span"
     },
     {
+      "raw": "b",
       "name": "bids",
       "type": "roq/bitget/json/BooksItem",
       "array": "std/span"
@@ -15,6 +17,10 @@
     {
       "name": "checksum",
       "type": "std/int64"
+    },
+    {
+      "name": "pseq",
+      "type": "std/uint64"
     },
     {
       "name": "seq",

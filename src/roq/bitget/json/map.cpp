@@ -42,6 +42,95 @@ std::optional<roq::MarginMode> Map<bitget::json::AssetMode>::helper() const {
   return Helper{args_};
 }
 
+// {bitget::json::Category, bitget::json::FuturesType} => roq::SecurityType
+
+template <>
+template <>
+constexpr Helper<bitget::json::Category, bitget::json::FuturesType>::operator std::optional<roq::SecurityType>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::Category::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::SecurityType::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::SecurityType::UNDEFINED;
+    case SPOT:
+      return roq::SecurityType::SPOT;
+    case MARGIN:
+      return roq::SecurityType::SPOT;
+    case USDT_FUTURES:
+    case USDC_FUTURES:
+    case COIN_FUTURES:
+      switch (std::get<1>(args_)) {
+        using enum bitget::json::FuturesType::type_t;
+        case UNDEFINED_INTERNAL:
+          return roq::SecurityType::UNDEFINED;
+        case UNKNOWN_INTERNAL:
+          return roq::SecurityType::UNDEFINED;
+        case PERPETUAL:
+          return roq::SecurityType::SWAP;
+        case DELIVERY:
+          return roq::SecurityType::FUTURES;
+      }
+      break;
+  }
+  return {};
+}
+
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::UNDEFINED_INTERNAL}, bitget::json::FuturesType{bitget::json::FuturesType::UNDEFINED_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::SPOT}, bitget::json::FuturesType{bitget::json::FuturesType::UNDEFINED_INTERNAL}} ==
+    roq::SecurityType::SPOT);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::MARGIN}, bitget::json::FuturesType{bitget::json::FuturesType::UNDEFINED_INTERNAL}} ==
+    roq::SecurityType::SPOT);
+
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDT_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::UNDEFINED_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDT_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::UNKNOWN_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDT_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::PERPETUAL}} ==
+    roq::SecurityType::SWAP);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDT_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::DELIVERY}} ==
+    roq::SecurityType::FUTURES);
+
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDC_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::UNDEFINED_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDC_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::UNKNOWN_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDC_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::PERPETUAL}} ==
+    roq::SecurityType::SWAP);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::USDC_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::DELIVERY}} ==
+    roq::SecurityType::FUTURES);
+
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::COIN_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::UNDEFINED_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::COIN_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::UNKNOWN_INTERNAL}} ==
+    roq::SecurityType::UNDEFINED);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::COIN_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::PERPETUAL}} ==
+    roq::SecurityType::SWAP);
+static_assert(
+    Helper{bitget::json::Category{bitget::json::Category::COIN_FUTURES}, bitget::json::FuturesType{bitget::json::FuturesType::DELIVERY}} ==
+    roq::SecurityType::FUTURES);
+
+template <>
+template <>
+std::optional<roq::SecurityType> Map<bitget::json::Category, bitget::json::FuturesType>::helper() const {
+  return Helper{args_};
+}
+
 // bitget::json::Force => roq::TimeInForce
 
 template <>

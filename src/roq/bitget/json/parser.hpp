@@ -12,8 +12,8 @@
 #include "roq/bitget/json/error.hpp"
 
 #include "roq/bitget/json/books.hpp"
+#include "roq/bitget/json/public_trade.hpp"
 #include "roq/bitget/json/ticker.hpp"
-#include "roq/bitget/json/trade.hpp"
 
 #include "roq/bitget/json/login.hpp"
 
@@ -30,7 +30,7 @@ struct Parser final {
   struct Handler {
     virtual void operator()(Trace<json::Error> const &) = 0;
     virtual void operator()(Trace<json::Ticker> const &) = 0;
-    virtual void operator()(Trace<json::Trade> const &) = 0;
+    virtual void operator()(Trace<json::PublicTrade> const &) = 0;
     virtual void operator()(Trace<json::Books> const &) = 0;
     //
     virtual void operator()(Trace<json::Login> const &) = 0;

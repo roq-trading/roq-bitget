@@ -3,56 +3,37 @@
   "type": "dictionary",
   "values": [
     {
-      "name": "marginCoin",
-      "type": "std/string_view"
-    },
-    {
-      "name": "frozen",
+      "name": "totalEquity",
       "type": "std/double"
     },
     {
-      "name": "available",
+      "name": "effEquity",
       "type": "std/double"
     },
     {
-      "name": "maxOpenPosAvailable",
+      "name": "mmr",
       "type": "std/double"
     },
     {
-      "name": "maxTransferOut",
+      "name": "imr",
       "type": "std/double"
     },
     {
-      "name": "equity",
+      "name": "mgnRatio",
       "type": "std/double"
     },
     {
-      "name": "usdtEquity",
+      "name": "positionMgnRatio",
       "type": "std/double"
     },
     {
-      "name": "crossedRiskRate",
+      "name": "unrealisedPnL",
       "type": "std/double"
     },
     {
-      "name": "unrealizedPL",
-      "type": "std/double"
-    },
-    {
-      "name": "unionTotalMargin",
-      "type": "std/double"
-    },
-    {
-      "name": "unionAvailable",
-      "type": "std/double"
-    },
-    {
-      "name": "unionMm",
-      "type": "std/double"
-    },
-    {
-      "name": "assetsMode",
-      "type": "roq/bitget/json/AssetMode"
+      "name": "coin",
+      "type": "roq/bitget/json/AccountDataItemCoinItem",
+      "array": "std/span"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "name": "roq/bitget/json/TradingStatus",
+  "type": "enum",
+  "values": [
+    {
+      "name": "listed"
+    },
+    {
+      "name": "online"
+    },
+    {
+      "name": "limit_open"
+    },
+    {
+      "name": "offline"
+    },
+    {
+      "name": "restrictedAPI"
+    }
+  ]
+}

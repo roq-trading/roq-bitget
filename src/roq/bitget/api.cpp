@@ -15,6 +15,8 @@ namespace bitget {
 
 namespace {
 enum class Key {
+  SPOT,
+  MARGIN,
   USDT_FUTURES,
   USDC_FUTURES,
   COIN_FUTURES,
@@ -33,12 +35,45 @@ API API::create(Settings const &settings) {
   auto key = parse_api(settings.api);
   switch (key) {
     using enum Key;
+    case SPOT:
+      return {
+          .inst_type = "spot"sv,
+          .market_data{
+              .instruments = "/api/v3/market/instruments?category=SPOT"sv,
+          },
+          .order_management{
+              .all_accounts = "/api/v2/mix/account/accounts?productType=USDT-FUTURES"sv,
+              .all_positions = "/api/v2/mix/position/all-position?productType=USDT-FUTURES"sv,
+              .orders_history = "/api/v2/mix/order/orders-history?productType=USDT-FUTURES"sv,
+              .order_fill_details = "/api/v2/mix/order/fills?productType=USDT-FUTURES"sv,
+              .place_order = "/api/v2/mix/order/place-order"sv,
+              .modify_order = "/api/v2/mix/order/modify-order"sv,
+              .cancel_order = "/api/v2/mix/order/cancel-order"sv,
+              .cancel_all_orders = "/api/v2/mix/order/cancel-all-orders"sv,
+          },
+      };
+    case MARGIN:
+      return {
+          .inst_type = "margin"sv,
+          .market_data{
+              .instruments = "/api/v3/market/instruments?category=MARGIN"sv,
+          },
+          .order_management{
+              .all_accounts = "/api/v2/mix/account/accounts?productType=USDT-FUTURES"sv,
+              .all_positions = "/api/v2/mix/position/all-position?productType=USDT-FUTURES"sv,
+              .orders_history = "/api/v2/mix/order/orders-history?productType=USDT-FUTURES"sv,
+              .order_fill_details = "/api/v2/mix/order/fills?productType=USDT-FUTURES"sv,
+              .place_order = "/api/v2/mix/order/place-order"sv,
+              .modify_order = "/api/v2/mix/order/modify-order"sv,
+              .cancel_order = "/api/v2/mix/order/cancel-order"sv,
+              .cancel_all_orders = "/api/v2/mix/order/cancel-all-orders"sv,
+          },
+      };
     case USDT_FUTURES:
       return {
-          .inst_type = "USDT-FUTURES"sv,
+          .inst_type = "usdt-futures"sv,
           .market_data{
-              .currencies = "/api/v2/spot/public/coins"sv,
-              .contracts = "/api/v2/mix/market/contracts?productType=USDT-FUTURES"sv,
+              .instruments = "/api/v3/market/instruments?category=USDT-FUTURES"sv,
           },
           .order_management{
               .all_accounts = "/api/v2/mix/account/accounts?productType=USDT-FUTURES"sv,
@@ -53,10 +88,9 @@ API API::create(Settings const &settings) {
       };
     case USDC_FUTURES:
       return {
-          .inst_type = "USDC-FUTURES"sv,
+          .inst_type = "usdc-futures"sv,
           .market_data{
-              .currencies = "/api/v2/spot/public/coins"sv,
-              .contracts = "/api/v2/mix/market/contracts?productType=USDC-FUTURES"sv,
+              .instruments = "/api/v3/market/instruments?category=USDC-FUTURES"sv,
           },
           .order_management{
               .all_accounts = "/api/v2/mix/account/accounts?productType=USDC-FUTURES"sv,
@@ -71,10 +105,9 @@ API API::create(Settings const &settings) {
       };
     case COIN_FUTURES:
       return {
-          .inst_type = "COIN-FUTURES"sv,
+          .inst_type = "coin-futures"sv,
           .market_data{
-              .currencies = "/api/v2/spot/public/coins"sv,
-              .contracts = "/api/v2/mix/market/contracts?productType=COIN-FUTURES"sv,
+              .instruments = "/api/v3/market/instruments?category=COIN-FUTURES"sv,
           },
           .order_management{
               .all_accounts = "/api/v2/mix/account/accounts?productType=COIN-FUTURES"sv,

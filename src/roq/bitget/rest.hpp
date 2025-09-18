@@ -24,8 +24,7 @@
 #include "roq/bitget/rest_state.hpp"
 #include "roq/bitget/shared.hpp"
 
-#include "roq/bitget/json/contracts.hpp"
-#include "roq/bitget/json/currencies.hpp"
+#include "roq/bitget/json/instruments.hpp"
 
 namespace roq {
 namespace bitget {
@@ -66,13 +65,9 @@ class Rest final : public web::rest::Client::Handler {
 
   uint32_t download(RestState);
 
-  void get_currencies();
-  void get_currencies_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::Currencies> const &);
-
-  void get_contracts();
-  void get_contracts_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::Contracts> const &);
+  void get_instruments();
+  void get_instruments_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::Instruments> const &);
 
   void process_response(web::rest::Response const &, auto error_handler, auto success_handler);
 
@@ -90,7 +85,7 @@ class Rest final : public web::rest::Client::Handler {
     utils::metrics::Counter disconnect;
   } counter_;
   struct {
-    utils::metrics::Profile currencies, currencies_ack, contracts, contracts_ack;
+    utils::metrics::Profile instruments, instruments_ack;
   } profile_;
   struct {
     utils::metrics::Latency ping;
