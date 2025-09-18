@@ -1,0 +1,14 @@
+{
+  "name": "roq/bitget/json/OpenOrdersDataListItemFeeDetailItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "feeCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "fee",
+      "type": "std/double"
+    }
+  ]
+}

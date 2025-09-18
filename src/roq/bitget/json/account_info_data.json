@@ -1,0 +1,36 @@
+{
+  "name": "roq/bitget/json/AccountInfoData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "uid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "accountMode",
+      "type": "roq/bitget/json/AccountMode"
+    },
+    {
+      "name": "assetMode",
+      "type": "roq/bitget/json/AssetMode"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/json/HoldMode"
+    },
+    {
+      "name": "stpMode",
+      "type": "roq/bitget/json/StpMode"
+    },
+    {
+      "name": "symbolConfigList",
+      "type": "roq/bitget/json/AccountInfoDataSymbolConfigItem",
+      "array": "std/span"
+    },
+    {
+      "name": "coinConfigList",
+      "type": "roq/bitget/json/AccountInfoDataCoinConfigItem",
+      "array": "std/span"
+    }
+  ]
+}

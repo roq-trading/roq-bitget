@@ -1,10 +1,14 @@
 {
-  "name": "roq/bitget/json/FillDataItem",
+  "name": "roq/bitget/json/FillHistoryDataListItem",
   "type": "dictionary",
   "values": [
     {
-      "name": "category",
-      "type": "roq/bitget/json/Category"
+      "name": "execId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "execLinkId",
+      "type": "std/string_view"
     },
     {
       "name": "orderId",
@@ -15,12 +19,8 @@
       "type": "std/string_view"
     },
     {
-      "name": "execId",
-      "type": "std/string_view"
-    },
-    {
-      "name": "execLinkId",
-      "type": "std/string_view"
+      "name": "category",
+      "type": "roq/bitget/json/Category"
     },
     {
       "name": "symbol",
@@ -29,18 +29,6 @@
     {
       "name": "orderType",
       "type": "roq/bitget/json/OrderType"
-    },
-    {
-      "name": "side",
-      "type": "roq/bitget/json/Side"
-    },
-    {
-      "name": "holdSide",
-      "type": "roq/bitget/json/HoldSide"
-    },
-    {
-      "name": "tradeSide",
-      "type": "roq/bitget/json/TradeSide"
     },
     {
       "name": "execPrice",
@@ -55,25 +43,33 @@
       "type": "std/double"
     },
     {
-      "name": "execPnl",
-      "type": "std/double"
+      "name": "feeDetail",
+      "type": "roq/bitget/json/FillHistoryDataListItemFeeDetailItem",
+      "array": "std/span"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/json/Side"
     },
     {
       "name": "tradeScope",
       "type": "roq/bitget/json/TradeScope"
     },
     {
-      "name": "feeDetail",
-      "type": "roq/bitget/json/FillDataItemFeeDetailItem",
-      "array": "std/span"
+      "name": "tradeSide",
+      "type": "roq/bitget/json/TradeSide"
     },
     {
-      "name": "execTime",
+      "name": "createdTime",
       "type": "std/milliseconds"
     },
     {
       "name": "updatedTime",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "execPnl",
+      "type": "std/double"
     }
   ]
 }

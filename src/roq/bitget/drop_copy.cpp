@@ -292,15 +292,15 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
         .stream_id = stream_id_,
         .account = account_.name,
         .exchange = shared_.settings.exchange,
-        .symbol = item.margin_coin,
+        .symbol = item.symbol,
         .margin_mode = map(item.margin_mode),
         .external_account = {},
-        .long_quantity = std::max(item.total, 0.0),    // ???
-        .short_quantity = std::max(-item.total, 0.0),  // ???
+        .long_quantity = std::max(item.size, 0.0),
+        .short_quantity = std::max(-item.size, 0.0),
         .update_type = UpdateType::INCREMENTAL,
-        .exchange_time_utc = item.c_time,  // ???
+        .exchange_time_utc = item.updated_time,  // XXX FIXME TODO created_time ???
         .exchange_sequence = {},
-        .sending_time_utc = item.u_time,  // ???
+        .sending_time_utc = position.ts,
     };
     create_trace_and_dispatch(handler_, trace_info, position_update, true);
   }
@@ -313,26 +313,26 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
     auto order_update = server::oms::OrderUpdate{
         .account = account_.name,
         .exchange = shared_.settings.exchange,
-        .symbol = item.inst_id,
+        .symbol = item.symbol,
         .side = map(item.side),
         .position_effect = {},  // ???
         .margin_mode = map(item.margin_mode),
         .max_show_quantity = NaN,
         .order_type = map(item.order_type),
-        .time_in_force = map(item.force),
+        .time_in_force = map(item.time_in_force),
         .execution_instructions = {},
-        .create_time_utc = item.c_time,  // ???
-        .update_time_utc = item.c_time,  // ???
+        .create_time_utc = item.created_time,
+        .update_time_utc = item.updated_time,
         .external_account = {},
         .external_order_id = item.order_id,
-        .client_order_id = item.client_o_id,
-        .order_status = map(item.status),
-        .quantity = item.size,
+        .client_order_id = item.client_oid,
+        .order_status = map(item.order_status),
+        .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
         .remaining_quantity = NaN,
-        .traded_quantity = NaN,
-        .average_traded_price = item.price_avg,
+        .traded_quantity = item.cum_exec_qty,
+        .average_traded_price = item.avg_price,
         .last_traded_quantity = NaN,
         .last_traded_price = NaN,
         .last_liquidity = {},
@@ -341,7 +341,7 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .max_response_version = {},
         .max_accepted_version = {},
         .update_type = UpdateType::INCREMENTAL,
-        .sending_time_utc = item.u_time,  // ???
+        .sending_time_utc = order.ts,
     };
     // create_trace_and_dispatch(handler_, trace_info, order_update, true);
   }
@@ -350,9 +350,10 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
 void DropCopy::operator()(Trace<json::Fill> const &event) {
   auto &[trace_info, fill] = event;
   log::info<2>("fill={}"sv, fill);
-  std::string_view symbol, order_id, client_order_id;
+  std::string_view symbol, order_id, client_oid;
   json::Side side = {};
-  std::chrono::nanoseconds timestamp = {};
+  std::chrono::nanoseconds exec_time = {};
+  std::chrono::nanoseconds updated_time = {};
   auto dispatch = [&]() {
     auto trade_update = TradeUpdate{
         .stream_id = stream_id_,
@@ -362,17 +363,17 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
         .symbol = symbol,
         .side = map(side),
         .position_effect = {},  // ???
-        .margin_mode = {},
+        .margin_mode = {},      // ??? from order ???
         .quantity_type = {},
-        .create_time_utc = timestamp,
-        .update_time_utc = timestamp,
+        .create_time_utc = exec_time,
+        .update_time_utc = updated_time,
         .external_account = {},
         .external_order_id = order_id,
-        .client_order_id = client_order_id,
+        .client_order_id = client_oid,
         .fills = shared_.fills,
         .routing_id = {},
         .update_type = UpdateType::INCREMENTAL,
-        .sending_time_utc = timestamp,
+        .sending_time_utc = fill.ts,
         .user = {},
         .strategy_id = {},
     };
@@ -381,20 +382,21 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
   };
   shared_.fills.clear();
   for (auto &item : fill.data) {
-    if (item.symbol != symbol || item.order_id != order_id || item.client_order_id != client_order_id || item.side != side) {
+    if (item.symbol != symbol || item.order_id != order_id || item.client_oid != client_oid || item.side != side) {
       dispatch();
       symbol = item.symbol;
       order_id = item.order_id;
-      client_order_id = item.client_order_id;
+      client_oid = item.client_oid;
       side = item.side;
-      timestamp = {};
+      exec_time = {};
+      updated_time = {};
     }
     auto fill = Fill{
-        .exchange_time_utc = item.c_time,  // ???
-        .external_trade_id = item.trade_id,
-        .quantity = item.base_volume,
-        .price = item.price,
-        .liquidity = {},
+        .exchange_time_utc = item.exec_time,
+        .external_trade_id = item.exec_id,
+        .quantity = item.exec_qty,
+        .price = item.exec_price,
+        .liquidity = map(item.trade_scope),
         .commission_amount = NaN,
         .commission_currency = {},
         .base_amount = NaN,
@@ -402,8 +404,11 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
         .profit_loss_amount = NaN,
     };
     shared_.fills.emplace_back(std::move(fill));
-    if (timestamp < item.c_time) {
-      timestamp = item.c_time;
+    if (exec_time < item.exec_time) {
+      exec_time = item.exec_time;
+    }
+    if (updated_time < item.updated_time) {
+      updated_time = item.updated_time;
     }
   }
   dispatch();

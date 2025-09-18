@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/AllAccountsDataItemAssetItem",
+  "name": "roq/bitget/json/AccountInfoDataCoinConfigItem",
   "type": "dictionary",
   "values": [
     {
@@ -7,11 +7,7 @@
       "type": "std/string_view"
     },
     {
-      "name": "balance",
-      "type": "std/double"
-    },
-    {
-      "name": "available",
+      "name": "leverage",
       "type": "std/double"
     }
   ]

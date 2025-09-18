@@ -3,50 +3,91 @@
   "type": "dictionary",
   "values": [
     {
-      "name": "accBaseVolume",
-      "type": "std/double"
+      "name": "category",
+      "type": "roq/bitget/json/Category"
     },
     {
-      "name": "cTime",
-      "type": "std/milliseconds"
-    },
-    {
-      "name": "clientOId",
+      "name": "symbol",
       "type": "std/string_view"
     },
     {
-      "name": "feeDetail"
-    },
-    {
-      "name": "fillFee",
-      "type": "std/double"
-    },
-    {
-      "name": "fillFeeCoin",
+      "name": "orderId",
       "type": "std/string_view"
     },
     {
-      "name": "fillNotionalUsd",
+      "name": "clientOid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "price",
       "type": "std/double"
     },
     {
-      "name": "fillPrice",
+      "name": "qty",
       "type": "std/double"
     },
     {
-      "name": "baseVolume",
+      "name": "amount",
       "type": "std/double"
     },
     {
-      "name": "fillTime",
-      "type": "std/milliseconds"
+      "name": "holdMode",
+      "type": "roq/bitget/json/HoldMode"
     },
     {
-      "name": "force",
-      "type": "roq/bitget/json/Force"
+      "name": "tradeSide",
+      "type": "roq/bitget/json/TradeSide"
     },
     {
-      "name": "instId",
+      "name": "orderType",
+      "type": "roq/bitget/json/OrderType"
+    },
+    {
+      "name": "timeInForce",
+      "type": "roq/bitget/json/TimeInForce"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/json/Side"
+    },
+    {
+      "name": "holdSide",
+      "type": "roq/bitget/json/HoldSide"
+    },
+    {
+      "name": "marginMode",
+      "type": "roq/bitget/json/MarginMode"
+    },
+    {
+      "name": "reduceOnly",
+      "type": "std/bool"
+    },
+    {
+      "name": "marginCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "cumExecQty",
+      "type": "std/double"
+    },
+    {
+      "name": "cumExecValue",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "totalProfit",
+      "type": "std/double"
+    },
+    {
+      "name": "orderStatus",
+      "type": "roq/bitget/json/OrderStatus"
+    },
+    {
+      "name": "cancelReason",
       "type": "std/string_view"
     },
     {
@@ -54,100 +95,21 @@
       "type": "std/double"
     },
     {
-      "name": "marginCoin",
-      "type": "std/string_view"
+      "name": "feeDetail",
+      "type": "roq/bitget/json/OrderDataItemFeeDetailItem",
+      "array": "std/span"
     },
     {
-      "name": "marginMode",
-      "type": "roq/bitget/json/MarginMode"
+      "name": "createdTime",
+      "type": "std/milliseconds"
     },
     {
-      "name": "notionalUsd",
-      "type": "std/double"
-    },
-    {
-      "name": "orderId",
-      "type": "std/string_view"
-    },
-    {
-      "name": "orderType",
-      "type": "roq/bitget/json/OrderType"
-    },
-    {
-      "name": "pnl",
-      "type": "std/double"
-    },
-    {
-      "name": "posMode",
-      "type": "roq/bitget/json/PosMode"
-    },
-    {
-      "name": "posSide",
-      "type": "roq/bitget/json/PosSide"
-    },
-    {
-      "name": "price",
-      "type": "std/double"
-    },
-    {
-      "name": "priceAvg",
-      "type": "std/double"
-    },
-    {
-      "name": "reduceOnly",
-      "type": "std/bool"
+      "name": "updatedTime",
+      "type": "std/milliseconds"
     },
     {
       "name": "stpMode",
       "type": "roq/bitget/json/StpMode"
-    },
-    {
-      "name": "side",
-      "type": "roq/bitget/json/Side"
-    },
-    {
-      "name": "size",
-      "type": "std/double"
-    },
-    {
-      "name": "enterPointSource",
-      "type": "std/string_view"
-    },
-    {
-      "name": "status",
-      "type": "roq/bitget/json/OrderStatus"
-    },
-    {
-      "name": "tradeScope",
-      "type": "roq/bitget/json/TradeScope"
-    },
-    {
-      "name": "tradeId",
-      "type": "std/string_view"
-    },
-    {
-      "name": "tradeSide",
-      "type": "roq/bitget/json/TradeSide"
-    },
-    {
-      "name": "presetStopSurplusPrice",
-      "type": "std/double"
-    },
-    {
-      "name": "totalProfits",
-      "type": "std/double"
-    },
-    {
-      "name": "presetStopLossPrice",
-      "type": "std/double"
-    },
-    {
-      "name": "cancelReason",
-      "type": "std/string_view"
-    },
-    {
-      "name": "uTime",
-      "type": "std/milliseconds"
     }
   ]
 }

@@ -43,7 +43,7 @@ std::string_view Encoder::place_order(
       Decimal{create_order.price, order.price_precision.precision},
       map(create_order.side).template get<json::Side>().as_raw_text(),
       map(create_order.order_type).template get<json::OrderType>().as_raw_text(),
-      map(create_order.time_in_force).template get<json::Force>().as_raw_text());
+      map(create_order.time_in_force).template get<json::TimeInForce>().as_raw_text());
   if (create_order.margin_mode != roq::MarginMode{}) {
     fmt::format_to(std::back_inserter(buffer), R"("marginMode":"{}",)"sv, map(create_order.margin_mode).template get<json::MarginMode>().as_raw_text());
   }

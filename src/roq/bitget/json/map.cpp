@@ -28,6 +28,8 @@ constexpr Helper<bitget::json::AssetMode>::operator std::optional<roq::MarginMod
       return roq::MarginMode::ISOLATED;
     case UNION:
       return roq::MarginMode::CROSS;
+    case MULTI_ASSETS:
+      return roq::MarginMode::CROSS;  // ???
   }
   return {};
 }
@@ -35,6 +37,7 @@ constexpr Helper<bitget::json::AssetMode>::operator std::optional<roq::MarginMod
 static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::UNDEFINED_INTERNAL}} == roq::MarginMode::UNDEFINED);
 static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::SINGLE}} == roq::MarginMode::ISOLATED);
 static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::UNION}} == roq::MarginMode::CROSS);
+static_assert(Helper{bitget::json::AssetMode{bitget::json::AssetMode::MULTI_ASSETS}} == roq::MarginMode::CROSS);
 
 template <>
 template <>
@@ -128,41 +131,6 @@ static_assert(
 template <>
 template <>
 std::optional<roq::SecurityType> Map<bitget::json::Category, bitget::json::FuturesType>::helper() const {
-  return Helper{args_};
-}
-
-// bitget::json::Force => roq::TimeInForce
-
-template <>
-template <>
-constexpr Helper<bitget::json::Force>::operator std::optional<roq::TimeInForce>() const {
-  switch (std::get<0>(args_)) {
-    using enum bitget::json::Force::type_t;
-    case UNDEFINED_INTERNAL:
-      return roq::TimeInForce::UNDEFINED;
-    case UNKNOWN_INTERNAL:
-      return roq::TimeInForce::UNDEFINED;
-    case GTC:
-      return roq::TimeInForce::GTC;
-    case POST_ONLY:
-      return roq::TimeInForce::GTC;
-    case FOK:
-      return roq::TimeInForce::FOK;
-    case IOC:
-      return roq::TimeInForce::IOC;
-  }
-  return {};
-}
-
-static_assert(Helper{bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL}} == roq::TimeInForce::UNDEFINED);
-static_assert(Helper{bitget::json::Force{bitget::json::Force::GTC}} == roq::TimeInForce::GTC);
-static_assert(Helper{bitget::json::Force{bitget::json::Force::POST_ONLY}} == roq::TimeInForce::GTC);
-static_assert(Helper{bitget::json::Force{bitget::json::Force::FOK}} == roq::TimeInForce::FOK);
-static_assert(Helper{bitget::json::Force{bitget::json::Force::IOC}} == roq::TimeInForce::IOC);
-
-template <>
-template <>
-std::optional<roq::TimeInForce> Map<bitget::json::Force>::helper() const {
   return Helper{args_};
 }
 
@@ -288,6 +256,70 @@ std::optional<roq::Side> Map<bitget::json::Side>::helper() const {
   return Helper{args_};
 }
 
+// bitget::json::Force => roq::TimeInForce
+
+template <>
+template <>
+constexpr Helper<bitget::json::TimeInForce>::operator std::optional<roq::TimeInForce>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::TimeInForce::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::TimeInForce::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::TimeInForce::UNDEFINED;
+    case IOC:
+      return roq::TimeInForce::IOC;
+    case FOK:
+      return roq::TimeInForce::FOK;
+    case GTC:
+      return roq::TimeInForce::GTC;
+    case POST_ONLY:
+      return roq::TimeInForce::GTC;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL}} == roq::TimeInForce::UNDEFINED);
+static_assert(Helper{bitget::json::TimeInForce{bitget::json::TimeInForce::IOC}} == roq::TimeInForce::IOC);
+static_assert(Helper{bitget::json::TimeInForce{bitget::json::TimeInForce::FOK}} == roq::TimeInForce::FOK);
+static_assert(Helper{bitget::json::TimeInForce{bitget::json::TimeInForce::GTC}} == roq::TimeInForce::GTC);
+static_assert(Helper{bitget::json::TimeInForce{bitget::json::TimeInForce::POST_ONLY}} == roq::TimeInForce::GTC);
+
+template <>
+template <>
+std::optional<roq::TimeInForce> Map<bitget::json::TimeInForce>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::TradeScope => roq::TimeInForce
+
+template <>
+template <>
+constexpr Helper<bitget::json::TradeScope>::operator std::optional<roq::Liquidity>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::TradeScope::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::Liquidity::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::Liquidity::UNDEFINED;
+    case TAKER:
+      return roq::Liquidity::TAKER;
+    case MAKER:
+      return roq::Liquidity::MAKER;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::TradeScope{bitget::json::TradeScope::UNDEFINED_INTERNAL}} == roq::Liquidity::UNDEFINED);
+static_assert(Helper{bitget::json::TradeScope{bitget::json::TradeScope::TAKER}} == roq::Liquidity::TAKER);
+static_assert(Helper{bitget::json::TradeScope{bitget::json::TradeScope::MAKER}} == roq::Liquidity::MAKER);
+
+template <>
+template <>
+std::optional<roq::Liquidity> Map<bitget::json::TradeScope>::helper() const {
+  return Helper{args_};
+}
+
 // roq => bitget::json
 
 // roq::MarginMode => bitget::json::MarginMode
@@ -406,59 +438,59 @@ std::optional<bitget::json::Side> Map<roq::Side>::helper() const {
 // POST_ONLY ???
 template <>
 template <>
-constexpr Helper<roq::TimeInForce>::operator std::optional<bitget::json::Force>() const {
+constexpr Helper<roq::TimeInForce>::operator std::optional<bitget::json::TimeInForce>() const {
   switch (std::get<0>(args_)) {
     using enum roq::TimeInForce;
     case UNDEFINED:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GFD:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GTC:
-      return bitget::json::Force::GTC;
+      return bitget::json::TimeInForce::GTC;
     case OPG:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case IOC:
-      return bitget::json::Force::IOC;
+      return bitget::json::TimeInForce::IOC;
     case FOK:
-      return bitget::json::Force::FOK;
+      return bitget::json::TimeInForce::FOK;
     case GTX:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GTD:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case AT_THE_CLOSE:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GOOD_THROUGH_CROSSING:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case AT_CROSSING:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GOOD_FOR_TIME:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GFA:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
     case GFM:
-      return bitget::json::Force::UNDEFINED_INTERNAL;
+      return bitget::json::TimeInForce::UNDEFINED_INTERNAL;
   }
   return {};
 }
 
-static_assert(Helper{roq::TimeInForce::UNDEFINED} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GFD} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GTC} == bitget::json::Force{bitget::json::Force::GTC});
-static_assert(Helper{roq::TimeInForce::OPG} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::IOC} == bitget::json::Force{bitget::json::Force::IOC});
-static_assert(Helper{roq::TimeInForce::FOK} == bitget::json::Force{bitget::json::Force::FOK});
-static_assert(Helper{roq::TimeInForce::GTX} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GTD} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::AT_THE_CLOSE} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GOOD_THROUGH_CROSSING} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::AT_CROSSING} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GOOD_FOR_TIME} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GFA} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
-static_assert(Helper{roq::TimeInForce::GFM} == bitget::json::Force{bitget::json::Force::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::UNDEFINED} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GFD} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GTC} == bitget::json::TimeInForce{bitget::json::TimeInForce::GTC});
+static_assert(Helper{roq::TimeInForce::OPG} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::IOC} == bitget::json::TimeInForce{bitget::json::TimeInForce::IOC});
+static_assert(Helper{roq::TimeInForce::FOK} == bitget::json::TimeInForce{bitget::json::TimeInForce::FOK});
+static_assert(Helper{roq::TimeInForce::GTX} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GTD} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::AT_THE_CLOSE} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GOOD_THROUGH_CROSSING} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::AT_CROSSING} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GOOD_FOR_TIME} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GFA} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::TimeInForce::GFM} == bitget::json::TimeInForce{bitget::json::TimeInForce::UNDEFINED_INTERNAL});
 
 template <>
 template <>
-std::optional<bitget::json::Force> Map<roq::TimeInForce>::helper() const {
+std::optional<bitget::json::TimeInForce> Map<roq::TimeInForce>::helper() const {
   return Helper{args_};
 }
 

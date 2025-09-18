@@ -1,0 +1,91 @@
+{
+  "name": "roq/bitget/json/OpenOrdersDataListItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "category",
+      "type": "roq/bitget/json/Category"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "qty",
+      "type": "std/double"
+    },
+    {
+      "name": "amount",
+      "type": "std/double"
+    },
+    {
+      "name": "orderType",
+      "type": "roq/bitget/json/OrderType"
+    },
+    {
+      "name": "cumExecQty",
+      "type": "std/double"
+    },
+    {
+      "name": "cumExecValue",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "orderStatus",
+      "type": "roq/bitget/json/OrderStatus"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/json/Side"
+    },
+    {
+      "name": "timeInForce",
+      "type": "roq/bitget/json/TimeInForce"
+    },
+    {
+      "name": "posSide",
+      "type": "roq/bitget/json/PosSide"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/json/HoldMode"
+    },
+    {
+      "name": "stpMode",
+      "type": "roq/bitget/json/StpMode"
+    },
+    {
+      "name": "reduceOnly",
+      "type": "std/bool"
+    },
+    {
+      "name": "feeDetail",
+      "type": "roq/bitget/json/OpenOrdersDataListItemFeeDetailItem",
+      "array": "std/span"
+    },
+    {
+      "name": "createdTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "updatedTime",
+      "type": "std/milliseconds"
+    }
+  ]
+}

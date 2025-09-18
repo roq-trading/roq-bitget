@@ -89,6 +89,14 @@
     {
       "name": "dte_sys_adl_sell_in_single_side_mode",
       "comment": "ADL close"
+    },
+    {
+      "name": "open_short",
+      "comment": "undoc"
+    },
+    {
+      "name": "close_short",
+      "comment": "undoc"
     }
   ]
 }

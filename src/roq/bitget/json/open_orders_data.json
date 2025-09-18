@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/json/OpenOrdersData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "list",
+      "type": "roq/bitget/json/OpenOrdersDataListItem",
+      "array": "std/span"
+    },
+    {
+      "name": "cursor",
+      "type": "std/int64"
+    }
+  ]
+}

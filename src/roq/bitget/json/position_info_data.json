@@ -1,0 +1,11 @@
+{
+  "name": "roq/bitget/json/PositionInfoData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "list",
+      "type": "roq/bitget/json/PositionInfoDataListItem",
+      "array": "std/span"
+    }
+  ]
+}

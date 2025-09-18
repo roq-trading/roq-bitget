@@ -1,0 +1,34 @@
+{
+  "name": "roq/bitget/json/AccountAssetsDataAssetsItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "coin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "equity",
+      "type": "std/double"
+    },
+    {
+      "name": "usdValue",
+      "type": "std/double"
+    },
+    {
+      "name": "balance",
+      "type": "std/double"
+    },
+    {
+      "name": "debt",
+      "type": "std/double"
+    },
+    {
+      "name": "available",
+      "type": "std/double"
+    },
+    {
+      "name": "locked",
+      "type": "std/double"
+    }
+  ]
+}

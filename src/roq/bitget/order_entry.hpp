@@ -24,10 +24,11 @@
 #include "roq/bitget/order_entry_state.hpp"
 #include "roq/bitget/shared.hpp"
 
-#include "roq/bitget/json/all_accounts.hpp"
-#include "roq/bitget/json/all_positions.hpp"
-#include "roq/bitget/json/order_fill_details.hpp"
-#include "roq/bitget/json/orders_history.hpp"
+#include "roq/bitget/json/account_assets.hpp"
+#include "roq/bitget/json/account_info.hpp"
+#include "roq/bitget/json/fill_history.hpp"
+#include "roq/bitget/json/open_orders.hpp"
+#include "roq/bitget/json/position_info.hpp"
 
 #include "roq/bitget/json/cancel_all_orders_ack.hpp"
 #include "roq/bitget/json/cancel_order_ack.hpp"
@@ -73,25 +74,30 @@ class OrderEntry final : public web::rest::Client::Handler {
 
   uint32_t download(OrderEntryState state);
 
-  // all_accounts
-  void get_all_accounts();
-  void get_all_accounts_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::AllAccounts> const &);
+  // account_info
+  void get_account_info();
+  void get_account_info_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::AccountInfo> const &);
 
-  // all_positions
-  void get_all_positions();
-  void get_all_positions_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::AllPositions> const &);
+  // account_assets
+  void get_account_assets();
+  void get_account_assets_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::AccountAssets> const &);
 
-  // orders_history
-  void get_orders_history();
-  void get_orders_history_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::OrdersHistory> const &);
+  // position_info
+  void get_position_info();
+  void get_position_info_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::PositionInfo> const &);
 
-  // order_fill_details
-  void get_order_fill_details();
-  void get_order_fill_details_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::OrderFillDetails> const &);
+  // open_orders
+  void get_open_orders();
+  void get_open_orders_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::OpenOrders> const &);
+
+  // fill_history
+  void get_fill_history();
+  void get_fill_history_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::FillHistory> const &);
 
   // place_order
   void place_order(Event<CreateOrder> const &, server::oms::Order const &, std::string_view const &request_id);
@@ -136,10 +142,11 @@ class OrderEntry final : public web::rest::Client::Handler {
     utils::metrics::Counter disconnect;
   } counter_;
   struct {
-    utils::metrics::Profile all_accounts, all_accounts_ack,  //
-        all_positions, all_positions_ack,                    //
-        orders_history, orders_history_ack,                  //
-        order_fill_details, order_fill_details_ack,          //
+    utils::metrics::Profile account_info, account_info_ack,  //
+        account_assets, account_assets_ack,                  //
+        position_info, position_info_ack,                    //
+        open_orders, open_orders_ack,                        //
+        fill_history, fill_history_ack,                      //
         place_order, place_order_ack,                        //
         modify_order, modify_order_ack,                      //
         cancel_order, cancel_order_ack,                      //

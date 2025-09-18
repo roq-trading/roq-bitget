@@ -1,0 +1,55 @@
+{
+  "name": "roq/bitget/json/AccountAssetsData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "accountEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "usdtEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "btcEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "unrealisedPnl",
+      "type": "std/double"
+    },
+    {
+      "name": "usdtUnrealisedPnl",
+      "type": "std/double"
+    },
+    {
+      "name": "btcUnrealizedPnl",
+      "type": "std/double"
+    },
+    {
+      "name": "effEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "mmr",
+      "type": "std/double"
+    },
+    {
+      "name": "imr",
+      "type": "std/double"
+    },
+    {
+      "name": "mgnRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "positionMgnRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "assets",
+      "type": "roq/bitget/json/AccountAssetsDataAssetsItem",
+      "array": "std/span"
+    }
+  ]
+}

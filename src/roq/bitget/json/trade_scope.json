@@ -7,14 +7,6 @@
     },
     {
       "name": "maker"
-    },
-    {
-      "raw": "T",
-      "name": "taker_1"
-    },
-    {
-      "raw": "M",
-      "name": "marker_1"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/OrderFillDetails",
+  "name": "roq/bitget/json/FillHistory",
   "type": "dictionary",
   "values": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "name": "data",
-      "type": "roq/bitget/json/OrderFillDetailsData"
+      "type": "roq/bitget/json/FillHistoryData"
     }
   ]
 }

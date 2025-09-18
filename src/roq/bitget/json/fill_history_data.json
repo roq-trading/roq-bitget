@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/json/FillHistoryData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "list",
+      "type": "roq/bitget/json/FillHistoryDataListItem",
+      "array": "std/span"
+    },
+    {
+      "name": "cursor",
+      "type": "std/int64"
+    }
+  ]
+}

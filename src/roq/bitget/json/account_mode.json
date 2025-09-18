@@ -1,0 +1,18 @@
+{
+  "name": "roq/bitget/json/AccountMode",
+  "type": "enum",
+  "values": [
+    {
+      "name": "unified"
+    },
+    {
+      "name": "hybrid"
+    },
+    {
+      "name": "upgrading"
+    },
+    {
+      "name": "switching"
+    }
+  ]
+}

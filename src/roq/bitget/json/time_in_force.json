@@ -1,0 +1,18 @@
+{
+  "name": "roq/bitget/json/TimeInForce",
+  "type": "enum",
+  "values": [
+    {
+      "name": "ioc"
+    },
+    {
+      "name": "fok"
+    },
+    {
+      "name": "gtc"
+    },
+    {
+      "name": "post_only"
+    }
+  ]
+}

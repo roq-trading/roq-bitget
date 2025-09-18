@@ -1,0 +1,22 @@
+{
+  "name": "roq/bitget/json/AccountInfoDataSymbolConfigItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "category",
+      "type": "roq/bitget/json/Category"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "marginMode",
+      "type": "roq/bitget/json/MarginMode"
+    },
+    {
+      "name": "leverage",
+      "type": "std/double"
+    }
+  ]
+}

@@ -1,29 +1,25 @@
 {
-  "name": "roq/bitget/json/AllPositionsDataItem",
+  "name": "roq/bitget/json/PositionInfoDataListItem",
   "type": "dictionary",
   "values": [
     {
-      "name": "marginCoin",
-      "type": "std/string_view"
+      "name": "category",
+      "type": "roq/bitget/json/Category"
     },
     {
       "name": "symbol",
       "type": "std/string_view"
     },
     {
-      "name": "holdSide",
-      "type": "roq/bitget/json/HoldSide"
-    },
-    {
-      "name": "coinDisplayName",
+      "name": "marginCoin",
       "type": "std/string_view"
     },
     {
-      "name": "epenDelegateSize",
-      "type": "std/double"
+      "name": "posSide",
+      "type": "roq/bitget/json/PosSide"
     },
     {
-      "name": "marginSize",
+      "name": "positionBalance",
       "type": "std/double"
     },
     {
@@ -31,7 +27,7 @@
       "type": "std/double"
     },
     {
-      "name": "locked",
+      "name": "frozen",
       "type": "std/double"
     },
     {
@@ -40,14 +36,14 @@
     },
     {
       "name": "leverage",
-      "type": "std/int32"
-    },
-    {
-      "name": "achievedProfits",
       "type": "std/double"
     },
     {
-      "name": "openPriceAvg",
+      "name": "curRealisedPnl",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
       "type": "std/double"
     },
     {
@@ -55,11 +51,15 @@
       "type": "roq/bitget/json/MarginMode"
     },
     {
-      "name": "posMode",
-      "type": "roq/bitget/json/PosMode"
+      "name": "positionStatus",
+      "type": "roq/bitget/json/PositionStatus"
     },
     {
-      "name": "unrealizedPL",
+      "name": "holdMode",
+      "type": "roq/bitget/json/HoldMode"
+    },
+    {
+      "name": "unrealisedPnl",
       "type": "std/double"
     },
     {
@@ -67,7 +67,11 @@
       "type": "std/double"
     },
     {
-      "name": "keepMarginRate",
+      "name": "mmr",
+      "type": "std/double"
+    },
+    {
+      "name": "profitRate",
       "type": "std/double"
     },
     {
@@ -79,43 +83,23 @@
       "type": "std/double"
     },
     {
-      "name": "totalFee",
+      "name": "totalFunding",
       "type": "std/double"
     },
     {
-      "name": "deductedFee",
+      "name": "openFeeTotal",
       "type": "std/double"
     },
     {
-      "name": "takeProfit",
+      "name": "closeFeeTotal",
       "type": "std/double"
     },
     {
-      "name": "stopLoss",
-      "type": "std/double"
-    },
-    {
-      "name": "takeProfitId",
-      "type": "std/int32"
-    },
-    {
-      "name": "stopLossId",
-      "type": "std/int32"
-    },
-    {
-      "name": "marginRatio",
-      "type": "std/double"
-    },
-    {
-      "name": "assetMode",
-      "type": "roq/bitget/json/AssetMode"
-    },
-    {
-      "name": "cTime",
+      "name": "createdTime",
       "type": "std/milliseconds"
     },
     {
-      "name": "uTime",
+      "name": "updatedTime",
       "type": "std/milliseconds"
     }
   ]

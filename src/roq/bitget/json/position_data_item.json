@@ -3,11 +3,7 @@
   "type": "dictionary",
   "values": [
     {
-      "name": "posId",
-      "type": "std/uint32"
-    },
-    {
-      "name": "instId",
+      "name": "symbol",
       "type": "std/string_view"
     },
     {
@@ -16,22 +12,26 @@
     },
     {
       "name": "marginSize",
-      "type": "std/double"
+      "type": "std/string_view"
     },
     {
       "name": "marginMode",
       "type": "roq/bitget/json/MarginMode"
     },
     {
-      "name": "holdSide",
-      "type": "roq/bitget/json/HoldSide"
+      "name": "posSide",
+      "type": "roq/bitget/json/PosSide"
     },
     {
-      "name": "posMode",
-      "type": "roq/bitget/json/PosMode"
+      "name": "holdMode",
+      "type": "roq/bitget/json/HoldMode"
     },
     {
-      "name": "total",
+      "name": "positionStatus",
+      "type": "roq/bitget/json/PositionStatus"
+    },
+    {
+      "name": "size",
       "type": "std/double"
     },
     {
@@ -43,7 +43,7 @@
       "type": "std/double"
     },
     {
-      "name": "openPriceAvg",
+      "name": "avgPrice",
       "type": "std/double"
     },
     {
@@ -51,23 +51,19 @@
       "type": "std/double"
     },
     {
-      "name": "achievedProfits",
+      "name": "curRealisedPnl",
       "type": "std/double"
     },
     {
-      "name": "unrealizedPL",
+      "name": "unrealisedPnl",
       "type": "std/double"
     },
     {
-      "name": "unrealizedPLR",
+      "name": "liqPrice",
       "type": "std/double"
     },
     {
-      "name": "liquidationPrice",
-      "type": "std/double"
-    },
-    {
-      "name": "keepMarginRate",
+      "name": "mmr",
       "type": "std/double"
     },
     {
@@ -75,32 +71,24 @@
       "type": "std/double"
     },
     {
-      "name": "cTime",
-      "type": "std/milliseconds"
-    },
-    {
       "name": "breakEvenPrice",
       "type": "std/double"
     },
     {
-      "name": "totalFee",
+      "name": "profitRate",
       "type": "std/double"
     },
     {
-      "name": "deductedFee",
+      "name": "totalFundingFee",
       "type": "std/double"
     },
     {
-      "name": "markPrice",
-      "type": "std/double"
-    },
-    {
-      "name": "uTime",
+      "name": "createdTime",
       "type": "std/milliseconds"
     },
     {
-      "name": "autoMargin",
-      "type": "std/string_view"
+      "name": "updatedTime",
+      "type": "std/milliseconds"
     }
   ]
 }
