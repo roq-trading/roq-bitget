@@ -230,6 +230,65 @@ std::optional<roq::OrderType> Map<bitget::json::OrderType>::helper() const {
   return Helper{args_};
 }
 
+// {bitget::json::PosSide, bitget::json::Side} => roq::PositionEffect
+
+template <>
+template <>
+constexpr Helper<bitget::json::PosSide, bitget::json::Side>::operator std::optional<roq::PositionEffect>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::PosSide::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::PositionEffect::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::PositionEffect::UNDEFINED;
+    case LONG:
+      switch (std::get<1>(args_)) {
+        using enum bitget::json::Side::type_t;
+        case UNDEFINED_INTERNAL:
+          return roq::PositionEffect::UNDEFINED;
+        case UNKNOWN_INTERNAL:
+          return roq::PositionEffect::UNDEFINED;
+        case BUY:
+          return roq::PositionEffect::OPEN;
+        case SELL:
+          return roq::PositionEffect::CLOSE;
+      }
+      break;
+    case SHORT:
+      switch (std::get<1>(args_)) {
+        using enum bitget::json::Side::type_t;
+        case UNDEFINED_INTERNAL:
+          return roq::PositionEffect::UNDEFINED;
+        case UNKNOWN_INTERNAL:
+          return roq::PositionEffect::UNDEFINED;
+        case BUY:
+          return roq::PositionEffect::CLOSE;
+        case SELL:
+          return roq::PositionEffect::OPEN;
+      }
+      break;
+    case NET:
+      return roq::PositionEffect::UNDEFINED;
+  }
+  return {};
+}
+
+static_assert(
+    Helper{bitget::json::PosSide{bitget::json::PosSide::UNDEFINED_INTERNAL}, bitget::json::Side{bitget::json::Side::UNDEFINED_INTERNAL}} ==
+    roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::PosSide{bitget::json::PosSide::LONG}, bitget::json::Side{bitget::json::Side::BUY}} == roq::PositionEffect::OPEN);
+static_assert(Helper{bitget::json::PosSide{bitget::json::PosSide::LONG}, bitget::json::Side{bitget::json::Side::SELL}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::PosSide{bitget::json::PosSide::SHORT}, bitget::json::Side{bitget::json::Side::BUY}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::PosSide{bitget::json::PosSide::SHORT}, bitget::json::Side{bitget::json::Side::SELL}} == roq::PositionEffect::OPEN);
+static_assert(Helper{bitget::json::PosSide{bitget::json::PosSide::NET}, bitget::json::Side{bitget::json::Side::BUY}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::PosSide{bitget::json::PosSide::NET}, bitget::json::Side{bitget::json::Side::SELL}} == roq::PositionEffect::UNDEFINED);
+
+template <>
+template <>
+std::optional<roq::PositionEffect> Map<bitget::json::PosSide, bitget::json::Side>::helper() const {
+  return Helper{args_};
+}
+
 // bitget::json::Side => roq::Side
 
 template <>
@@ -259,7 +318,7 @@ std::optional<roq::Side> Map<bitget::json::Side>::helper() const {
   return Helper{args_};
 }
 
-// bitget::json::Force => roq::TimeInForce
+// bitget::json::TimeInForce => roq::TimeInForce
 
 template <>
 template <>
@@ -294,7 +353,7 @@ std::optional<roq::TimeInForce> Map<bitget::json::TimeInForce>::helper() const {
   return Helper{args_};
 }
 
-// bitget::json::TradeScope => roq::TimeInForce
+// bitget::json::TradeScope => roq::Liquidity
 
 template <>
 template <>
@@ -320,6 +379,145 @@ static_assert(Helper{bitget::json::TradeScope{bitget::json::TradeScope::MAKER}} 
 template <>
 template <>
 std::optional<roq::Liquidity> Map<bitget::json::TradeScope>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::TradeSide => roq::PositionEffect
+
+template <>
+template <>
+constexpr Helper<bitget::json::TradeSide>::operator std::optional<roq::PositionEffect>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::TradeSide::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::PositionEffect::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::PositionEffect::UNDEFINED;
+    case CLOSE:
+      return roq::PositionEffect::CLOSE;
+    case OPEN:
+      return roq::PositionEffect::OPEN;
+    case REDUCE_CLOSE_LONG:
+      return roq::PositionEffect::CLOSE;
+    case REDUCE_CLOSE_SHORT:
+      return roq::PositionEffect::CLOSE;
+    case BURST_CLOSE_LONG:
+      return roq::PositionEffect::CLOSE;
+    case BURST_CLOSE_SHORT:
+      return roq::PositionEffect::CLOSE;
+    case OFFSET_CLOSE_LONG:
+      return roq::PositionEffect::CLOSE;
+    case OFFSET_CLOSE_SHORT:
+      return roq::PositionEffect::CLOSE;
+    case DELIVERY_CLOSE_LONG:
+      return roq::PositionEffect::CLOSE;
+    case DELIVERY_CLOSE_SHORT:
+      return roq::PositionEffect::CLOSE;
+    case DTE_SYS_ADL_CLOSE_LONG:
+      return roq::PositionEffect::CLOSE;
+    case DTE_SYS_ADL_CLOSE_SHORT:
+      return roq::PositionEffect::CLOSE;
+    case BUY_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case SELL_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case REDUCE_BUY_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case REDUCE_SELL_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case BURST_BUY_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case BURST_SELL_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case DELIVERY_SELL_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case DELIVERY_BUY_SINGLE:
+      return roq::PositionEffect::UNDEFINED;
+    case DTE_SYS_ADL_BUY_IN_SINGLE_SIDE_MODE:
+      return roq::PositionEffect::UNDEFINED;
+    case DTE_SYS_ADL_SELL_IN_SINGLE_SIDE_MODE:
+      return roq::PositionEffect::UNDEFINED;
+    case OPEN_SHORT:
+      return roq::PositionEffect::OPEN;
+    case OPEN_LONG:
+      return roq::PositionEffect::OPEN;
+    case CLOSE_SHORT:
+      return roq::PositionEffect::CLOSE;
+    case CLOSE_LONG:
+      return roq::PositionEffect::CLOSE;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::UNDEFINED_INTERNAL}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::CLOSE}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::OPEN}} == roq::PositionEffect::OPEN);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::REDUCE_CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::REDUCE_CLOSE_SHORT}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::BURST_CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::BURST_CLOSE_SHORT}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::OFFSET_CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::OFFSET_CLOSE_SHORT}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DELIVERY_CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DELIVERY_CLOSE_SHORT}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DTE_SYS_ADL_CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DTE_SYS_ADL_CLOSE_SHORT}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::BUY_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::SELL_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::REDUCE_BUY_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::REDUCE_SELL_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::BURST_BUY_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::BURST_SELL_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DELIVERY_SELL_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DELIVERY_BUY_SINGLE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DTE_SYS_ADL_BUY_IN_SINGLE_SIDE_MODE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::DTE_SYS_ADL_SELL_IN_SINGLE_SIDE_MODE}} == roq::PositionEffect::UNDEFINED);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::OPEN_SHORT}} == roq::PositionEffect::OPEN);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::OPEN_SHORT}} == roq::PositionEffect::OPEN);
+static_assert(Helper{bitget::json::TradeSide{bitget::json::TradeSide::CLOSE_LONG}} == roq::PositionEffect::CLOSE);
+
+template <>
+template <>
+std::optional<roq::PositionEffect> Map<bitget::json::TradeSide>::helper() const {
+  return Helper{args_};
+}
+
+// bitget::json::TradingStatus => roq::TradingStatus
+
+template <>
+template <>
+constexpr Helper<bitget::json::TradingStatus>::operator std::optional<roq::TradingStatus>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::TradingStatus::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::TradingStatus::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::TradingStatus::UNDEFINED;
+    case LISTED:
+      return roq::TradingStatus::UNDEFINED;
+    case ONLINE:
+      return roq::TradingStatus::OPEN;
+    case LIMIT_OPEN:
+      return roq::TradingStatus::PRE_OPEN;
+    case OFFLINE:
+      return roq::TradingStatus::CLOSE;
+    case RESTRICTED_API:
+      return roq::TradingStatus::HALT;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::UNDEFINED_INTERNAL}} == roq::TradingStatus::UNDEFINED);
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::LISTED}} == roq::TradingStatus::UNDEFINED);
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::ONLINE}} == roq::TradingStatus::OPEN);
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::LIMIT_OPEN}} == roq::TradingStatus::PRE_OPEN);
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::OFFLINE}} == roq::TradingStatus::CLOSE);
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::RESTRICTED_API}} == roq::TradingStatus::HALT);
+
+template <>
+template <>
+std::optional<roq::TradingStatus> Map<bitget::json::TradingStatus>::helper() const {
   return Helper{args_};
 }
 

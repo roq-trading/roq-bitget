@@ -95,7 +95,15 @@
       "comment": "undoc"
     },
     {
+      "name": "open_long",
+      "comment": "undoc"
+    },
+    {
       "name": "close_short",
+      "comment": "undoc"
+    },
+    {
+      "name": "close_long",
       "comment": "undoc"
     }
   ]

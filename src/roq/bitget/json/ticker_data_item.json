@@ -60,7 +60,7 @@
     },
     {
       "name": "nextFundingTime",
-      "type": "std/string_view"
+      "type": "std/milliseconds"
     },
     {
       "name": "openInterest",

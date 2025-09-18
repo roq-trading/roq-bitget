@@ -12,6 +12,7 @@
 #include "roq/security_type.hpp"
 #include "roq/side.hpp"
 #include "roq/time_in_force.hpp"
+#include "roq/trading_status.hpp"
 
 #include "roq/bitget/json/asset_mode.hpp"
 #include "roq/bitget/json/category.hpp"
@@ -24,6 +25,7 @@
 #include "roq/bitget/json/time_in_force.hpp"
 #include "roq/bitget/json/trade_scope.hpp"
 #include "roq/bitget/json/trade_side.hpp"
+#include "roq/bitget/json/trading_status.hpp"
 
 namespace roq {
 
@@ -51,6 +53,10 @@ std::optional<OrderType> Map<bitget::json::OrderType>::helper() const;
 
 template <>
 template <>
+std::optional<PositionEffect> Map<bitget::json::PosSide, bitget::json::Side>::helper() const;
+
+template <>
+template <>
 std::optional<Side> Map<bitget::json::Side>::helper() const;
 
 template <>
@@ -61,7 +67,15 @@ template <>
 template <>
 std::optional<Liquidity> Map<bitget::json::TradeScope>::helper() const;
 
-// roq => bitget::json => roq
+template <>
+template <>
+std::optional<PositionEffect> Map<bitget::json::TradeSide>::helper() const;
+
+template <>
+template <>
+std::optional<TradingStatus> Map<bitget::json::TradingStatus>::helper() const;
+
+// roq => bitget::json
 
 template <>
 template <>

@@ -49,7 +49,7 @@ Supports
       :widths: auto
 
       * - Spot
-        -
+        - |checkmark|
       * - Futures
         - |checkmark|
       * - Options
@@ -482,11 +482,11 @@ Streams
 Constraints
 -----------
 
+* There is no live update of trading status
+* Stop orders are not supported
 
 Comments
 --------
 
-* Missing from market data:
-
-  * Depth requires custom parser due to nested arrays
-  * Depth should validate checksum
+* The post-only and reduce-only order types have not yet been implemented
+* Long/Short mode don't clear positions correctly

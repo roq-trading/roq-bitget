@@ -30,18 +30,24 @@ std::string_view Encoder::place_order(
       R"({{)"
       R"("category":"{}",)"
       R"("symbol":"{}",)"
-      R"("qty":"{}",)"
-      R"("price":"{}",)"
-      R"("side":"{}",)"
-      R"("orderType":"{}",)"
-      R"("timeInForce":"{}",)"sv,
+      R"("qty":"{}",)"sv,
       category,
       create_order.symbol,
-      Decimal{create_order.quantity, order.quantity_precision.precision},
-      Decimal{create_order.price, order.price_precision.precision},
+      Decimal{create_order.quantity, order.quantity_precision.precision});
+  if (create_order.order_type == roq::OrderType::LIMIT) {
+    fmt::format_to(
+        std::back_inserter(buffer),
+        R"("price":"{}",)"
+        R"("timeInForce":"{}",)"sv,
+        Decimal{create_order.price, order.price_precision.precision},
+        map(create_order.time_in_force).template get<json::TimeInForce>().as_raw_text());
+  }
+  fmt::format_to(
+      std::back_inserter(buffer),
+      R"("side":"{}",)"
+      R"("orderType":"{}",)"sv,
       map(create_order.side).template get<json::Side>().as_raw_text(),
-      map(create_order.order_type).template get<json::OrderType>().as_raw_text(),
-      map(create_order.time_in_force).template get<json::TimeInForce>().as_raw_text());
+      map(create_order.order_type).template get<json::OrderType>().as_raw_text());
   if (create_order.position_effect != roq::PositionEffect{}) {
     fmt::format_to(
         std::back_inserter(buffer), R"("posSide":"{}",)"sv, map(create_order.position_effect, create_order.side).template get<json::PosSide>().as_raw_text());

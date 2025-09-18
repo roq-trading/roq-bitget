@@ -193,7 +193,6 @@ void OrderEntry::operator()(Trace<web::rest::Client::Disconnected> const &) {
   if (!download_.downloading()) {
     download_.reset();
   }
-  margin_coins_.clear();
 }
 
 void OrderEntry::operator()(Trace<web::rest::Client::Latency> const &event) {
@@ -313,30 +312,18 @@ void OrderEntry::get_account_info_ack(Trace<web::rest::Response> const &event, u
 void OrderEntry::operator()(Trace<json::AccountInfo> const &event) {
   auto &[trace_info, account_info] = event;
   log::info<4>("account_info={}"sv, account_info);
-  /*
-  for (auto &item : account_info.data.symbol_config) {
-    log::warn("DEBUG item={}"sv, item);
-    auto funds_update = FundsUpdate{
-        .stream_id = stream_id_,
-        .account = account_.name,
-        .currency = item.margin_coin,
-        .margin_mode = {},
-        .balance = item.available,
-        .hold = item.locked,
-        .borrowed = NaN,
-        .external_account = {},
-        .update_type = UpdateType::INCREMENTAL,
-        .exchange_time_utc = {},
-        .exchange_sequence = {},
-        .sending_time_utc = {},
-    };
-    create_trace_and_dispatch(handler_, trace_info, funds_update, true);
-    //
-    auto margin_mode = map(item.asset_mode).template get<MarginMode>();
-    log::warn(R"(DEBUG account="{}", coin="{}", margin_mode={})"sv, account_.name, item.margin_coin, margin_mode);
-    margin_coins_[std::string{item.margin_coin}] = margin_mode;
-  }
-  */
+  log::warn(
+      R"(DEBUG account="{}", account_mode={}, asset_mode={}, hold_mode={}, stp_mode={})"sv,
+      account_.name,
+      account_info.data.account_mode,
+      account_info.data.asset_mode,
+      account_info.data.hold_mode,
+      account_info.data.stp_mode);
+  // symbol
+  // - margin_mode
+  // - leverage
+  // coin:
+  // - leverage
 }
 
 // account_assets
@@ -394,30 +381,25 @@ void OrderEntry::get_account_assets_ack(Trace<web::rest::Response> const &event,
 void OrderEntry::operator()(Trace<json::AccountAssets> const &event) {
   auto &[trace_assets, account_assets] = event;
   log::info<4>("account_assets={}"sv, account_assets);
-  /*
-  for (auto &item : account_assets.data.symbol_config) {
+  for (auto &item : account_assets.data.assets) {
     log::warn("DEBUG item={}"sv, item);
     auto funds_update = FundsUpdate{
         .stream_id = stream_id_,
         .account = account_.name,
-        .currency = item.margin_coin,
+        .currency = item.coin,
         .margin_mode = {},
-        .balance = item.available,
+        .balance = item.balance,  // ???
         .hold = item.locked,
-        .borrowed = NaN,
+        .borrowed = item.debt,
         .external_account = {},
-        .update_type = UpdateType::INCREMENTAL,
+        .update_type = UpdateType::SNAPSHOT,
         .exchange_time_utc = {},
         .exchange_sequence = {},
-        .sending_time_utc = {},
+        .sending_time_utc = account_assets.request_time,
     };
+    log::warn("DEBUG funds_update={}"sv, funds_update);
     create_trace_and_dispatch(handler_, trace_assets, funds_update, true);
-    //
-    auto margin_mode = map(item.asset_mode).template get<MarginMode>();
-    log::warn(R"(DEBUG account="{}", coin="{}", margin_mode={})"sv, account_.name, item.margin_coin, margin_mode);
-    margin_coins_[std::string{item.margin_coin}] = margin_mode;
   }
-  */
 }
 
 // position_info
@@ -477,6 +459,24 @@ void OrderEntry::operator()(Trace<json::PositionInfo> const &event) {
   log::info<4>("position_info={}"sv, position_info);
   for (auto &item : position_info.data.list) {
     log::warn("DEBUG item={}"sv, item);
+    auto long_quantity = [&]() -> double {
+      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
+        if (item.pos_side == json::PosSide::LONG) {
+          return item.total;
+        }
+        return NaN;
+      }
+      return std::max(item.total, 0.0);
+    }();
+    auto short_quantity = [&]() -> double {
+      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
+        if (item.pos_side == json::PosSide::SHORT) {
+          return item.total;
+        }
+        return NaN;
+      }
+      return std::max(-item.total, 0.0);
+    }();
     auto position_update = PositionUpdate{
         .stream_id = stream_id_,
         .account = account_.name,
@@ -484,13 +484,14 @@ void OrderEntry::operator()(Trace<json::PositionInfo> const &event) {
         .symbol = item.symbol,
         .margin_mode = map(item.margin_mode),
         .external_account = {},
-        .long_quantity = std::max(item.position_balance, 0.0),    // ???
-        .short_quantity = std::max(-item.position_balance, 0.0),  // ???
-        .update_type = UpdateType::INCREMENTAL,
+        .long_quantity = long_quantity,
+        .short_quantity = short_quantity,
+        .update_type = UpdateType::SNAPSHOT,
         .exchange_time_utc = item.created_time,  // ???
         .exchange_sequence = {},
         .sending_time_utc = position_info.request_time,
     };
+    log::warn("DEBUG position_update={}"sv, position_update);
     create_trace_and_dispatch(handler_, trace_info, position_update, true);
   }
 }
@@ -557,12 +558,12 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
         .exchange = shared_.settings.exchange,
         .symbol = item.symbol,
         .side = map(item.side),
-        .position_effect = {},
-        .margin_mode = {},
+        .position_effect = map(item.pos_side, item.side),
+        .margin_mode = {},  // XXX lookup from asset_info ???
         .max_show_quantity = NaN,
         .order_type = map(item.order_type),
         .time_in_force = map(item.time_in_force),
-        .execution_instructions = {},
+        .execution_instructions = {},  // XXX map from time_in_force + reduce_only
         .create_time_utc = item.created_time,
         .update_time_utc = item.updated_time,
         .external_account = {},
@@ -572,7 +573,7 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
         .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
-        .remaining_quantity = NaN,  // ???
+        .remaining_quantity = NaN,  // XXX HANS check it's being computed
         .traded_quantity = item.cum_exec_qty,
         .average_traded_price = item.avg_price,
         .last_traded_quantity = NaN,
@@ -585,6 +586,7 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
         .update_type = UpdateType::SNAPSHOT,
         .sending_time_utc = open_orders.request_time,
     };
+    log::warn("DEBUG order_update={}"sv, order_update);
     Trace event_2{trace_info, order_update};
     (*this)(event_2, item.client_oid);
   }
@@ -592,6 +594,7 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
 
 // fill_history
 
+// XXX HANS need lookback period
 void OrderEntry::get_fill_history() {
   profile_.fill_history([&]() {
     auto method = web::http::Method::GET;
@@ -645,9 +648,73 @@ void OrderEntry::get_fill_history_ack(Trace<web::rest::Response> const &event, u
 void OrderEntry::operator()(Trace<json::FillHistory> const &event) {
   auto &[trace_info, fill_history] = event;
   log::info<4>("fill_history={}"sv, fill_history);
+  std::string_view symbol, order_id, client_oid;
+  json::Side side = {};
+  json::TradeSide trade_side = {};
+  std::chrono::nanoseconds created_time = {};
+  std::chrono::nanoseconds updated_time = {};
+  auto dispatch = [&]() {
+    if (!std::empty(shared_.fills)) {
+      auto trade_update = TradeUpdate{
+          .stream_id = stream_id_,
+          .account = account_.name,
+          .order_id = {},
+          .exchange = shared_.settings.exchange,
+          .symbol = symbol,
+          .side = map(side),
+          .position_effect = map(trade_side),
+          .margin_mode = {},  // XXX from symbol ???
+          .quantity_type = {},
+          .create_time_utc = created_time,
+          .update_time_utc = updated_time,
+          .external_account = {},
+          .external_order_id = order_id,
+          .client_order_id = client_oid,
+          .fills = shared_.fills,
+          .routing_id = {},
+          .update_type = UpdateType::SNAPSHOT,
+          .sending_time_utc = fill_history.request_time,
+          .user = {},
+          .strategy_id = {},
+      };
+      create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE, client_oid);
+      log::warn("DEBUG trade_update={}"sv, trade_update);
+      shared_.fills.clear();
+    }
+  };
+  shared_.fills.clear();
   for (auto &item : fill_history.data.list) {
     log::warn("DEBUG item={}"sv, item);
+    if (item.symbol != symbol || item.order_id != order_id || item.client_oid != client_oid || item.side != side || item.trade_side != trade_side) {
+      dispatch();
+      symbol = item.symbol;
+      order_id = item.order_id;
+      client_oid = item.client_oid;
+      side = item.side;
+      trade_side = item.trade_side, created_time = {};
+      updated_time = {};
+    }
+    auto fill = Fill{
+        .exchange_time_utc = item.created_time,
+        .external_trade_id = item.exec_id,
+        .quantity = item.exec_qty,
+        .price = item.exec_price,
+        .liquidity = map(item.trade_scope),
+        .commission_amount = NaN,   // XXX TODO
+        .commission_currency = {},  // XXX TODO
+        .base_amount = NaN,
+        .quote_amount = NaN,
+        .profit_loss_amount = NaN,
+    };
+    shared_.fills.emplace_back(std::move(fill));
+    if (created_time < item.created_time) {
+      created_time = item.created_time;
+    }
+    if (updated_time < item.updated_time) {
+      updated_time = item.updated_time;
+    }
   }
+  dispatch();
 }
 
 // place_order

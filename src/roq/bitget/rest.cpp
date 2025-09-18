@@ -249,9 +249,7 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
       symbols.emplace_back(item.symbol);
     }
     ++counter;
-    // XXX TODO how to detect linear vs inverse futures?
     auto tick_size = std::pow(10.0, -static_cast<double>(item.price_precision));
-    auto min_trade_vol = std::pow(10.0, -static_cast<double>(item.quantity_precision));
     auto reference_data = ReferenceData{
         .stream_id = stream_id_,
         .exchange = shared_.settings.exchange,
@@ -261,15 +259,15 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
         .cfi_code = {},
         .base_currency = item.base_coin,
         .quote_currency = item.quote_coin,
-        .settlement_currency = {},
+        .settlement_currency = {},  // XXX TODO how to detect linear vs inverse futures?
         .margin_currency = {},
         .commission_currency = {},
         .tick_size = tick_size,
         .tick_size_steps = {},
-        .multiplier = NaN,  // XXX TODO or inverse of this ???
+        .multiplier = item.quantity_multiplier,  // XXX ???
         .min_notional = NaN,
-        .min_trade_vol = min_trade_vol,
-        .max_trade_vol = NaN,
+        .min_trade_vol = item.min_order_qty,  // XXX min_order_amount
+        .max_trade_vol = item.max_order_qty,
         .trade_vol_step_size = NaN,
         .option_type = {},
         .strike_currency = {},
@@ -286,6 +284,16 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
         .discard = {},
     };
     create_trace_and_dispatch(handler_, trace_info, reference_data, true);
+    auto market_status = MarketStatus{
+        .stream_id = stream_id_,
+        .exchange = shared_.settings.exchange,
+        .symbol = item.symbol,
+        .trading_status = map(item.status),
+        .exchange_time_utc = {},
+        .exchange_sequence = {},
+        .sending_time_utc = instruments.request_time,
+    };
+    create_trace_and_dispatch(handler_, trace_info, market_status, true);
   }
   if (!std::empty(symbols)) {
     auto instruments_update = SymbolsUpdate{

@@ -272,13 +272,14 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
           .margin_mode = {},
           .balance = item_2.balance,
           .hold = item_2.locked,
-          .borrowed = NaN,
+          .borrowed = item_2.debts,
           .external_account = {},
-          .update_type = UpdateType::INCREMENTAL,
+          .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
           .exchange_time_utc = {},
           .exchange_sequence = {},
           .sending_time_utc = account.ts,
       };
+      log::warn("DEBUG funds_update={}"sv, funds_update);
       create_trace_and_dispatch(handler_, trace_info, funds_update, true);
     }
   }
@@ -287,7 +288,26 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
 void DropCopy::operator()(Trace<json::Position> const &event) {
   auto &[trace_info, position] = event;
   log::info<2>("position={}"sv, position);
+  log::warn("DEBUG position={}"sv, position);
   for (auto &item : position.data) {
+    auto long_quantity = [&]() -> double {
+      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
+        if (item.pos_side == json::PosSide::LONG) {
+          return item.size;
+        }
+        return NaN;
+      }
+      return std::max(item.size, 0.0);
+    }();
+    auto short_quantity = [&]() -> double {
+      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
+        if (item.pos_side == json::PosSide::SHORT) {
+          return item.size;
+        }
+        return NaN;
+      }
+      return std::max(-item.size, 0.0);
+    }();
     auto position_update = PositionUpdate{
         .stream_id = stream_id_,
         .account = account_.name,
@@ -295,13 +315,14 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
         .symbol = item.symbol,
         .margin_mode = map(item.margin_mode),
         .external_account = {},
-        .long_quantity = std::max(item.size, 0.0),
-        .short_quantity = std::max(-item.size, 0.0),
-        .update_type = UpdateType::INCREMENTAL,
+        .long_quantity = long_quantity,
+        .short_quantity = short_quantity,
+        .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
         .exchange_time_utc = item.updated_time,  // XXX FIXME TODO created_time ???
         .exchange_sequence = {},
         .sending_time_utc = position.ts,
     };
+    log::warn("DEBUG position_update={}"sv, position_update);
     create_trace_and_dispatch(handler_, trace_info, position_update, true);
   }
 }
@@ -309,18 +330,19 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
 void DropCopy::operator()(Trace<json::Order> const &event) {
   auto &[trace_info, order] = event;
   log::info<2>("order={}"sv, order);
+  log::warn("DEBUG order={}"sv, order);
   for (auto &item : order.data) {
     auto order_update = server::oms::OrderUpdate{
         .account = account_.name,
         .exchange = shared_.settings.exchange,
         .symbol = item.symbol,
         .side = map(item.side),
-        .position_effect = {},  // ???
+        .position_effect = map(item.trade_side),  // XXX alt. hold_side + side
         .margin_mode = map(item.margin_mode),
         .max_show_quantity = NaN,
         .order_type = map(item.order_type),
         .time_in_force = map(item.time_in_force),
-        .execution_instructions = {},
+        .execution_instructions = {},  // XXX order_type + reduce_only
         .create_time_utc = item.created_time,
         .update_time_utc = item.updated_time,
         .external_account = {},
@@ -330,7 +352,7 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
-        .remaining_quantity = NaN,
+        .remaining_quantity = NaN,  // XXX HANS check
         .traded_quantity = item.cum_exec_qty,
         .average_traded_price = item.avg_price,
         .last_traded_quantity = NaN,
@@ -340,9 +362,10 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .max_request_version = {},
         .max_response_version = {},
         .max_accepted_version = {},
-        .update_type = UpdateType::INCREMENTAL,
+        .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
         .sending_time_utc = order.ts,
     };
+    log::warn("DEBUG order_update={}"sv, order_update);
     if (shared_.update_order(item.client_oid, stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {
           // no fills here
         })) {
@@ -355,8 +378,10 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
 void DropCopy::operator()(Trace<json::Fill> const &event) {
   auto &[trace_info, fill] = event;
   log::info<2>("fill={}"sv, fill);
+  log::warn("DEBUG fill={}"sv, fill);
   std::string_view symbol, order_id, client_oid;
   json::Side side = {};
+  json::TradeSide trade_side = {};
   std::chrono::nanoseconds exec_time = {};
   std::chrono::nanoseconds updated_time = {};
   auto dispatch = [&]() {
@@ -368,8 +393,8 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
           .exchange = shared_.settings.exchange,
           .symbol = symbol,
           .side = map(side),
-          .position_effect = {},  // ???
-          .margin_mode = {},      // ??? from order ???
+          .position_effect = map(trade_side),
+          .margin_mode = {},  // XXX from asset_info
           .quantity_type = {},
           .create_time_utc = exec_time,
           .update_time_utc = updated_time,
@@ -378,23 +403,25 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
           .client_order_id = client_oid,
           .fills = shared_.fills,
           .routing_id = {},
-          .update_type = UpdateType::INCREMENTAL,
+          .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
           .sending_time_utc = fill.ts,
           .user = {},
           .strategy_id = {},
       };
       create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE, client_oid);
+      log::warn("DEBUG trade_update={}"sv, trade_update);
       shared_.fills.clear();
     }
   };
   shared_.fills.clear();
   for (auto &item : fill.data) {
-    if (item.symbol != symbol || item.order_id != order_id || item.client_oid != client_oid || item.side != side) {
+    if (item.symbol != symbol || item.order_id != order_id || item.client_oid != client_oid || item.side != side || item.trade_side != trade_side) {
       dispatch();
       symbol = item.symbol;
       order_id = item.order_id;
       client_oid = item.client_oid;
       side = item.side;
+      trade_side = item.trade_side;
       exec_time = {};
       updated_time = {};
     }
@@ -404,8 +431,8 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
         .quantity = item.exec_qty,
         .price = item.exec_price,
         .liquidity = map(item.trade_scope),
-        .commission_amount = NaN,
-        .commission_currency = {},
+        .commission_amount = NaN,   // XXX TODO
+        .commission_currency = {},  // XXX TODO
         .base_amount = NaN,
         .quote_amount = NaN,
         .profit_loss_amount = NaN,

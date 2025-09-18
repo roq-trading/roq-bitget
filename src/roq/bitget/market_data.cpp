@@ -261,7 +261,14 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
           .sending_time_utc = ticker.ts,
       };
       create_trace_and_dispatch(handler_, trace_info, top_of_book, true);
-      std::array<Statistics, 4> statistics{{
+      // XXX mark_price ???
+      std::array<Statistics, 7> statistics{{
+          {
+              .type = StatisticsType::OPEN_PRICE,
+              .value = item.open_price24h,
+              .begin_time_utc = {},
+              .end_time_utc = {},
+          },
           {
               .type = StatisticsType::HIGHEST_TRADED_PRICE,
               .value = item.high_price24h,
@@ -286,6 +293,18 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
               .begin_time_utc = {},
               .end_time_utc = {},
           },
+          {
+              .type = StatisticsType::FUNDING_RATE,
+              .value = item.funding_rate,
+              .begin_time_utc = {},
+              .end_time_utc = utils::safe_cast(item.next_funding_time),  // ???
+          },
+          {
+              .type = StatisticsType::OPEN_INTEREST,
+              .value = item.open_interest,
+              .begin_time_utc = {},
+              .end_time_utc = {},
+          },
       }};
       auto statistics_update = StatisticsUpdate{
           .stream_id = stream_id_,
@@ -293,9 +312,9 @@ void MarketData::operator()(Trace<json::Ticker> const &event) {
           .symbol = ticker.arg.symbol,
           .statistics = statistics,
           .update_type = UpdateType::INCREMENTAL,
-          .exchange_time_utc = ticker.ts,
+          .exchange_time_utc = {},  // ???
           .exchange_sequence = {},
-          .sending_time_utc = {},
+          .sending_time_utc = ticker.ts,
       };
       create_trace_and_dispatch(handler_, trace_info, statistics_update, true);
     }
