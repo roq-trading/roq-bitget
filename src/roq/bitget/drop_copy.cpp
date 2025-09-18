@@ -360,30 +360,32 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
   std::chrono::nanoseconds exec_time = {};
   std::chrono::nanoseconds updated_time = {};
   auto dispatch = [&]() {
-    auto trade_update = TradeUpdate{
-        .stream_id = stream_id_,
-        .account = account_.name,
-        .order_id = {},
-        .exchange = shared_.settings.exchange,
-        .symbol = symbol,
-        .side = map(side),
-        .position_effect = {},  // ???
-        .margin_mode = {},      // ??? from order ???
-        .quantity_type = {},
-        .create_time_utc = exec_time,
-        .update_time_utc = updated_time,
-        .external_account = {},
-        .external_order_id = order_id,
-        .client_order_id = client_oid,
-        .fills = shared_.fills,
-        .routing_id = {},
-        .update_type = UpdateType::INCREMENTAL,
-        .sending_time_utc = fill.ts,
-        .user = {},
-        .strategy_id = {},
-    };
-    // create_trace_and_dispatch(handler_, trace_info, trade_update, true);
-    shared_.fills.clear();
+    if (!std::empty(shared_.fills)) {
+      auto trade_update = TradeUpdate{
+          .stream_id = stream_id_,
+          .account = account_.name,
+          .order_id = {},
+          .exchange = shared_.settings.exchange,
+          .symbol = symbol,
+          .side = map(side),
+          .position_effect = {},  // ???
+          .margin_mode = {},      // ??? from order ???
+          .quantity_type = {},
+          .create_time_utc = exec_time,
+          .update_time_utc = updated_time,
+          .external_account = {},
+          .external_order_id = order_id,
+          .client_order_id = client_oid,
+          .fills = shared_.fills,
+          .routing_id = {},
+          .update_type = UpdateType::INCREMENTAL,
+          .sending_time_utc = fill.ts,
+          .user = {},
+          .strategy_id = {},
+      };
+      create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE, client_oid);
+      shared_.fills.clear();
+    }
   };
   shared_.fills.clear();
   for (auto &item : fill.data) {

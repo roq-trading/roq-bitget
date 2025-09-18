@@ -10,6 +10,7 @@ set(SOURCES
     json_cancel_all_orders.cpp
     json_cancel_all_orders_ack.cpp
     json_cancel_order.cpp
+    json_fill.cpp
     json_fill_history.cpp
     json_instruments.cpp
     json_message.cpp
@@ -17,6 +18,7 @@ set(SOURCES
     json_open_orders.cpp
     json_order.cpp
     json_place_order.cpp
+    json_position.cpp
     json_position_info.cpp
     json_public_trade.cpp
     json_ticker.cpp

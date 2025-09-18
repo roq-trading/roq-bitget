@@ -10,7 +10,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-TEST_CASE("json_books_update", "[json_books]") {
+TEST_CASE("simple", "[json_books]") {
   auto message = R"({)"
                  R"("action":"update",)"
                  R"("arg":{)"

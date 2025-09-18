@@ -11,7 +11,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-TEST_CASE("json_public_trade_update", "[json_public_trade]") {
+TEST_CASE("simple", "[json_public_trade]") {
   auto message = R"({)"
                  R"("action":"update",)"
                  R"("arg":{)"

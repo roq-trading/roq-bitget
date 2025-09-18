@@ -12,7 +12,7 @@ using namespace roq::bitget;
 using namespace std::literals;
 
 // note! reduced
-TEST_CASE("json_instruments_usdt", "[json_instruments]") {
+TEST_CASE("simple", "[json_instruments]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"

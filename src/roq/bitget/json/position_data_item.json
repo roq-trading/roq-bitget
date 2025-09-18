@@ -89,6 +89,18 @@
     {
       "name": "updatedTime",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "markPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "openFeeTotal",
+      "type": "std/double"
+    },
+    {
+      "name": "closeFeeTotal",
+      "type": "std/double"
     }
   ]
 }

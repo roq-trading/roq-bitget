@@ -14,7 +14,9 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-TEST_CASE("json_fill_history", "[json_fill_history]") {
+// TODO empty
+
+TEST_CASE("simple", "[json_fill_history]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
