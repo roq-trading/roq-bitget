@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/CancelAllOrdersAckDataFailureListItem",
+  "name": "roq/bitget/json/CancelAllOrdersAckDataListItem",
   "type": "dictionary",
   "values": [
     {
@@ -8,10 +8,6 @@
     },
     {
       "name": "clientOid",
-      "type": "std/string_view"
-    },
-    {
-      "name": "errorMsg",
       "type": "std/string_view"
     }
   ]

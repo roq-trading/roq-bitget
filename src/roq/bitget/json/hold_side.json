@@ -3,7 +3,13 @@
   "type": "enum",
   "values": [
     {
+      "name": "long"
+    },
+    {
       "name": "short"
+    },
+    {
+      "name": "net"
     }
   ]
 }

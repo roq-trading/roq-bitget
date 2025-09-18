@@ -9,7 +9,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-TEST_CASE("cancel_all_orders_simple", "[json_cancel_all_orders]") {
+TEST_CASE("simple", "[json_cancel_all_orders]") {
   std::string buffer;
   auto cancel_all_orders = CancelAllOrders{
       .account = {},
@@ -20,12 +20,30 @@ TEST_CASE("cancel_all_orders_simple", "[json_cancel_all_orders]") {
       .side = {},
   };
   auto request_id = "1234"sv;
-  auto inst_type = "USDT-FUTURES"sv;
-  auto margin_coin = "USDT";  // why?
-  auto message = json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, {}, inst_type, margin_coin);
+  auto category = "USDT-FUTURES"sv;
+  auto message = json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, category);
   CHECK(
       message == R"({)"
-                 R"("productType":"USDT-FUTURES",)"
-                 R"("marginCoin":"USDT")"
+                 R"("category":"USDT-FUTURES")"
+                 R"(})"sv);
+}
+
+TEST_CASE("symbol", "[json_cancel_all_orders]") {
+  std::string buffer;
+  auto cancel_all_orders = CancelAllOrders{
+      .account = {},
+      .order_id = {},
+      .exchange = {},
+      .symbol = "BTCUSDT"sv,
+      .strategy_id = {},
+      .side = {},
+  };
+  auto request_id = "1234"sv;
+  auto category = "USDT-FUTURES"sv;
+  auto message = json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, category);
+  CHECK(
+      message == R"({)"
+                 R"("category":"USDT-FUTURES",)"
+                 R"("symbol":"BTCUSDT")"
                  R"(})"sv);
 }

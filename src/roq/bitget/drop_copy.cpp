@@ -343,7 +343,12 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .update_type = UpdateType::INCREMENTAL,
         .sending_time_utc = order.ts,
     };
-    // create_trace_and_dispatch(handler_, trace_info, order_update, true);
+    if (shared_.update_order(item.client_oid, stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {
+          // no fills here
+        })) {
+    } else {
+      log::warn<1>(R"(*** EXTERNAL ORDER *** (order_id="{}", client_oid="{}"))"sv, item.order_id, item.client_oid);
+    }
   }
 }
 

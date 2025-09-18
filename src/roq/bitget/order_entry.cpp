@@ -552,6 +552,41 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
   log::info<4>("open_orders={}"sv, open_orders);
   for (auto &item : open_orders.data.list) {
     log::warn("DEBUG item={}"sv, item);
+    auto order_update = server::oms::OrderUpdate{
+        .account = account_.name,
+        .exchange = shared_.settings.exchange,
+        .symbol = item.symbol,
+        .side = map(item.side),
+        .position_effect = {},
+        .margin_mode = {},
+        .max_show_quantity = NaN,
+        .order_type = map(item.order_type),
+        .time_in_force = map(item.time_in_force),
+        .execution_instructions = {},
+        .create_time_utc = item.created_time,
+        .update_time_utc = item.updated_time,
+        .external_account = {},
+        .external_order_id = item.order_id,
+        .client_order_id = item.client_oid,
+        .order_status = map(item.order_status),
+        .quantity = item.qty,
+        .price = item.price,
+        .stop_price = NaN,
+        .remaining_quantity = NaN,  // ???
+        .traded_quantity = item.cum_exec_qty,
+        .average_traded_price = item.avg_price,
+        .last_traded_quantity = NaN,
+        .last_traded_price = NaN,
+        .last_liquidity = {},
+        .routing_id = {},
+        .max_request_version = {},
+        .max_response_version = {},
+        .max_accepted_version = {},
+        .update_type = UpdateType::SNAPSHOT,
+        .sending_time_utc = open_orders.request_time,
+    };
+    Trace event_2{trace_info, order_update};
+    (*this)(event_2, item.client_oid);
   }
 }
 
@@ -625,7 +660,7 @@ void OrderEntry::place_order(Event<CreateOrder> const &event, server::oms::Order
     auto &[message_info, create_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.place_order;
-    auto body = json::Encoder::place_order(encode_buffer_, create_order, order, request_id, {}, shared_.api.inst_type, shared_.settings.margin_coin);
+    auto body = json::Encoder::place_order(encode_buffer_, create_order, order, request_id, shared_.api.category);
     log::warn(R"(DEBUG body="{}")"sv, body);
     auto headers = account_.create_headers(method, path, {}, body);
     auto request = web::rest::Request{
@@ -699,7 +734,7 @@ void OrderEntry::modify_order(
     auto &[message_info, modify_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.modify_order;
-    auto body = json::Encoder::modify_order(encode_buffer_, modify_order, order, request_id, {}, shared_.api.inst_type, shared_.settings.margin_coin);
+    auto body = json::Encoder::modify_order(encode_buffer_, modify_order, order, request_id);
     log::warn(R"(DEBUG body="{}")"sv, body);
     auto headers = account_.create_headers(method, path, {}, body);
     auto request = web::rest::Request{
@@ -773,7 +808,7 @@ void OrderEntry::cancel_order(
     auto &[message_info, cancel_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.cancel_order;
-    auto body = json::Encoder::cancel_order(encode_buffer_, cancel_order, order, request_id, {}, shared_.api.inst_type, shared_.settings.margin_coin);
+    auto body = json::Encoder::cancel_order(encode_buffer_, cancel_order, order, request_id);
     log::warn(R"(DEBUG body="{}")"sv, body);
     auto headers = account_.create_headers(method, path, {}, body);
     auto request = web::rest::Request{
@@ -843,7 +878,7 @@ void OrderEntry::cancel_all_orders(Event<CancelAllOrders> const &event, std::str
     auto &[message_info, cancel_all_orders] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.cancel_all_orders;
-    auto body = json::Encoder::cancel_all_orders(encode_buffer_, cancel_all_orders, request_id, {}, shared_.api.inst_type, shared_.settings.margin_coin);
+    auto body = json::Encoder::cancel_all_orders(encode_buffer_, cancel_all_orders, request_id, shared_.api.category);
     auto headers = account_.create_headers(method, path, {}, body);
     auto request = web::rest::Request{
         .method = method,

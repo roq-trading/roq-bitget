@@ -176,11 +176,13 @@ constexpr Helper<bitget::json::OrderStatus>::operator std::optional<roq::OrderSt
       return roq::OrderStatus::UNDEFINED;
     case LIVE:
       return roq::OrderStatus::WORKING;
+    case NEW:
+      return roq::OrderStatus::WORKING;
     case PARTIALLY_FILLED:
       return roq::OrderStatus::WORKING;
     case FILLED:
       return roq::OrderStatus::COMPLETED;
-    case CANCELED:
+    case CANCELLED:
       return roq::OrderStatus::CANCELED;
   }
   return {};
@@ -188,9 +190,10 @@ constexpr Helper<bitget::json::OrderStatus>::operator std::optional<roq::OrderSt
 
 static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::UNDEFINED_INTERNAL}} == roq::OrderStatus::UNDEFINED);
 static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::LIVE}} == roq::OrderStatus::WORKING);
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::NEW}} == roq::OrderStatus::WORKING);
 static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::PARTIALLY_FILLED}} == roq::OrderStatus::WORKING);
 static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::FILLED}} == roq::OrderStatus::COMPLETED);
-static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::CANCELED}} == roq::OrderStatus::CANCELED);
+static_assert(Helper{bitget::json::OrderStatus{bitget::json::OrderStatus::CANCELLED}} == roq::OrderStatus::CANCELED);
 
 template <>
 template <>
@@ -376,6 +379,53 @@ static_assert(Helper{roq::OrderType::LIMIT} == bitget::json::OrderType{bitget::j
 template <>
 template <>
 std::optional<bitget::json::OrderType> Map<roq::OrderType>::helper() const {
+  return Helper{args_};
+}
+
+// {roq::PositionEffect, roq::Side} => bitget::json::PosSide
+
+template <>
+template <>
+constexpr Helper<roq::PositionEffect, roq::Side>::operator std::optional<bitget::json::PosSide>() const {
+  switch (std::get<0>(args_)) {
+    using enum roq::PositionEffect;
+    case UNDEFINED:
+      return bitget::json::PosSide::UNDEFINED_INTERNAL;
+    case OPEN:
+      switch (std::get<1>(args_)) {
+        using enum roq::Side;
+        case UNDEFINED:
+          return bitget::json::PosSide::UNDEFINED_INTERNAL;
+        case BUY:
+          return bitget::json::PosSide::LONG;
+        case SELL:
+          return bitget::json::PosSide::SHORT;
+      }
+      break;
+    case CLOSE:
+      switch (std::get<1>(args_)) {
+        using enum roq::Side;
+        case UNDEFINED:
+          return bitget::json::PosSide::UNDEFINED_INTERNAL;
+        case BUY:
+          return bitget::json::PosSide::SHORT;
+        case SELL:
+          return bitget::json::PosSide::LONG;
+      }
+      break;
+  }
+  return {};
+}
+
+static_assert(Helper{roq::PositionEffect::UNDEFINED, roq::Side::UNDEFINED} == bitget::json::PosSide{bitget::json::PosSide::UNDEFINED_INTERNAL});
+static_assert(Helper{roq::PositionEffect::OPEN, roq::Side::BUY} == bitget::json::PosSide{bitget::json::PosSide::LONG});
+static_assert(Helper{roq::PositionEffect::OPEN, roq::Side::SELL} == bitget::json::PosSide{bitget::json::PosSide::SHORT});
+static_assert(Helper{roq::PositionEffect::CLOSE, roq::Side::BUY} == bitget::json::PosSide{bitget::json::PosSide::SHORT});
+static_assert(Helper{roq::PositionEffect::CLOSE, roq::Side::SELL} == bitget::json::PosSide{bitget::json::PosSide::LONG});
+
+template <>
+template <>
+std::optional<bitget::json::PosSide> Map<roq::PositionEffect, roq::Side>::helper() const {
   return Helper{args_};
 }
 

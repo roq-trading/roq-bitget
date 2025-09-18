@@ -8,12 +8,14 @@ set(SOURCES
     json_account_info.cpp
     json_books.cpp
     json_cancel_all_orders.cpp
+    json_cancel_all_orders_ack.cpp
     json_cancel_order.cpp
     json_fill_history.cpp
     json_instruments.cpp
     json_message.cpp
     json_modify_order.cpp
     json_open_orders.cpp
+    json_order.cpp
     json_place_order.cpp
     json_position_info.cpp
     json_public_trade.cpp

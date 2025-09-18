@@ -6,13 +6,16 @@
       "name": "live"
     },
     {
+      "name": "new"
+    },
+    {
       "name": "partially_filled"
     },
     {
       "name": "filled"
     },
     {
-      "name": "canceled"
+      "name": "cancelled"
     }
   ]
 }

@@ -22,13 +22,13 @@ set(AUTOGEN_SCHEMAS
     books_data.json
     books_item.json
     books.json
-    cancel_all_orders_ack_data_failure_list_item.json
     cancel_all_orders_ack_data.json
-    cancel_all_orders_ack_data_success_list_item.json
+    cancel_all_orders_ack_data_list_item.json
     cancel_all_orders_ack.json
     cancel_order_ack_data.json
     cancel_order_ack.json
     category.json
+    category_ws.json
     delivery_period.json
     error.json
     event.json

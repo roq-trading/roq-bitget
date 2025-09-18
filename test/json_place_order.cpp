@@ -9,7 +9,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-TEST_CASE("place_order_simple", "[json_place_order]") {
+TEST_CASE("simple", "[json_place_order]") {
   std::string buffer;
   auto create_order = CreateOrder{
       .account = {},
@@ -41,22 +41,19 @@ TEST_CASE("place_order_simple", "[json_place_order]") {
       .precision = Precision::_1,
   };
   auto request_id = "1234"sv;
-  auto inst_type = "USDT-FUTURES"sv;
-  auto margin_coin = "USDT";
-  auto message = json::Encoder::place_order(buffer, create_order, order, request_id, {}, inst_type, margin_coin);
+  auto category = "USDT-FUTURES"sv;
+  auto message = json::Encoder::place_order(buffer, create_order, order, request_id, category);
   CHECK(
       message == R"({)"
+                 R"("category":"USDT-FUTURES",)"
                  R"("symbol":"BTCUSDT",)"
-                 R"("productType":"USDT-FUTURES",)"
-                 R"("size":"0.0010",)"
-                 R"("price":)"
-                 R"("32000.0",)"
+                 R"("qty":"0.0010",)"
+                 R"("price":"32000.0",)"
                  R"("side":"buy",)"
                  R"("orderType":"limit",)"
-                 R"("force":"gtc",)"
-                 R"("marginMode":)"
-                 R"("isolated",)"
-                 R"("marginCoin":"USDT",)"
-                 R"("clientOid":"1234")"
+                 R"("timeInForce":"gtc",)"
+                 R"("clientOid":"1234",)"
+                 R"("reduceOnly":"no",)"
+                 R"("stpMode":"none")"
                  R"(})"sv);
 }

@@ -86,6 +86,38 @@
     {
       "name": "updatedTime",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "tpTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "slTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "takeProfit",
+      "comment": "undoc"
+    },
+    {
+      "name": "stopLoss",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "slOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpLimitPrice",
+      "comment": "undoc"
+    },
+    {
+      "name": "slLimitPrice",
+      "comment": "undoc"
     }
   ]
 }

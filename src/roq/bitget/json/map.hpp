@@ -19,6 +19,7 @@
 #include "roq/bitget/json/margin_mode.hpp"
 #include "roq/bitget/json/order_status.hpp"
 #include "roq/bitget/json/order_type.hpp"
+#include "roq/bitget/json/pos_side.hpp"
 #include "roq/bitget/json/side.hpp"
 #include "roq/bitget/json/time_in_force.hpp"
 #include "roq/bitget/json/trade_scope.hpp"
@@ -69,6 +70,10 @@ std::optional<bitget::json::MarginMode> Map<MarginMode>::helper() const;
 template <>
 template <>
 std::optional<bitget::json::OrderType> Map<OrderType>::helper() const;
+
+template <>
+template <>
+std::optional<bitget::json::PosSide> Map<PositionEffect, Side>::helper() const;
 
 template <>
 template <>

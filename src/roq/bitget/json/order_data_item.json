@@ -4,7 +4,7 @@
   "values": [
     {
       "name": "category",
-      "type": "roq/bitget/json/Category"
+      "type": "roq/bitget/json/CategoryWS"
     },
     {
       "name": "symbol",
@@ -110,6 +110,38 @@
     {
       "name": "stpMode",
       "type": "roq/bitget/json/StpMode"
+    },
+    {
+      "name": "tpTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "slTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "takeprofit",
+      "comment": "undoc"
+    },
+    {
+      "name": "stoploss",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "slOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpLimitPrice",
+      "comment": "undoc"
+    },
+    {
+      "name": "slLimitPrice",
+      "comment": "undoc"
     }
   ]
 }
