@@ -25,7 +25,6 @@ $PREFIX ./roq-bitget \
   --config_file "$CONFIG_FILE" \
   --flagfile "$FLAG_FILE" \
   --api "$API" \
-  --margin_coin "$MARGIN_COIN" \
   --cache_dir "$HOME/var/lib/roq/cache" \
   --event_log_dir "$HOME/var/lib/roq/data" \
   --event_log_symlink true \
