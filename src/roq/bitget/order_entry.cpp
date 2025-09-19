@@ -385,10 +385,10 @@ void OrderEntry::get_account_assets_ack(Trace<web::rest::Response> const &event,
   });
 }
 
+// note! download because it seems we don't always get snapshot from drop-copy
 void OrderEntry::operator()(Trace<json::AccountAssets> const &event) {
   auto &[trace_assets, account_assets] = event;
   log::info<4>("account_assets={}"sv, account_assets);
-#if (0)  // note! drop-copy gets the snapshot
   for (auto &item : account_assets.data.assets) {
     log::warn("DEBUG item={}"sv, item);
     auto funds_update = FundsUpdate{
@@ -408,7 +408,6 @@ void OrderEntry::operator()(Trace<json::AccountAssets> const &event) {
     log::warn("DEBUG funds_update={}"sv, funds_update);
     create_trace_and_dispatch(handler_, trace_assets, funds_update, true);
   }
-#endif
 }
 
 // position_info
@@ -464,10 +463,10 @@ void OrderEntry::get_position_info_ack(Trace<web::rest::Response> const &event, 
   });
 }
 
+// note! download because it seems we don't always get snapshot from drop-copy
 void OrderEntry::operator()(Trace<json::PositionInfo> const &event) {
   auto &[trace_info, position_info] = event;
   log::info<4>("position_info={}"sv, position_info);
-#if (0)  // note! drop-copy gets the snapshot
   for (auto &item : position_info.data.list) {
     log::warn("DEBUG item={}"sv, item);
     auto long_quantity = [&]() -> double {
@@ -499,7 +498,6 @@ void OrderEntry::operator()(Trace<json::PositionInfo> const &event) {
     log::warn("DEBUG position_update={}"sv, position_update);
     create_trace_and_dispatch(handler_, trace_info, position_update, true);
   }
-#endif
 }
 
 // open_orders
