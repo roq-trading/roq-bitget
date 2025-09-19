@@ -65,7 +65,7 @@ Supports
       * - Reference Data
         - |checkmark|
       * - Market Status
-        -
+        - (|checkmark|)
       * - Top of Book
         - |checkmark|
       * - Market by Price
@@ -93,7 +93,7 @@ Supports
       * - Cancel All
         - |checkmark|
       * - Auto-Cancel
-        -
+        - |checkmark|
 
   .. grid-item-card::  Account Management
 

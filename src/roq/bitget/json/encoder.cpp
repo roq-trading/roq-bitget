@@ -132,6 +132,19 @@ std::string_view Encoder::cancel_all_orders(
   return buffer;
 }
 
+std::string_view Encoder::countdown_cancel_all(std::string &buffer, std::chrono::seconds countdown) {
+  buffer.clear();
+  int64_t count = countdown.count();
+  auto tmp = std::min<int64_t>(std::max<int64_t>(count, 5), 60);  // note! docs say allowed range is [5;60]
+  fmt::format_to(
+      std::back_inserter(buffer),
+      R"({{)"
+      R"("countdown":"{}")"
+      R"(}})"sv,
+      tmp);
+  return buffer;
+}
+
 }  // namespace json
 }  // namespace bitget
 }  // namespace roq

@@ -77,6 +77,12 @@
       "validator": "roq/flags/validators/TimePeriod",
       "default": "8h",
       "description": "Token refresh frequency"
+    },
+    {
+      "name": "cancel_on_disconnect",
+      "type": "std/bool",
+      "default": false,
+      "description": "Auto-cancel orders on disconnect?"
     }
   ]
 }

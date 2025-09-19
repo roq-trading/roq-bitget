@@ -120,6 +120,11 @@ class OrderEntry final : public web::rest::Client::Handler {
   void cancel_all_orders_ack(Trace<web::rest::Response> const &, uint8_t user_id);
   void operator()(Trace<json::CancelAllOrdersAck> const &, uint8_t user_id);
 
+  // countdown_cancel_all
+  void countdown_cancel_all();
+  void countdown_cancel_all_ack(Trace<web::rest::Response> const &);
+  // void operator()(Trace<json::CancelAllOrdersAck> const &, uint8_t user_id);
+
   // helpers
 
   void process_response(web::rest::Response const &, auto error_handler, auto success_handler);
@@ -151,7 +156,8 @@ class OrderEntry final : public web::rest::Client::Handler {
         place_order, place_order_ack,                        //
         modify_order, modify_order_ack,                      //
         cancel_order, cancel_order_ack,                      //
-        cancel_all_orders, cancel_all_orders_ack;
+        cancel_all_orders, cancel_all_orders_ack,            //
+        countdown_cancel_all, countdown_cancel_all_ack;
   } profile_;
   struct {
     utils::metrics::Latency ping;
@@ -164,6 +170,7 @@ class OrderEntry final : public web::rest::Client::Handler {
   core::Download<OrderEntryState> download_;
   //
   std::string encode_buffer_;
+  std::chrono::nanoseconds next_heartbeat_ = {};
 };
 
 }  // namespace bitget
