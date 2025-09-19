@@ -68,6 +68,7 @@ public_trade_data_item.hpp
 public_trade.hpp
 side.hpp
 stp_mode.hpp
+subscribe.hpp
 symbol_status.hpp
 symbol_type.hpp
 ticker_data_item.hpp
@@ -145,6 +146,7 @@ public_trade_data_item.cpp
 public_trade.cpp
 side.cpp
 stp_mode.cpp
+subscribe.cpp
 symbol_status.cpp
 symbol_type.cpp
 ticker_data_item.cpp

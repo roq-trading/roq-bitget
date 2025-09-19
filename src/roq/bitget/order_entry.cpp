@@ -237,18 +237,22 @@ uint32_t OrderEntry::download(OrderEntryState state) {
     case ACCOUNT_INFO:
       get_account_info();
       return 1;
-    case ACCOUNT_ASSETS:
+    case ACCOUNT_ASSETS:  // skip
       get_account_assets();
       return 1;
-    case POSITION_INFO:
+    case POSITION_INFO:  // skip
       get_position_info();
       return 1;
     case OPEN_ORDERS:
       get_open_orders();
       return 1;
     case FILL_HISTORY:
-      get_fill_history();
-      return 1;
+      if (shared_.settings.rest.download_fills_begin.count()) {
+        get_fill_history();
+        return 1;
+      } else {
+        return 0;
+      }
     case DONE:
       (*this)(ConnectionStatus::READY);
       return 0;
@@ -263,11 +267,12 @@ void OrderEntry::get_account_info() {
   profile_.account_info([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.account_info;
-    auto headers = account_.create_headers(method, path, {}, {});
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
+    auto headers = account_.create_headers(method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = {},
         .headers = headers,
@@ -319,11 +324,12 @@ void OrderEntry::operator()(Trace<json::AccountInfo> const &event) {
       account_info.data.asset_mode,
       account_info.data.hold_mode,
       account_info.data.stp_mode);
-  // symbol
-  // - margin_mode
-  // - leverage
-  // coin:
-  // - leverage
+  for (auto &item : account_info.data.symbol_config_list) {
+    log::warn(R"(DEBUG account="{}", symbol="{}", leverage={}, margin_mode={})"sv, account_.name, item.symbol, item.leverage, item.margin_mode);
+  }
+  for (auto &item : account_info.data.coin_config_list) {
+    log::warn(R"(DEBUG account="{}", coin="{}", leverage={})"sv, account_.name, item.coin, item.leverage);
+  }
 }
 
 // account_assets
@@ -332,11 +338,12 @@ void OrderEntry::get_account_assets() {
   profile_.account_assets([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.account_assets;
-    auto headers = account_.create_headers(method, path, {}, {});
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
+    auto headers = account_.create_headers(method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = {},
         .headers = headers,
@@ -381,6 +388,7 @@ void OrderEntry::get_account_assets_ack(Trace<web::rest::Response> const &event,
 void OrderEntry::operator()(Trace<json::AccountAssets> const &event) {
   auto &[trace_assets, account_assets] = event;
   log::info<4>("account_assets={}"sv, account_assets);
+#if (0)  // note! drop-copy gets the snapshot
   for (auto &item : account_assets.data.assets) {
     log::warn("DEBUG item={}"sv, item);
     auto funds_update = FundsUpdate{
@@ -400,6 +408,7 @@ void OrderEntry::operator()(Trace<json::AccountAssets> const &event) {
     log::warn("DEBUG funds_update={}"sv, funds_update);
     create_trace_and_dispatch(handler_, trace_assets, funds_update, true);
   }
+#endif
 }
 
 // position_info
@@ -408,11 +417,12 @@ void OrderEntry::get_position_info() {
   profile_.position_info([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.position_info;
-    auto headers = account_.create_headers(method, path, {}, {});
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
+    auto headers = account_.create_headers(method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = {},
         .headers = headers,
@@ -457,25 +467,20 @@ void OrderEntry::get_position_info_ack(Trace<web::rest::Response> const &event, 
 void OrderEntry::operator()(Trace<json::PositionInfo> const &event) {
   auto &[trace_info, position_info] = event;
   log::info<4>("position_info={}"sv, position_info);
+#if (0)  // note! drop-copy gets the snapshot
   for (auto &item : position_info.data.list) {
     log::warn("DEBUG item={}"sv, item);
     auto long_quantity = [&]() -> double {
-      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
-        if (item.pos_side == json::PosSide::LONG) {
-          return item.total;
-        }
-        return NaN;
+      if (item.pos_side == json::PosSide::LONG) {
+        return item.total;
       }
-      return std::max(item.total, 0.0);
+      return 0.0;
     }();
     auto short_quantity = [&]() -> double {
-      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
-        if (item.pos_side == json::PosSide::SHORT) {
-          return item.total;
-        }
-        return NaN;
+      if (item.pos_side == json::PosSide::SHORT) {
+        return item.total;
       }
-      return std::max(-item.total, 0.0);
+      return 0.0;
     }();
     auto position_update = PositionUpdate{
         .stream_id = stream_id_,
@@ -494,6 +499,7 @@ void OrderEntry::operator()(Trace<json::PositionInfo> const &event) {
     log::warn("DEBUG position_update={}"sv, position_update);
     create_trace_and_dispatch(handler_, trace_info, position_update, true);
   }
+#endif
 }
 
 // open_orders
@@ -502,11 +508,12 @@ void OrderEntry::get_open_orders() {
   profile_.open_orders([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.open_orders;
-    auto headers = account_.create_headers(method, path, {}, {});
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
+    auto headers = account_.create_headers(method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = {},
         .headers = headers,
@@ -553,13 +560,14 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
   log::info<4>("open_orders={}"sv, open_orders);
   for (auto &item : open_orders.data.list) {
     log::warn("DEBUG item={}"sv, item);
+    auto remaining_quantity = item.qty - item.cum_exec_qty;
     auto order_update = server::oms::OrderUpdate{
         .account = account_.name,
         .exchange = shared_.settings.exchange,
         .symbol = item.symbol,
         .side = map(item.side),
         .position_effect = map(item.pos_side, item.side),
-        .margin_mode = {},  // XXX lookup from asset_info ???
+        .margin_mode = {},  // XXX FIXME TODO from asset_info[symbol]
         .max_show_quantity = NaN,
         .order_type = map(item.order_type),
         .time_in_force = map(item.time_in_force),
@@ -573,7 +581,7 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
         .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
-        .remaining_quantity = NaN,  // XXX HANS check it's being computed
+        .remaining_quantity = remaining_quantity,
         .traded_quantity = item.cum_exec_qty,
         .average_traded_price = item.avg_price,
         .last_traded_quantity = NaN,
@@ -593,17 +601,20 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
 }
 
 // fill_history
-
-// XXX HANS need lookback period
 void OrderEntry::get_fill_history() {
+  assert(shared_.settings.rest.download_fills_begin.count() > 0);
   profile_.fill_history([&]() {
+    auto now = clock::get_realtime();
+    auto start_time = std::chrono::duration_cast<std::chrono::milliseconds>(now - shared_.settings.rest.download_fills_begin);
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.fill_history;
-    auto headers = account_.create_headers(method, path, {}, {});
+    auto query = fmt::format("?category={}&startTime={}"sv, shared_.api.category, start_time.count());
+    log::warn("DEBUG query={}"sv, query);
+    auto headers = account_.create_headers(method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = {},
         .headers = headers,
@@ -663,7 +674,7 @@ void OrderEntry::operator()(Trace<json::FillHistory> const &event) {
           .symbol = symbol,
           .side = map(side),
           .position_effect = map(trade_side),
-          .margin_mode = {},  // XXX from symbol ???
+          .margin_mode = {},  // XXX FIXME TODO from asset_info[symbol]
           .quantity_type = {},
           .create_time_utc = created_time,
           .update_time_utc = updated_time,
@@ -694,16 +705,34 @@ void OrderEntry::operator()(Trace<json::FillHistory> const &event) {
       trade_side = item.trade_side, created_time = {};
       updated_time = {};
     }
+    std::string_view fee_coin;
+    double fee = 0.0;
+    bool please_report = false;
+    for (auto &item_2 : item.fee_detail) {
+      if (!std::isnan(item_2.fee)) {
+        fee += item_2.fee;
+      }
+      if (!std::empty(item_2.fee_coin)) {
+        if (std::empty(fee_coin)) {
+          fee_coin = item_2.fee_coin;
+        } else if (item_2.fee_coin != fee_coin) {
+          log::warn(R"(fee_coin="{}"!="{}")"sv, item_2.fee_coin, fee_coin);
+        }
+      }
+    }
+    if (please_report) {
+      log::warn("*** PLEASE REPORT *** fill={}"sv, item);
+    }
     auto fill = Fill{
         .exchange_time_utc = item.created_time,
         .external_trade_id = item.exec_id,
         .quantity = item.exec_qty,
         .price = item.exec_price,
         .liquidity = map(item.trade_scope),
-        .commission_amount = NaN,   // XXX TODO
-        .commission_currency = {},  // XXX TODO
-        .base_amount = NaN,
-        .quote_amount = NaN,
+        .commission_amount = fee,
+        .commission_currency = fee_coin,
+        .base_amount = NaN,   // XXX FIXME TODO
+        .quote_amount = NaN,  // XXX FIXME TODO
         .profit_loss_amount = NaN,
     };
     shared_.fills.emplace_back(std::move(fill));
@@ -727,13 +756,14 @@ void OrderEntry::place_order(Event<CreateOrder> const &event, server::oms::Order
     auto &[message_info, create_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.place_order;
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = json::Encoder::place_order(encode_buffer_, create_order, order, request_id, shared_.api.category);
     log::warn(R"(DEBUG body="{}")"sv, body);
-    auto headers = account_.create_headers(method, path, {}, body);
+    auto headers = account_.create_headers(method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = web::http::ContentType::APPLICATION_JSON,
         .headers = headers,
@@ -801,13 +831,14 @@ void OrderEntry::modify_order(
     auto &[message_info, modify_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.modify_order;
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = json::Encoder::modify_order(encode_buffer_, modify_order, order, request_id);
     log::warn(R"(DEBUG body="{}")"sv, body);
-    auto headers = account_.create_headers(method, path, {}, body);
+    auto headers = account_.create_headers(method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = web::http::ContentType::APPLICATION_JSON,
         .headers = headers,
@@ -875,13 +906,14 @@ void OrderEntry::cancel_order(
     auto &[message_info, cancel_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.cancel_order;
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = json::Encoder::cancel_order(encode_buffer_, cancel_order, order, request_id);
     log::warn(R"(DEBUG body="{}")"sv, body);
-    auto headers = account_.create_headers(method, path, {}, body);
+    auto headers = account_.create_headers(method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = web::http::ContentType::APPLICATION_JSON,
         .headers = headers,
@@ -945,12 +977,13 @@ void OrderEntry::cancel_all_orders(Event<CancelAllOrders> const &event, std::str
     auto &[message_info, cancel_all_orders] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.cancel_all_orders;
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = json::Encoder::cancel_all_orders(encode_buffer_, cancel_all_orders, request_id, shared_.api.category);
-    auto headers = account_.create_headers(method, path, {}, body);
+    auto headers = account_.create_headers(method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = web::http::ContentType::APPLICATION_JSON,
         .headers = headers,

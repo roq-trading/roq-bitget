@@ -13,6 +13,35 @@ using Helper = detail::MapHelper<Args...>;
 
 // bitget::json => roq
 
+// bitget::json::Action => roq::MarginMode
+
+template <>
+template <>
+constexpr Helper<bitget::json::Action>::operator std::optional<roq::UpdateType>() const {
+  switch (std::get<0>(args_)) {
+    using enum bitget::json::Action::type_t;
+    case UNDEFINED_INTERNAL:
+      return roq::UpdateType::UNDEFINED;
+    case UNKNOWN_INTERNAL:
+      return roq::UpdateType::UNDEFINED;
+    case SNAPSHOT:
+      return roq::UpdateType::SNAPSHOT;
+    case UPDATE:
+      return roq::UpdateType::INCREMENTAL;
+  }
+  return {};
+}
+
+static_assert(Helper{bitget::json::Action{bitget::json::Action::UNDEFINED_INTERNAL}} == roq::UpdateType::UNDEFINED);
+static_assert(Helper{bitget::json::Action{bitget::json::Action::SNAPSHOT}} == roq::UpdateType::SNAPSHOT);
+static_assert(Helper{bitget::json::Action{bitget::json::Action::UPDATE}} == roq::UpdateType::INCREMENTAL);
+
+template <>
+template <>
+std::optional<roq::UpdateType> Map<bitget::json::Action>::helper() const {
+  return Helper{args_};
+}
+
 // bitget::json::AssetMode => roq::MarginMode
 
 template <>

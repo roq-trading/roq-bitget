@@ -35,12 +35,18 @@ std::string_view Encoder::place_order(
       create_order.symbol,
       Decimal{create_order.quantity, order.quantity_precision.precision});
   if (create_order.order_type == roq::OrderType::LIMIT) {
+    auto time_in_force = [&]() -> json::TimeInForce {
+      if (create_order.execution_instructions.has(ExecutionInstruction::PARTICIPATE_DO_NOT_INITIATE)) {
+        return json::TimeInForce::POST_ONLY;
+      }
+      return map(create_order.time_in_force).template get<json::TimeInForce>();
+    }();
     fmt::format_to(
         std::back_inserter(buffer),
         R"("price":"{}",)"
         R"("timeInForce":"{}",)"sv,
         Decimal{create_order.price, order.price_precision.precision},
-        map(create_order.time_in_force).template get<json::TimeInForce>().as_raw_text());
+        time_in_force.as_raw_text());
   }
   fmt::format_to(
       std::back_inserter(buffer),

@@ -1,0 +1,22 @@
+{
+  "name": "roq/bitget/json/Subscribe",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "event",
+      "type": "roq/bitget/json/Event"
+    },
+    {
+      "name": "code",
+      "type": "std/int64"
+    },
+    {
+      "name": "msg",
+      "type": "std/string_view"
+    },
+    {
+      "name": "arg",
+      "type": "roq/bitget/json/Arg"
+    }
+  ]
+}

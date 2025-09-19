@@ -57,7 +57,7 @@ bool Parser::dispatch(
       return true;
     }
     case SUBSCRIBE: {
-      // note! drop
+      dispatch_helper<Subscribe>(handler, message, buffer_stack, trace_info);
       return true;
     }
     case LOGIN:

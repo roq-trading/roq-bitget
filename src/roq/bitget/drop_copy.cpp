@@ -236,6 +236,11 @@ void DropCopy::operator()(Trace<json::Error> const &event) {
   log::fatal("event={{book_ticker={}, trace_info={}}}"sv, error, trace_info);
 }
 
+void DropCopy::operator()(Trace<json::Subscribe> const &event) {
+  auto &[trace_info, subscribe] = event;
+  log::warn("DEBUG subscribe={}"sv, subscribe);
+}
+
 void DropCopy::operator()(Trace<json::Ticker> const &) {
   log::fatal("Unexpected"sv);
 }
@@ -259,6 +264,7 @@ void DropCopy::operator()(Trace<json::Login> const &event) {
   (*this)(ConnectionStatus::READY);
 }
 
+// note! snapshot + incremental
 void DropCopy::operator()(Trace<json::Account> const &event) {
   auto &[trace_info, account] = event;
   log::info<2>("account={}"sv, account);
@@ -274,7 +280,7 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
           .hold = item_2.locked,
           .borrowed = item_2.debts,
           .external_account = {},
-          .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
+          .update_type = map(account.action),
           .exchange_time_utc = {},
           .exchange_sequence = {},
           .sending_time_utc = account.ts,
@@ -285,28 +291,23 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
   }
 }
 
+// note! snapshot + incremental
 void DropCopy::operator()(Trace<json::Position> const &event) {
   auto &[trace_info, position] = event;
   log::info<2>("position={}"sv, position);
   log::warn("DEBUG position={}"sv, position);
   for (auto &item : position.data) {
     auto long_quantity = [&]() -> double {
-      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
-        if (item.pos_side == json::PosSide::LONG) {
-          return item.size;
-        }
-        return NaN;
+      if (item.pos_side == json::PosSide::LONG) {
+        return item.size;
       }
-      return std::max(item.size, 0.0);
+      return 0.0;
     }();
     auto short_quantity = [&]() -> double {
-      if (item.hold_mode == json::HoldMode::HEDGE_MODE) {
-        if (item.pos_side == json::PosSide::SHORT) {
-          return item.size;
-        }
-        return NaN;
+      if (item.pos_side == json::PosSide::SHORT) {
+        return item.size;
       }
-      return std::max(-item.size, 0.0);
+      return 0.0;
     }();
     auto position_update = PositionUpdate{
         .stream_id = stream_id_,
@@ -317,8 +318,8 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
         .external_account = {},
         .long_quantity = long_quantity,
         .short_quantity = short_quantity,
-        .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
-        .exchange_time_utc = item.updated_time,  // XXX FIXME TODO created_time ???
+        .update_type = map(position.action),
+        .exchange_time_utc = item.updated_time,
         .exchange_sequence = {},
         .sending_time_utc = position.ts,
     };
@@ -327,11 +328,13 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
   }
 }
 
+// note! incremental
 void DropCopy::operator()(Trace<json::Order> const &event) {
   auto &[trace_info, order] = event;
   log::info<2>("order={}"sv, order);
   log::warn("DEBUG order={}"sv, order);
   for (auto &item : order.data) {
+    auto remaining_quantity = item.qty - item.cum_exec_qty;
     auto order_update = server::oms::OrderUpdate{
         .account = account_.name,
         .exchange = shared_.settings.exchange,
@@ -352,7 +355,7 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
-        .remaining_quantity = NaN,  // XXX HANS check
+        .remaining_quantity = remaining_quantity,
         .traded_quantity = item.cum_exec_qty,
         .average_traded_price = item.avg_price,
         .last_traded_quantity = NaN,
@@ -362,7 +365,7 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .max_request_version = {},
         .max_response_version = {},
         .max_accepted_version = {},
-        .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
+        .update_type = map(order.action),
         .sending_time_utc = order.ts,
     };
     log::warn("DEBUG order_update={}"sv, order_update);
@@ -375,6 +378,7 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
   }
 }
 
+// note! incremental
 void DropCopy::operator()(Trace<json::Fill> const &event) {
   auto &[trace_info, fill] = event;
   log::info<2>("fill={}"sv, fill);
@@ -394,7 +398,7 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
           .symbol = symbol,
           .side = map(side),
           .position_effect = map(trade_side),
-          .margin_mode = {},  // XXX from asset_info
+          .margin_mode = {},  // XXX FIXME TODO from asset_info[symbol]
           .quantity_type = {},
           .create_time_utc = exec_time,
           .update_time_utc = updated_time,
@@ -403,7 +407,7 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
           .client_order_id = client_oid,
           .fills = shared_.fills,
           .routing_id = {},
-          .update_type = UpdateType::INCREMENTAL,  // XXX from action ???
+          .update_type = map(fill.action),
           .sending_time_utc = fill.ts,
           .user = {},
           .strategy_id = {},
@@ -425,16 +429,34 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
       exec_time = {};
       updated_time = {};
     }
+    std::string_view fee_coin;
+    double fee = 0.0;
+    bool please_report = false;
+    for (auto &item_2 : item.fee_detail) {
+      if (!std::isnan(item_2.fee)) {
+        fee += item_2.fee;
+      }
+      if (!std::empty(item_2.fee_coin)) {
+        if (std::empty(fee_coin)) {
+          fee_coin = item_2.fee_coin;
+        } else if (item_2.fee_coin != fee_coin) {
+          log::warn(R"(fee_coin="{}"!="{}")"sv, item_2.fee_coin, fee_coin);
+        }
+      }
+    }
+    if (please_report) {
+      log::warn("*** PLEASE REPORT *** fill={}"sv, item);
+    }
     auto fill = Fill{
         .exchange_time_utc = item.exec_time,
         .external_trade_id = item.exec_id,
         .quantity = item.exec_qty,
         .price = item.exec_price,
         .liquidity = map(item.trade_scope),
-        .commission_amount = NaN,   // XXX TODO
-        .commission_currency = {},  // XXX TODO
-        .base_amount = NaN,
-        .quote_amount = NaN,
+        .commission_amount = fee,
+        .commission_currency = fee_coin,
+        .base_amount = NaN,   // XXX FIXME TODO
+        .quote_amount = NaN,  // XXX FIXME TODO
         .profit_loss_amount = NaN,
     };
     shared_.fills.emplace_back(std::move(fill));

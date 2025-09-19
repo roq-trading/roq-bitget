@@ -10,6 +10,7 @@
 #include "roq/core/json/buffer_stack.hpp"
 
 #include "roq/bitget/json/error.hpp"
+#include "roq/bitget/json/subscribe.hpp"
 
 #include "roq/bitget/json/books.hpp"
 #include "roq/bitget/json/public_trade.hpp"
@@ -29,6 +30,8 @@ namespace json {
 struct Parser final {
   struct Handler {
     virtual void operator()(Trace<json::Error> const &) = 0;
+    virtual void operator()(Trace<json::Subscribe> const &) = 0;
+    //
     virtual void operator()(Trace<json::Ticker> const &) = 0;
     virtual void operator()(Trace<json::PublicTrade> const &) = 0;
     virtual void operator()(Trace<json::Books> const &) = 0;

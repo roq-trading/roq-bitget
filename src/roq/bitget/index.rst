@@ -482,11 +482,8 @@ Streams
 Constraints
 -----------
 
-* There is no live update of trading status
+* There is no live update of reference data or trading status
 * Stop orders are not supported
 
 Comments
 --------
-
-* The post-only and reduce-only order types have not yet been implemented
-* Long/Short mode don't clear positions correctly

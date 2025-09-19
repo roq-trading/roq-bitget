@@ -188,10 +188,11 @@ uint32_t Rest::download(RestState state) {
 
 void Rest::get_instruments() {
   profile_.instruments([&]() {
+    auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto request = web::rest::Request{
         .method = web::http::Method::GET,
         .path = shared_.api.market_data.instruments,
-        .query = {},
+        .query = query,
         .accept = web::http::Accept::APPLICATION_JSON,
         .content_type = {},
         .headers = {},
@@ -249,6 +250,25 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
       symbols.emplace_back(item.symbol);
     }
     ++counter;
+    auto settlement_currency = [&]() -> std::string_view {
+      switch (item.category) {
+        using enum json::Category::type_t;
+        case UNDEFINED_INTERNAL:
+        case UNKNOWN_INTERNAL:
+          break;
+        case SPOT:
+          return item.quote_coin;  // ???
+        case MARGIN:
+          return item.quote_coin;  // ???
+        case USDT_FUTURES:
+          return item.base_coin;  // inverse ???
+        case USDC_FUTURES:
+          return item.quote_coin;  // linear ???
+        case COIN_FUTURES:
+          return item.quote_coin;  // linear ???
+      }
+      return {};
+    }();
     auto tick_size = std::pow(10.0, -static_cast<double>(item.price_precision));
     auto reference_data = ReferenceData{
         .stream_id = stream_id_,
@@ -259,14 +279,14 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
         .cfi_code = {},
         .base_currency = item.base_coin,
         .quote_currency = item.quote_coin,
-        .settlement_currency = {},  // XXX TODO how to detect linear vs inverse futures?
+        .settlement_currency = settlement_currency,
         .margin_currency = {},
         .commission_currency = {},
         .tick_size = tick_size,
         .tick_size_steps = {},
         .multiplier = item.quantity_multiplier,  // XXX ???
         .min_notional = NaN,
-        .min_trade_vol = item.min_order_qty,  // XXX min_order_amount
+        .min_trade_vol = item.min_order_qty,
         .max_trade_vol = item.max_order_qty,
         .trade_vol_step_size = NaN,
         .option_type = {},

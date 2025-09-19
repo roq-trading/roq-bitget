@@ -13,7 +13,9 @@
 #include "roq/side.hpp"
 #include "roq/time_in_force.hpp"
 #include "roq/trading_status.hpp"
+#include "roq/update_type.hpp"
 
+#include "roq/bitget/json/action.hpp"
 #include "roq/bitget/json/asset_mode.hpp"
 #include "roq/bitget/json/category.hpp"
 #include "roq/bitget/json/futures_type.hpp"
@@ -30,6 +32,10 @@
 namespace roq {
 
 // bitget::json => roq
+
+template <>
+template <>
+std::optional<UpdateType> Map<bitget::json::Action>::helper() const;
 
 template <>
 template <>

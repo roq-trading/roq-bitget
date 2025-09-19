@@ -73,6 +73,7 @@ set(AUTOGEN_SCHEMAS
     public_trade.json
     side.json
     stp_mode.json
+    subscribe.json
     symbol_status.json
     symbol_type.json
     ticker_data_item.json

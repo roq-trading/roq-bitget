@@ -90,6 +90,7 @@ MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_i
       profile_{
           .parse = create_metrics(shared.settings, name_, "parse"sv),
           .error = create_metrics(shared.settings, name_, "error"sv),
+          .subscribe = create_metrics(shared.settings, name_, "subscribe"sv),
           .ticker = create_metrics(shared.settings, name_, "ticker"sv),
           .public_trade = create_metrics(shared.settings, name_, "public_trade"sv),
           .books = create_metrics(shared.settings, name_, "books"sv),
@@ -126,6 +127,7 @@ void MarketData::operator()(metrics::Writer &writer) const {
       // profile
       .write(profile_.parse, metrics::Type::PROFILE)
       .write(profile_.error, metrics::Type::PROFILE)
+      .write(profile_.subscribe, metrics::Type::PROFILE)
       .write(profile_.ticker, metrics::Type::PROFILE)
       .write(profile_.public_trade, metrics::Type::PROFILE)
       .write(profile_.books, metrics::Type::PROFILE)
@@ -238,6 +240,13 @@ void MarketData::operator()(Trace<json::Error> const &event) {
   profile_.error([&]() {
     auto &[trace_info, error] = event;
     log::fatal("error={}"sv, error);
+  });
+}
+
+void MarketData::operator()(Trace<json::Subscribe> const &event) {
+  profile_.subscribe([&]() {
+    auto &[trace_info, subscribe] = event;
+    log::warn("DEBUG subscribe={}"sv, subscribe);
   });
 }
 

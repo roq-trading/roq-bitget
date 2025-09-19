@@ -55,6 +55,7 @@ TEST_CASE("simple", "[json_books]") {
   core::json::BufferStack buffer_stack{8192, 3};
   struct MyHandler : public json::Parser::Handler {
     void operator()(Trace<json::Error> const &) { FAIL(); }
+    void operator()(Trace<json::Subscribe> const &) { FAIL(); }
     void operator()(Trace<json::Ticker> const &) { FAIL(); }
     void operator()(Trace<json::PublicTrade> const &) { FAIL(); }
     void operator()(Trace<json::Books> const &event) {

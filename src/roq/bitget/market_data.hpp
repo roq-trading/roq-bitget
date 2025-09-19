@@ -73,6 +73,7 @@ class MarketData final : public web::socket::Client::Handler, public json::Parse
   void parse(std::string_view const &message);
 
   void operator()(Trace<json::Error> const &) override;
+  void operator()(Trace<json::Subscribe> const &) override;
 
   void operator()(Trace<json::Ticker> const &) override;
   void operator()(Trace<json::PublicTrade> const &) override;
@@ -99,7 +100,7 @@ class MarketData final : public web::socket::Client::Handler, public json::Parse
     utils::metrics::Counter disconnect;
   } counter_;
   struct {
-    utils::metrics::Profile parse, error, ticker, public_trade, books;
+    utils::metrics::Profile parse, error, subscribe, ticker, public_trade, books;
   } profile_;
   struct {
     utils::metrics::Latency ping;
