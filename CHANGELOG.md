@@ -4,6 +4,10 @@ All notable changes will be documented in this file.
 
 ## Head
 
+### Fixed
+
+* HTTP response with status code 503 (service unavailable) should map to `RequestStatus::REJECTED` (#522)
+
 ## 1.0.8 &ndash; 2025-08-16
 
 ## 1.0.7 &ndash; 2025-07-02
