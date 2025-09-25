@@ -14,20 +14,17 @@ CONFIG="${CONFIG:-$NAME}"
 
 CONFIG_FILE="$ROQ_CONFIG_PATH/roq-bitget/$CONFIG.toml"
 
-FLAG_FILE="../../../share/flags/prod/flags.cfg"
+FLAGFILE="../../../share/flags/prod/flags.cfg"
 
 API="MARGIN"
-
-MARGIN_COIN="USDT"
 
 $PREFIX ./roq-bitget \
   --name "$NAME" \
   --config_file "$CONFIG_FILE" \
-  --flagfile "$FLAG_FILE" \
-  --api "$API" \
+  --flagfile "$FLAGFILE" \
   --cache_dir "$HOME/var/lib/roq/cache" \
   --event_log_dir "$HOME/var/lib/roq/data" \
-  --event_log_symlink true \
   --client_listen_address "$HOME/run/$NAME.sock" \
   --service_listen_address "$HOME/run/metrics/${NAME}.sock" \
+  --api "$API" \
   $@
