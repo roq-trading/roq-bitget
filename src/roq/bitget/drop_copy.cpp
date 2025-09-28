@@ -233,7 +233,7 @@ void DropCopy::parse(std::string_view const &message) {
 
 void DropCopy::operator()(Trace<json::Error> const &event) {
   auto &[trace_info, error] = event;
-  log::fatal("event={{book_ticker={}, trace_info={}}}"sv, error, trace_info);
+  log::fatal("error={}"sv, error);
 }
 
 void DropCopy::operator()(Trace<json::Subscribe> const &event) {
