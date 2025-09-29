@@ -19,6 +19,8 @@ using namespace std::literals;
 namespace roq {
 namespace bitget {
 
+// === HELPERS ===
+
 namespace {
 template <typename R>
 R create_accounts(auto &config) {
@@ -48,6 +50,8 @@ R create_drop_copy(auto &gateway, auto &context, auto &stream_id, auto &accounts
   return result;
 }
 }  // namespace
+
+// === IMPLEMENTATION ===
 
 Gateway::Gateway(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context)
     : dispatcher_(dispatcher), master_account_(config.get_master_account()), accounts_(create_accounts<decltype(accounts_)>(config)), context_(context),
