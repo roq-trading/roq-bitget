@@ -91,6 +91,6 @@ TEST_CASE("simple", "[json_books]") {
     size_t count = 0;
   } handler;
   TraceInfo trace_info;
-  json::Parser::dispatch(handler, message, buffer_stack, trace_info);
+  json::Parser::dispatch(handler, message, buffer_stack, trace_info, false);
   CHECK(handler.count == 1);
 }
