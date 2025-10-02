@@ -1,6 +1,7 @@
 .. _roq-bitget:
 
 .. |checkmark| unicode:: U+2713
+.. |checkmark-2| unicode:: U+2021
 
 roq-bitget
 ==========
@@ -63,9 +64,9 @@ Supports
       :widths: auto
 
       * - Reference Data
-        - |checkmark|
+        - |checkmark-2|
       * - Market Status
-        - (|checkmark|)
+        - |checkmark-2|
       * - Top of Book
         - |checkmark|
       * - Market by Price
@@ -104,6 +105,8 @@ Supports
         - |checkmark|
       * - Funds
         - |checkmark|
+
+|checkmark-2| There are no live updates for reference data and market status.
 
 
 .. _roq-bitget-flags:
@@ -482,9 +485,26 @@ Streams
 Constraints
 -----------
 
-* There is no live update of reference data or trading status
 * Stop orders are not supported
 
 
 Comments
 --------
+
+
+References
+----------
+
+Common
+~~~~~~
+
+* :ref:`Using Conda <tutorial-conda>`
+* :ref:`Using Flags <abseil-cpp>`
+* :ref:`Gateway Flags <gateway-flags>`
+* :ref:`Gateway Config <gateway-config>`
+
+Exchange
+~~~~~~~~
+
+* `Website <https://www.bitget.com/>`__
+* `Documentation <https://www.bitget.com/api-doc/common/intro>`__
