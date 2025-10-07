@@ -1,3 +1,5 @@
+# config template for the roq-bitget gateway
+
 symbols = [
  "^BTCUSDT$",
  "^BTCPERP$",
@@ -7,8 +9,8 @@ symbols = [
 
   [accounts.A1]
   master = true
-  login = "YOUR_BITGET_FUTURES_API_KEY_GOES_HERE"
-  secret = "YOUR_BITGET_FUTURES_SECRET_GOES_HERE"
+  login = "YOUR_BITGET_API_KEY_GOES_HERE"
+  secret = "YOUR_BITGET_SECRET_GOES_HERE"
   symbols = [ ".*" ]
 
 [users]
