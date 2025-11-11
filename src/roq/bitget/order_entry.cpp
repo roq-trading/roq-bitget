@@ -821,7 +821,8 @@ void OrderEntry::place_order_ack(Trace<web::rest::Response> const &event, uint8_
   });
 }
 
-void OrderEntry::operator()(Trace<json::PlaceOrderAck> const &event, uint8_t user_id, uint64_t order_id, uint32_t version) {
+void OrderEntry::operator()(
+    Trace<json::PlaceOrderAck> const &event, [[maybe_unused]] uint8_t user_id, [[maybe_unused]] uint64_t order_id, [[maybe_unused]] uint32_t version) {
   auto &[trace_info, place_order_ack] = event;
   log::info<2>("place_order_ack={}"sv, place_order_ack);
   log::warn("DEBUG place_order_ack={}"sv, place_order_ack);
@@ -896,7 +897,8 @@ void OrderEntry::modify_order_ack(Trace<web::rest::Response> const &event, uint8
   });
 }
 
-void OrderEntry::operator()(Trace<json::ModifyOrderAck> const &event, uint8_t user_id, uint64_t order_id, uint32_t version) {
+void OrderEntry::operator()(
+    Trace<json::ModifyOrderAck> const &event, [[maybe_unused]] uint8_t user_id, [[maybe_unused]] uint64_t order_id, [[maybe_unused]] uint32_t version) {
   auto &[trace_info, modify_order_ack] = event;
   log::info<2>("modify_order_ack={}"sv, modify_order_ack);
   log::warn("DEBUG modify_order_ack={}"sv, modify_order_ack);
@@ -971,7 +973,8 @@ void OrderEntry::cancel_order_ack(Trace<web::rest::Response> const &event, uint8
   });
 }
 
-void OrderEntry::operator()(Trace<json::CancelOrderAck> const &event, uint8_t user_id, uint64_t order_id, uint32_t version) {
+void OrderEntry::operator()(
+    Trace<json::CancelOrderAck> const &event, [[maybe_unused]] uint8_t user_id, [[maybe_unused]] uint64_t order_id, [[maybe_unused]] uint32_t version) {
   auto &[trace_info, cancel_order_ack] = event;
   log::info<2>("cancel_order_ack={}"sv, cancel_order_ack);
   log::warn("DEBUG cancel_order_ack={}"sv, cancel_order_ack);
@@ -1048,7 +1051,7 @@ void OrderEntry::cancel_all_orders_ack(Trace<web::rest::Response> const &event, 
   });
 }
 
-void OrderEntry::operator()(Trace<json::CancelAllOrdersAck> const &event, uint8_t user_id) {
+void OrderEntry::operator()(Trace<json::CancelAllOrdersAck> const &event, [[maybe_unused]] uint8_t user_id) {
   auto &[trace_info, cancel_all_orders_ack] = event;
   log::info<2>("cancel_all_orders_ack={}"sv, cancel_all_orders_ack);
   log::warn("DEBUG cancel_all_orders_ack={}"sv, cancel_all_orders_ack);
