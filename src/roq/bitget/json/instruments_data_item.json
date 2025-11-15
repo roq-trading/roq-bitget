@@ -169,6 +169,10 @@
     {
       "name": "maxMarketOrderQty",
       "type": "std/string_view"
+    },
+    {
+      "name": "isRwa",
+      "type": "std/string_view"
     }
   ]
 }
