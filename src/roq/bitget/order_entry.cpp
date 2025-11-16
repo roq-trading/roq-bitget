@@ -591,6 +591,7 @@ void OrderEntry::operator()(Trace<json::OpenOrders> const &event) {
         .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
+        .leverage = NaN,
         .remaining_quantity = remaining_quantity,
         .traded_quantity = item.cum_exec_qty,
         .average_traded_price = item.avg_price,

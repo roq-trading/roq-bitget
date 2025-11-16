@@ -28,6 +28,7 @@ TEST_CASE("market", "[json_place_order]") {
       .quantity = 0.001,
       .price = NaN,
       .stop_price = NaN,
+      .leverage = NaN,
       .routing_id = {},
       .strategy_id = {},
   };
@@ -75,6 +76,7 @@ TEST_CASE("limit", "[json_place_order]") {
       .quantity = 0.001,
       .price = 32000.0,
       .stop_price = NaN,
+      .leverage = NaN,
       .routing_id = {},
       .strategy_id = {},
   };
@@ -124,6 +126,7 @@ TEST_CASE("limit_post_only", "[json_place_order]") {
       .quantity = 0.001,
       .price = 32000.0,
       .stop_price = NaN,
+      .leverage = NaN,
       .routing_id = {},
       .strategy_id = {},
   };
