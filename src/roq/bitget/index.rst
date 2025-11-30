@@ -182,7 +182,7 @@ Environments
 
    .. code-block:: shell
 
-      $ $CONDA_PREFIX/share/roq-bitget/flags/prod/flags.cfg
+      $ --flagfile $CONDA_PREFIX/share/roq-bitget/flags/prod/flags.cfg
 
    .. include:: flags/prod/flags.cfg
      :code: shell
@@ -193,7 +193,7 @@ Configuration
 
 .. code-block:: shell
 
-   $ $CONDA_PREFIX/share/roq-bitget/config.toml
+   $ --flagfile $CONDA_PREFIX/share/roq-bitget/config.toml
 
 .. important::
 
