@@ -1,0 +1,11 @@
+{
+  "name": "roq/bitget/json/CurrentPositionsAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "list",
+      "type": "roq/bitget/json/CurrentPositionsAckDataListItem",
+      "array": "std/span"
+    }
+  ]
+}

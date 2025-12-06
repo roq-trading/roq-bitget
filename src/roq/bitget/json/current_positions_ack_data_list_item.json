@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/PositionInfoDataListItem",
+  "name": "roq/bitget/json/CurrentPositionsAckDataListItem",
   "type": "dictionary",
   "values": [
     {

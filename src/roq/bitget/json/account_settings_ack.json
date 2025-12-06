@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/AccountInfo",
+  "name": "roq/bitget/json/AccountSettingsAck",
   "type": "dictionary",
   "values": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "name": "data",
-      "type": "roq/bitget/json/AccountInfoData"
+      "type": "roq/bitget/json/AccountSettingsAckData"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/PositionInfo",
+  "name": "roq/bitget/json/InstrumentsAck",
   "type": "dictionary",
   "values": [
     {
@@ -16,7 +16,8 @@
     },
     {
       "name": "data",
-      "type": "roq/bitget/json/PositionInfoData"
+      "type": "roq/bitget/json/InstrumentsAckDataItem",
+      "array": "std/span"
     }
   ]
 }

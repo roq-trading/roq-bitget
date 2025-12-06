@@ -139,6 +139,8 @@ void Rest::operator()(ConnectionStatus status) {
   }
 }
 
+// web::rest::Client::Handler
+
 void Rest::operator()(Trace<web::rest::Client::Connected> const &) {
   if (download_.downloading()) {
     download_.bump();
@@ -220,13 +222,13 @@ void Rest::get_instruments_ack(Trace<web::rest::Response> const &event, uint32_t
       if (download_.skip(sequence, state)) {
         log::info("Download state={} has already been processed"sv, state);
       } else {
-        json::Instruments instruments{body, decode_buffer_};
-        if (instruments.code == 0) {
-          Trace event{trace_info, instruments};
+        json::InstrumentsAck instruments_ack{body, decode_buffer_};
+        if (instruments_ack.code == 0) {
+          Trace event{trace_info, instruments_ack};
           (*this)(event);
           download_.check(state);
         } else {
-          handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, json::guess_error(instruments.code), instruments.msg);
+          handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, json::guess_error(instruments_ack.code), instruments_ack.msg);
         }
       }
     };
@@ -234,14 +236,14 @@ void Rest::get_instruments_ack(Trace<web::rest::Response> const &event, uint32_t
   });
 }
 
-void Rest::operator()(Trace<json::Instruments> const &event) {
-  auto &[trace_info, instruments] = event;
-  log::info<4>("instruments={}"sv, instruments);
+void Rest::operator()(Trace<json::InstrumentsAck> const &event) {
+  auto &[trace_info, instruments_ack] = event;
+  log::info<4>("instruments_ack={}"sv, instruments_ack);
   std::vector<Symbol> symbols;
-  symbols.reserve(std::size(instruments.data));
+  symbols.reserve(std::size(instruments_ack.data));
   size_t counter = 0;
-  for (size_t i = 0; i < std::size(instruments.data); ++i) {
-    auto &item = instruments.data[i];
+  for (size_t i = 0; i < std::size(instruments_ack.data); ++i) {
+    auto &item = instruments_ack.data[i];
     log::info<2>("item={}"sv, item);
     auto discard = shared_.discard_symbol(item.symbol);
     auto settlement_currency = [&]() -> std::string_view {
@@ -294,7 +296,7 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
         .expiry_datetime_utc = {},
         .exchange_time_utc = {},
         .exchange_sequence = {},
-        .sending_time_utc = instruments.request_time,
+        .sending_time_utc = instruments_ack.request_time,
         .discard = discard,
     };
     create_trace_and_dispatch(handler_, trace_info, reference_data, true);
@@ -309,7 +311,7 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
         .trading_status = map(item.status),
         .exchange_time_utc = {},
         .exchange_sequence = {},
-        .sending_time_utc = instruments.request_time,
+        .sending_time_utc = instruments_ack.request_time,
     };
     create_trace_and_dispatch(handler_, trace_info, market_status, true);
     if (all_symbols_.emplace(item.symbol).second) {  // only include new
@@ -324,7 +326,7 @@ void Rest::operator()(Trace<json::Instruments> const &event) {
     handler_(instruments_update);
   }
   if (counter > 0) [[unlikely]] {
-    log::info("Symbols {} / {}"sv, counter, std::size(instruments.data));
+    log::info("Symbols {} / {}"sv, counter, std::size(instruments_ack.data));
   }
 }
 

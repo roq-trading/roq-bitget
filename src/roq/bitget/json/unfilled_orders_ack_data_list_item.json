@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/OpenOrdersDataListItem",
+  "name": "roq/bitget/json/UnfilledOrdersAckDataListItem",
   "type": "dictionary",
   "values": [
     {
@@ -76,7 +76,7 @@
     },
     {
       "name": "feeDetail",
-      "type": "roq/bitget/json/OpenOrdersDataListItemFeeDetailItem",
+      "type": "roq/bitget/json/UnfilledOrdersAckDataListItemFeeDetailItem",
       "array": "std/span"
     },
     {

@@ -1,10 +1,10 @@
 {
-  "name": "roq/bitget/json/OpenOrdersData",
+  "name": "roq/bitget/json/UnfilledOrdersAckData",
   "type": "dictionary",
   "values": [
     {
       "name": "list",
-      "type": "roq/bitget/json/OpenOrdersDataListItem",
+      "type": "roq/bitget/json/UnfilledOrdersAckDataListItem",
       "array": "std/span"
     },
     {

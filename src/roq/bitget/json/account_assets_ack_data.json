@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/AccountAssetsData",
+  "name": "roq/bitget/json/AccountAssetsAckData",
   "type": "dictionary",
   "values": [
     {
@@ -48,7 +48,7 @@
     },
     {
       "name": "assets",
-      "type": "roq/bitget/json/AccountAssetsDataAssetsItem",
+      "type": "roq/bitget/json/AccountAssetsAckDataAssetsItem",
       "array": "std/span"
     }
   ]

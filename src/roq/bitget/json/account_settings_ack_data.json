@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/AccountInfoData",
+  "name": "roq/bitget/json/AccountSettingsAckData",
   "type": "dictionary",
   "values": [
     {
@@ -24,12 +24,12 @@
     },
     {
       "name": "symbolConfigList",
-      "type": "roq/bitget/json/AccountInfoDataSymbolConfigItem",
+      "type": "roq/bitget/json/AccountSettingsAckDataSymbolConfigItem",
       "array": "std/span"
     },
     {
       "name": "coinConfigList",
-      "type": "roq/bitget/json/AccountInfoDataCoinConfigItem",
+      "type": "roq/bitget/json/AccountSettingsAckDataCoinConfigItem",
       "array": "std/span"
     }
   ]

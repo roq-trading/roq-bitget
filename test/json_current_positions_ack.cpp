@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/position_info.hpp"
+#include "roq/bitget/json/current_positions_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,9 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-TEST_CASE("empty", "[json_position_info]") {
+using value_type = json::CurrentPositionsAck;
+
+TEST_CASE("empty", "[json_current_positions_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -23,12 +25,17 @@ TEST_CASE("empty", "[json_position_info]") {
                  R"("list":null)"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::PositionInfo obj{message, buffer};
-  REQUIRE(std::size(obj.data.list) == 0);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.list) == 0);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }
 
-TEST_CASE("simple", "[json_position_info]") {
+TEST_CASE("simple", "[json_current_positions_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -64,7 +71,12 @@ TEST_CASE("simple", "[json_position_info]") {
                  R"(])"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::PositionInfo obj{message, buffer};
-  REQUIRE(std::size(obj.data.list) == 1);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.list) == 1);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }

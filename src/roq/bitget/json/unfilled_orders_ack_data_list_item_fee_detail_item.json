@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/FillHistoryDataListItemFeeDetailItem",
+  "name": "roq/bitget/json/UnfilledOrdersAckDataListItemFeeDetailItem",
   "type": "dictionary",
   "values": [
     {

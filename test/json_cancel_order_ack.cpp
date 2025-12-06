@@ -14,6 +14,8 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
+using value_type = json::CancelOrderAck;
+
 TEST_CASE("simple", "[json_cancel_order_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
@@ -24,8 +26,13 @@ TEST_CASE("simple", "[json_cancel_order_ack]") {
                  R"("clientOid":"JQAClCOGZDQAAQAAAAAA")"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::CancelOrderAck obj{message, buffer};
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }
 
 TEST_CASE("order_does_not_exist", "[json_cancel_order_ack]") {
@@ -35,6 +42,11 @@ TEST_CASE("order_does_not_exist", "[json_cancel_order_ack]") {
                  R"("requestTime":1758192130006,)"
                  R"("data":null)"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::CancelOrderAck obj{message, buffer};
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 25204);
+    REQUIRE(obj.msg == "Order does not exist"sv);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }

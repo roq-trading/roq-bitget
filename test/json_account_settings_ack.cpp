@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/account_info.hpp"
+#include "roq/bitget/json/account_settings_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,9 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-TEST_CASE("simple", "[json_account_info]") {
+using value_type = json::AccountSettingsAck;
+
+TEST_CASE("simple", "[json_account_settings_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -35,8 +37,13 @@ TEST_CASE("simple", "[json_account_info]") {
                  R"("coinConfigList":[])"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 2};
-  json::AccountInfo obj{message, buffer};
-  REQUIRE(std::size(obj.data.symbol_config_list) == 1);
-  REQUIRE(std::size(obj.data.coin_config_list) == 0);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.symbol_config_list) == 1);
+    REQUIRE(std::size(obj.data.coin_config_list) == 0);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }

@@ -1,10 +1,10 @@
 {
-  "name": "roq/bitget/json/FillHistoryData",
+  "name": "roq/bitget/json/TradeFillsAckData",
   "type": "dictionary",
   "values": [
     {
       "name": "list",
-      "type": "roq/bitget/json/FillHistoryDataListItem",
+      "type": "roq/bitget/json/TradeFillsAckDataListItem",
       "array": "std/span"
     },
     {

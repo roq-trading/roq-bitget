@@ -3,19 +3,19 @@
   "type": "enum",
   "values": [
     {
-      "name": "account_info"
+      "name": "account_settings"
     },
     {
       "name": "account_assets"
     },
     {
-      "name": "position_info"
+      "name": "current_positions"
     },
     {
-      "name": "open_orders"
+      "name": "unfilled_orders"
     },
     {
-      "name": "fill_history"
+      "name": "trade_fills"
     },
     {
       "name": "done"

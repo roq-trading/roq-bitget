@@ -14,6 +14,8 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
+using value_type = json::PlaceOrderAck;
+
 TEST_CASE("simple", "[json_place_order_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
@@ -24,8 +26,13 @@ TEST_CASE("simple", "[json_place_order_ack]") {
                  R"("clientOid":"JQAClCOGZDQAAQAAAAAA")"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::PlaceOrderAck obj{message, buffer};
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }
 
 TEST_CASE("no_position_available_to_close", "[json_place_order_ack]") {
@@ -35,8 +42,13 @@ TEST_CASE("no_position_available_to_close", "[json_place_order_ack]") {
                  R"("requestTime":1758192088206,)"
                  R"("data":null)"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::PlaceOrderAck obj{message, buffer};
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 25227);
+    REQUIRE(obj.msg == "No position available to close"sv);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }
 
 TEST_CASE("less_than_the_minimum_amount", "[json_place_order_ack]") {
@@ -46,6 +58,11 @@ TEST_CASE("less_than_the_minimum_amount", "[json_place_order_ack]") {
                  R"("requestTime":1758192103376,)"
                  R"("data":null)"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::PlaceOrderAck obj{message, buffer};
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 45110);
+    REQUIRE(obj.msg == "less than the minimum amount 5 USDT"sv);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }

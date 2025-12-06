@@ -24,7 +24,7 @@
 #include "roq/bitget/rest_state.hpp"
 #include "roq/bitget/shared.hpp"
 
-#include "roq/bitget/json/instruments.hpp"
+#include "roq/bitget/json/instruments_ack.hpp"
 
 namespace roq {
 namespace bitget {
@@ -57,6 +57,8 @@ class Rest final : public web::rest::Client::Handler {
   void operator()(metrics::Writer &) const;
 
  protected:
+  // web::rest::Client::Handler
+
   void operator()(Trace<web::rest::Client::Connected> const &) override;
   void operator()(Trace<web::rest::Client::Disconnected> const &) override;
   void operator()(Trace<web::rest::Client::Latency> const &) override;
@@ -65,9 +67,13 @@ class Rest final : public web::rest::Client::Handler {
 
   uint32_t download(RestState);
 
+  // instruments
+
   void get_instruments();
   void get_instruments_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::Instruments> const &);
+  void operator()(Trace<json::InstrumentsAck> const &);
+
+  // helpers
 
   void process_response(web::rest::Response const &, auto error_handler, auto success_handler);
 

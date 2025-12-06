@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/InstrumentsDataItem",
+  "name": "roq/bitget/json/InstrumentsAckDataItem",
   "type": "dictionary",
   "values": [
     {

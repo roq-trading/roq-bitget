@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/fill_history.hpp"
+#include "roq/bitget/json/trade_fills_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,9 +14,11 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
+using value_type = json::TradeFillsAck;
+
 // TODO empty
 
-TEST_CASE("simple", "[json_fill_history]") {
+TEST_CASE("simple", "[json_trade_fills_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -71,7 +73,12 @@ TEST_CASE("simple", "[json_fill_history]") {
                  R"("cursor":"1351957615097393153")"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 2};
-  json::FillHistory obj{message, buffer};
-  REQUIRE(std::size(obj.data.list) == 2);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.list) == 2);
+  };
+  core::json::BufferStack buffers{8192, 2};
+  value_type obj{message, buffers};
+  helper(obj);
 }

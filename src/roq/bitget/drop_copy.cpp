@@ -268,7 +268,6 @@ void DropCopy::operator()(Trace<json::Login> const &event) {
 void DropCopy::operator()(Trace<json::Account> const &event) {
   auto &[trace_info, account] = event;
   log::info<2>("account={}"sv, account);
-  log::warn("DEBUG account={}"sv, account);
   for (auto &item : account.data) {
     for (auto &item_2 : item.coin) {
       auto funds_update = FundsUpdate{
@@ -285,7 +284,6 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
           .exchange_sequence = {},
           .sending_time_utc = account.ts,
       };
-      log::warn("DEBUG funds_update={}"sv, funds_update);
       create_trace_and_dispatch(handler_, trace_info, funds_update, true);
     }
   }
@@ -295,7 +293,6 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
 void DropCopy::operator()(Trace<json::Position> const &event) {
   auto &[trace_info, position] = event;
   log::info<2>("position={}"sv, position);
-  log::warn("DEBUG position={}"sv, position);
   for (auto &item : position.data) {
     auto long_quantity = [&]() -> double {
       if (item.pos_side == json::PosSide::LONG) {
@@ -323,7 +320,6 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
         .exchange_sequence = {},
         .sending_time_utc = position.ts,
     };
-    log::warn("DEBUG position_update={}"sv, position_update);
     create_trace_and_dispatch(handler_, trace_info, position_update, true);
   }
 }
@@ -332,7 +328,6 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
 void DropCopy::operator()(Trace<json::Order> const &event) {
   auto &[trace_info, order] = event;
   log::info<2>("order={}"sv, order);
-  log::warn("DEBUG order={}"sv, order);
   for (auto &item : order.data) {
     auto remaining_quantity = item.qty - item.cum_exec_qty;
     auto order_update = server::oms::OrderUpdate{
@@ -369,7 +364,6 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
         .update_type = map(order.action),
         .sending_time_utc = order.ts,
     };
-    log::warn("DEBUG order_update={}"sv, order_update);
     if (shared_.update_order(item.client_oid, stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {
           // no fills here
         })) {
@@ -383,7 +377,6 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
 void DropCopy::operator()(Trace<json::Fill> const &event) {
   auto &[trace_info, fill] = event;
   log::info<2>("fill={}"sv, fill);
-  log::warn("DEBUG fill={}"sv, fill);
   std::string_view symbol, order_id, client_oid;
   json::Side side = {};
   json::TradeSide trade_side = {};
@@ -414,7 +407,6 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
           .strategy_id = {},
       };
       create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE, client_oid);
-      log::warn("DEBUG trade_update={}"sv, trade_update);
       shared_.fills.clear();
     }
   };

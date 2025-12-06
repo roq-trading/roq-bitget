@@ -2,13 +2,14 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/bitget/json/books.hpp"
-#include "roq/bitget/json/parser.hpp"
+#include "parser_tester.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
 
 using namespace std::literals;
+
+using value_type = json::Books;
 
 TEST_CASE("simple", "[json_books]") {
   auto message = R"({)"
@@ -52,45 +53,28 @@ TEST_CASE("simple", "[json_books]") {
                  R"(],)"
                  R"("ts":1758111262300)"
                  R"(})";
-  core::json::BufferStack buffer_stack{8192, 3};
-  struct MyHandler : public json::Parser::Handler {
-    void operator()(Trace<json::Error> const &) { FAIL(); }
-    void operator()(Trace<json::Subscribe> const &) { FAIL(); }
-    void operator()(Trace<json::Ticker> const &) { FAIL(); }
-    void operator()(Trace<json::PublicTrade> const &) { FAIL(); }
-    void operator()(Trace<json::Books> const &event) {
-      ++count;
-      auto &[trace_info, books] = event;
-      CHECK(books.action == json::Action::UPDATE);
-      CHECK(books.arg.symbol == "ETHUSDT"sv);
-      REQUIRE(std::size(books.data) == 1);
-      auto &data = books.data[0];
-      auto &asks = data.asks;
-      REQUIRE(std::size(asks) == 12);
-      CHECK(asks[0].price == Catch::Approx{4488.46});
-      CHECK(asks[0].size == Catch::Approx{1.52});
-      CHECK(asks[11].price == Catch::Approx{4502.33});
-      CHECK(asks[11].size == Catch::Approx{91.72});
-      auto &bids = data.bids;
-      REQUIRE(std::size(bids) == 9);
-      CHECK(bids[0].price == Catch::Approx{4487.66});
-      CHECK(bids[0].size == Catch::Approx{34.16});
-      CHECK(bids[8].price == Catch::Approx{4474.89});
-      CHECK(bids[8].size == Catch::Approx{92.87});
-      CHECK(data.checksum == 1990051938);
-      CHECK(data.pseq == 1352182127478939650);
-      CHECK(data.seq == 1352182127898370048);
-      CHECK(data.ts == 1758111262297ms);
-      CHECK(books.ts == 1758111262300ms);
-    }
-    void operator()(Trace<json::Login> const &) { FAIL(); }
-    void operator()(Trace<json::Account> const &) { FAIL(); }
-    void operator()(Trace<json::Position> const &) { FAIL(); }
-    void operator()(Trace<json::Order> const &) { FAIL(); }
-    void operator()(Trace<json::Fill> const &) { FAIL(); }
-    size_t count = 0;
-  } handler;
-  TraceInfo trace_info;
-  json::Parser::dispatch(handler, message, buffer_stack, trace_info, false);
-  CHECK(handler.count == 1);
+  auto helper = [](value_type const &obj) {
+    CHECK(obj.action == json::Action::UPDATE);
+    CHECK(obj.arg.symbol == "ETHUSDT"sv);
+    REQUIRE(std::size(obj.data) == 1);
+    auto &data = obj.data[0];
+    auto &asks = data.asks;
+    REQUIRE(std::size(asks) == 12);
+    CHECK(asks[0].price == Catch::Approx{4488.46});
+    CHECK(asks[0].size == Catch::Approx{1.52});
+    CHECK(asks[11].price == Catch::Approx{4502.33});
+    CHECK(asks[11].size == Catch::Approx{91.72});
+    auto &bids = data.bids;
+    REQUIRE(std::size(bids) == 9);
+    CHECK(bids[0].price == Catch::Approx{4487.66});
+    CHECK(bids[0].size == Catch::Approx{34.16});
+    CHECK(bids[8].price == Catch::Approx{4474.89});
+    CHECK(bids[8].size == Catch::Approx{92.87});
+    CHECK(data.checksum == 1990051938);
+    CHECK(data.pseq == 1352182127478939650);
+    CHECK(data.seq == 1352182127898370048);
+    CHECK(data.ts == 1758111262297ms);
+    CHECK(obj.ts == 1758111262300ms);
+  };
+  ParserTester<value_type>::dispatch(helper, message, 8192, 3);
 }

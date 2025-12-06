@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/account_assets.hpp"
+#include "roq/bitget/json/account_assets_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,9 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-TEST_CASE("simple", "[json_account_assets]") {
+using value_type = json::AccountAssetsAck;
+
+TEST_CASE("simple", "[json_account_assets_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -58,7 +60,12 @@ TEST_CASE("simple", "[json_account_assets]") {
                  R"(])"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 2};
-  json::AccountAssets obj{message, buffer};
-  REQUIRE(std::size(obj.data.assets) == 3);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.assets) == 3);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }

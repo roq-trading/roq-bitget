@@ -2,14 +2,14 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/core/json/buffer_stack.hpp"
-
-#include "roq/bitget/json/public_trade.hpp"
+#include "parser_tester.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
 
 using namespace std::literals;
+
+using value_type = json::PublicTrade;
 
 TEST_CASE("simple", "[json_public_trade]") {
   auto message = R"({)"
@@ -30,6 +30,9 @@ TEST_CASE("simple", "[json_public_trade]") {
                  R"(],)"
                  R"("ts":1758111262141)"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  [[maybe_unused]] json::PublicTrade obj{message, buffer};
+  auto helper = [](value_type const &obj) {
+    CHECK(obj.action == json::Action::UPDATE);
+    REQUIRE(std::size(obj.data) == 1);
+  };
+  ParserTester<value_type>::dispatch(helper, message, 8192, 1);
 }

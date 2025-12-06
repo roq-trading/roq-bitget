@@ -4,15 +4,17 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/instruments.hpp"
+#include "roq/bitget/json/instruments_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
 
 using namespace std::literals;
 
+using value_type = json::InstrumentsAck;
+
 // note! reduced
-TEST_CASE("simple", "[json_instruments]") {
+TEST_CASE("simple", "[json_instruments_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -126,6 +128,12 @@ TEST_CASE("simple", "[json_instruments]") {
                  R"(])"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  [[maybe_unused]] json::Instruments obj{message, buffer};
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data) == 3);
+  };
+  core::json::BufferStack buffers{8192, 1};
+  value_type obj{message, buffers};
+  helper(obj);
 }

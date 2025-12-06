@@ -12,6 +12,9 @@
       "name": "limit_open"
     },
     {
+      "name": "limit_close"
+    },
+    {
       "name": "offline"
     },
     {

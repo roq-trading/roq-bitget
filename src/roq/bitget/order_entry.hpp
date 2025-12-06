@@ -24,11 +24,11 @@
 #include "roq/bitget/order_entry_state.hpp"
 #include "roq/bitget/shared.hpp"
 
-#include "roq/bitget/json/account_assets.hpp"
-#include "roq/bitget/json/account_info.hpp"
-#include "roq/bitget/json/fill_history.hpp"
-#include "roq/bitget/json/open_orders.hpp"
-#include "roq/bitget/json/position_info.hpp"
+#include "roq/bitget/json/account_assets_ack.hpp"
+#include "roq/bitget/json/account_settings_ack.hpp"
+#include "roq/bitget/json/current_positions_ack.hpp"
+#include "roq/bitget/json/trade_fills_ack.hpp"
+#include "roq/bitget/json/unfilled_orders_ack.hpp"
 
 #include "roq/bitget/json/cancel_all_orders_ack.hpp"
 #include "roq/bitget/json/cancel_order_ack.hpp"
@@ -67,6 +67,8 @@ class OrderEntry final : public web::rest::Client::Handler {
   uint16_t operator()(Event<CancelAllOrders> const &, std::string_view const &request_id);
 
  protected:
+  // web::rest::Client::Handler
+
   void operator()(Trace<web::rest::Client::Connected> const &) override;
   void operator()(Trace<web::rest::Client::Disconnected> const &) override;
   void operator()(Trace<web::rest::Client::Latency> const &) override;
@@ -75,52 +77,62 @@ class OrderEntry final : public web::rest::Client::Handler {
 
   uint32_t download(OrderEntryState state);
 
-  // account_info
-  void get_account_info();
-  void get_account_info_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::AccountInfo> const &);
+  // account-settings
 
-  // account_assets
+  void get_account_settings();
+  void get_account_settings_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::AccountSettingsAck> const &);
+
+  // account-assets
+
   void get_account_assets();
   void get_account_assets_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::AccountAssets> const &);
+  void operator()(Trace<json::AccountAssetsAck> const &);
 
-  // position_info
-  void get_position_info();
-  void get_position_info_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::PositionInfo> const &);
+  // current-positions
 
-  // open_orders
-  void get_open_orders();
-  void get_open_orders_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::OpenOrders> const &);
+  void get_current_positions();
+  void get_current_positions_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::CurrentPositionsAck> const &);
 
-  // fill_history
-  void get_fill_history();
-  void get_fill_history_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::FillHistory> const &);
+  // unfilled-orders
 
-  // place_order
+  void get_unfilled_orders();
+  void get_unfilled_orders_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::UnfilledOrdersAck> const &);
+
+  // trade-fills
+
+  void get_trade_fills();
+  void get_trade_fills_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void operator()(Trace<json::TradeFillsAck> const &);
+
+  // place-order
+
   void place_order(Event<CreateOrder> const &, server::oms::Order const &, std::string_view const &request_id);
   void place_order_ack(Trace<web::rest::Response> const &, uint8_t user_id, uint64_t order_id, uint32_t version);
   void operator()(Trace<json::PlaceOrderAck> const &, uint8_t user_id, uint64_t order_id, uint32_t version);
 
-  // modify_order
+  // modify-order
+
   void modify_order(Event<ModifyOrder> const &, server::oms::Order const &, std::string_view const &request_id, std::string_view const &previous_request_id);
   void modify_order_ack(Trace<web::rest::Response> const &, uint8_t user_id, uint64_t order_id, uint32_t version);
   void operator()(Trace<json::ModifyOrderAck> const &, uint8_t user_id, uint64_t order_id, uint32_t version);
 
-  // cancel_order
+  // cancel-order
+
   void cancel_order(Event<CancelOrder> const &, server::oms::Order const &, std::string_view const &request_id, std::string_view const &previous_request_id);
   void cancel_order_ack(Trace<web::rest::Response> const &, uint8_t user_id, uint64_t order_id, uint32_t version);
   void operator()(Trace<json::CancelOrderAck> const &, uint8_t user_id, uint64_t order_id, uint32_t version);
 
-  // cancel_all_orders
+  // cancel-all-orders
+
   void cancel_all_orders(Event<CancelAllOrders> const &, std::string_view const &request_id);
   void cancel_all_orders_ack(Trace<web::rest::Response> const &, uint8_t user_id);
   void operator()(Trace<json::CancelAllOrdersAck> const &, uint8_t user_id);
 
-  // countdown_cancel_all
+  // countdown-cancel-all
+
   void countdown_cancel_all();
   void countdown_cancel_all_ack(Trace<web::rest::Response> const &);
   // void operator()(Trace<json::CancelAllOrdersAck> const &, uint8_t user_id);
@@ -148,15 +160,15 @@ class OrderEntry final : public web::rest::Client::Handler {
     utils::metrics::Counter disconnect;
   } counter_;
   struct {
-    utils::metrics::Profile account_info, account_info_ack,  //
-        account_assets, account_assets_ack,                  //
-        position_info, position_info_ack,                    //
-        open_orders, open_orders_ack,                        //
-        fill_history, fill_history_ack,                      //
-        place_order, place_order_ack,                        //
-        modify_order, modify_order_ack,                      //
-        cancel_order, cancel_order_ack,                      //
-        cancel_all_orders, cancel_all_orders_ack,            //
+    utils::metrics::Profile account_settings, account_settings_ack,  //
+        account_assets, account_assets_ack,                          //
+        current_positions, current_positions_ack,                    //
+        unfilled_orders, unfilled_orders_ack,                        //
+        trade_fills, trade_fills_ack,                                //
+        place_order, place_order_ack,                                //
+        modify_order, modify_order_ack,                              //
+        cancel_order, cancel_order_ack,                              //
+        cancel_all_orders, cancel_all_orders_ack,                    //
         countdown_cancel_all, countdown_cancel_all_ack;
   } profile_;
   struct {

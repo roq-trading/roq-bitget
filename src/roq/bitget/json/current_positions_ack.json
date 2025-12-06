@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/OpenOrders",
+  "name": "roq/bitget/json/CurrentPositionsAck",
   "type": "dictionary",
   "values": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "name": "data",
-      "type": "roq/bitget/json/OpenOrdersData"
+      "type": "roq/bitget/json/CurrentPositionsAckData"
     }
   ]
 }

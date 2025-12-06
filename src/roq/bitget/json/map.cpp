@@ -529,6 +529,8 @@ constexpr Helper<bitget::json::TradingStatus>::operator std::optional<roq::Tradi
       return roq::TradingStatus::OPEN;
     case LIMIT_OPEN:
       return roq::TradingStatus::PRE_OPEN;
+    case LIMIT_CLOSE:
+      return roq::TradingStatus::CLOSE;
     case OFFLINE:
       return roq::TradingStatus::CLOSE;
     case RESTRICTED_API:
@@ -541,6 +543,7 @@ static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::UN
 static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::LISTED}} == roq::TradingStatus::UNDEFINED);
 static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::ONLINE}} == roq::TradingStatus::OPEN);
 static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::LIMIT_OPEN}} == roq::TradingStatus::PRE_OPEN);
+static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::LIMIT_CLOSE}} == roq::TradingStatus::CLOSE);
 static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::OFFLINE}} == roq::TradingStatus::CLOSE);
 static_assert(Helper{bitget::json::TradingStatus{bitget::json::TradingStatus::RESTRICTED_API}} == roq::TradingStatus::HALT);
 

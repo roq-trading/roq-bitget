@@ -2,9 +2,7 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/core/json/buffer_stack.hpp"
-
-#include "roq/bitget/json/position.hpp"
+#include "parser_tester.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -13,6 +11,8 @@ using namespace std::literals;
 using namespace std::chrono_literals;
 
 using namespace Catch::literals;
+
+using value_type = json::Position;
 
 TEST_CASE("snapshot", "[json_position]") {
   auto message = R"({)"
@@ -50,7 +50,9 @@ TEST_CASE("snapshot", "[json_position]") {
                  R"(],)"
                  R"("ts":1758186381497)"
                  R"(})";
-  core::json::BufferStack buffer{8192, 1};
-  json::Position obj{message, buffer};
-  REQUIRE(std::size(obj.data) == 1);
+  auto helper = [](value_type const &obj) {
+    CHECK(obj.action == json::Action::SNAPSHOT);
+    REQUIRE(std::size(obj.data) == 1);
+  };
+  ParserTester<value_type>::dispatch(helper, message, 8192, 1);
 }

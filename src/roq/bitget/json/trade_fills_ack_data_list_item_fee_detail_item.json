@@ -1,13 +1,13 @@
 {
-  "name": "roq/bitget/json/AccountInfoDataCoinConfigItem",
+  "name": "roq/bitget/json/TradeFillsAckDataListItemFeeDetailItem",
   "type": "dictionary",
   "values": [
     {
-      "name": "coin",
+      "name": "feeCoin",
       "type": "std/string_view"
     },
     {
-      "name": "leverage",
+      "name": "fee",
       "type": "std/double"
     }
   ]

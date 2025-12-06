@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/open_orders.hpp"
+#include "roq/bitget/json/unfilled_orders_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,9 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-TEST_CASE("empty", "[json_open_orders]") {
+using value_type = json::UnfilledOrdersAck;
+
+TEST_CASE("empty", "[json_unfilled_orders_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -24,12 +26,17 @@ TEST_CASE("empty", "[json_open_orders]") {
                  R"("cursor":null)"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 2};
-  json::OpenOrders obj{message, buffer};
-  REQUIRE(std::size(obj.data.list) == 0);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.list) == 0);
+  };
+  core::json::BufferStack buffers{8192, 2};
+  value_type obj{message, buffers};
+  helper(obj);
 }
 
-TEST_CASE("working", "[json_open_orders]") {
+TEST_CASE("working", "[json_unfilled_orders_ack]") {
   auto message = R"({)"
                  R"("code":"00000",)"
                  R"("msg":"success",)"
@@ -74,7 +81,12 @@ TEST_CASE("working", "[json_open_orders]") {
                  R"("cursor":"1352466809719251013")"
                  R"(})"
                  R"(})";
-  core::json::BufferStack buffer{8192, 2};
-  json::OpenOrders obj{message, buffer};
-  REQUIRE(std::size(obj.data.list) == 1);
+  auto helper = [&](value_type &obj) {
+    REQUIRE(obj.code == 0);
+    REQUIRE(obj.msg == "success"sv);
+    REQUIRE(std::size(obj.data.list) == 1);
+  };
+  core::json::BufferStack buffers{8192, 2};
+  value_type obj{message, buffers};
+  helper(obj);
 }

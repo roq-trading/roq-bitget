@@ -1,5 +1,5 @@
 {
-  "name": "roq/bitget/json/FillHistoryDataListItem",
+  "name": "roq/bitget/json/TradeFillsAckDataListItem",
   "type": "dictionary",
   "values": [
     {
@@ -44,7 +44,7 @@
     },
     {
       "name": "feeDetail",
-      "type": "roq/bitget/json/FillHistoryDataListItemFeeDetailItem",
+      "type": "roq/bitget/json/TradeFillsAckDataListItemFeeDetailItem",
       "array": "std/span"
     },
     {
