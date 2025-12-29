@@ -10,6 +10,7 @@ symbols = [
   [accounts.A1]
   master = true
   login = "YOUR_BITGET_API_KEY_GOES_HERE"
+  password = "YOUR_BITGET_PASSPHRASE_GOES_HERE"
   secret = "YOUR_BITGET_SECRET_GOES_HERE"
   symbols = [ ".*" ]
 
