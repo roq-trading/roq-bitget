@@ -17,7 +17,7 @@ TEST_CASE("param", "[json_error]") {
                  R"("id":"IQAC76UdfkwAAQAAAAAA",)"
                  R"("code":"41101",)"
                  R"("msg":"Param category=USDT-FUTURES error")"
-                 R"(})";
+                 R"(})"sv;
   auto helper = [](value_type const &obj) {
     CHECK(obj.id == "IQAC76UdfkwAAQAAAAAA"sv);
     CHECK(obj.code == 41101);
