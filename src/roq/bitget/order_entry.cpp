@@ -37,6 +37,11 @@ auto const SUPPORTS = Mask{
     SupportType::POSITION,
 };
 
+auto const SUPPORTS_WS_API = Mask{
+    SupportType::FUNDS,
+    SupportType::POSITION,
+};
+
 size_t const MAX_DECODE_BUFFER_DEPTH = 2;
 }  // namespace
 
@@ -84,9 +89,9 @@ struct create_metrics final : public utils::metrics::Factory {
 
 // === IMPLEMENTATION ===
 
-OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared)
-    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)}, connection_{create_connection(*this, shared.settings, context)},
-      decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
+OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, bool master)
+    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)}, master_{master},
+      connection_{create_connection(*this, shared.settings, context)}, decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
       },
@@ -224,7 +229,7 @@ void OrderEntry::operator()(ConnectionStatus status) {
     auto stream_status = StreamStatus{
         .stream_id = stream_id_,
         .account = account_.name,
-        .supports = SUPPORTS,
+        .supports = shared_.settings.ws_api ? SUPPORTS_WS_API : SUPPORTS,
         .transport = Transport::TCP,
         .protocol = Protocol::HTTP,
         .encoding = {Encoding::JSON},
