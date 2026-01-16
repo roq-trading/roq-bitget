@@ -39,6 +39,9 @@ struct ParserTester final : public json::Parser::Handler {
   void operator()(Trace<json::Position> const &event) override { dispatch_helper(event); }
   void operator()(Trace<json::Order> const &event) override { dispatch_helper(event); }
   void operator()(Trace<json::Fill> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<json::PlaceOrder> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<json::ModifyOrder> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<json::CancelOrder> const &event) override { dispatch_helper(event); }
 
   template <typename U>
   void dispatch_helper(Trace<U> const &event) {

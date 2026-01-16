@@ -554,5 +554,68 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
   dispatch();
 }
 
+void DropCopy::operator()(Trace<json::PlaceOrder> const &event) {
+  auto &[trace_info, place_order] = event;
+  log::warn("DEBUG place_order={}"sv, place_order);
+  auto [request_type, request_id] = json::Encoder::parse_id(place_order.id);
+  for (auto &item : place_order.args) {
+    auto response = server::oms::Response{
+        .request_type = RequestType::CREATE_ORDER,
+        .origin = Origin::EXCHANGE,
+        .request_status = RequestStatus::ACCEPTED,
+        .error = json::guess_error(place_order.code),
+        .text = place_order.msg,
+        .version = {},
+        .request_id = request_id,
+        .external_order_id = item.order_id,
+        .quantity = NaN,
+        .price = NaN,
+    };
+    shared_.update_order(item.client_oid, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+  }
+}
+
+void DropCopy::operator()(Trace<json::ModifyOrder> const &event) {
+  auto &[trace_info, modify_order] = event;
+  log::warn("DEBUG modify_order={}"sv, modify_order);
+  auto [request_type, request_id] = json::Encoder::parse_id(modify_order.id);
+  for (auto &item : modify_order.args) {
+    auto response = server::oms::Response{
+        .request_type = RequestType::MODIFY_ORDER,
+        .origin = Origin::EXCHANGE,
+        .request_status = RequestStatus::ACCEPTED,
+        .error = json::guess_error(modify_order.code),
+        .text = modify_order.msg,
+        .version = {},
+        .request_id = request_id,
+        .external_order_id = item.order_id,
+        .quantity = NaN,
+        .price = NaN,
+    };
+    shared_.update_order(item.client_oid, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+  }
+}
+
+void DropCopy::operator()(Trace<json::CancelOrder> const &event) {
+  auto &[trace_info, cancel_order] = event;
+  log::warn("DEBUG cancel_order={}"sv, cancel_order);
+  auto [request_type, request_id] = json::Encoder::parse_id(cancel_order.id);
+  for (auto &item : cancel_order.args) {
+    auto response = server::oms::Response{
+        .request_type = RequestType::CANCEL_ORDER,
+        .origin = Origin::EXCHANGE,
+        .request_status = RequestStatus::ACCEPTED,
+        .error = json::guess_error(cancel_order.code),
+        .text = cancel_order.msg,
+        .version = {},
+        .request_id = request_id,
+        .external_order_id = item.order_id,
+        .quantity = NaN,
+        .price = NaN,
+    };
+    shared_.update_order(item.client_oid, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+  }
+}
+
 }  // namespace bitget
 }  // namespace roq

@@ -454,5 +454,17 @@ void MarketData::operator()(Trace<json::Fill> const &) {
   log::fatal("Unexpected"sv);
 }
 
+void MarketData::operator()(Trace<json::PlaceOrder> const &) {
+  log::fatal("Unexpected"sv);
+}
+
+void MarketData::operator()(Trace<json::ModifyOrder> const &) {
+  log::fatal("Unexpected"sv);
+}
+
+void MarketData::operator()(Trace<json::CancelOrder> const &) {
+  log::fatal("Unexpected"sv);
+}
+
 }  // namespace bitget
 }  // namespace roq

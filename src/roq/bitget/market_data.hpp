@@ -56,6 +56,8 @@ class MarketData final : public web::socket::Client::Handler, public json::Parse
   void subscribe(size_t start_from = 0);
 
  protected:
+  // web::socket::Client::Handler
+
   void operator()(web::socket::Client::Connected const &) override;
   void operator()(web::socket::Client::Disconnected const &) override;
   void operator()(web::socket::Client::Ready const &) override;
@@ -72,6 +74,8 @@ class MarketData final : public web::socket::Client::Handler, public json::Parse
 
   void parse(std::string_view const &message);
 
+  // json::Parser::Handler
+
   void operator()(Trace<json::Error> const &) override;
   void operator()(Trace<json::Subscribe> const &) override;
 
@@ -84,6 +88,10 @@ class MarketData final : public web::socket::Client::Handler, public json::Parse
   void operator()(Trace<json::Position> const &) override;
   void operator()(Trace<json::Order> const &) override;
   void operator()(Trace<json::Fill> const &) override;
+
+  void operator()(Trace<json::PlaceOrder> const &) override;
+  void operator()(Trace<json::ModifyOrder> const &) override;
+  void operator()(Trace<json::CancelOrder> const &) override;
 
  private:
   Handler &handler_;

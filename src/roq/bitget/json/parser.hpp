@@ -23,6 +23,10 @@
 #include "roq/bitget/json/order.hpp"
 #include "roq/bitget/json/position.hpp"
 
+#include "roq/bitget/json/cancel_order.hpp"
+#include "roq/bitget/json/modify_order.hpp"
+#include "roq/bitget/json/place_order.hpp"
+
 namespace roq {
 namespace bitget {
 namespace json {
@@ -41,6 +45,10 @@ struct Parser final {
     virtual void operator()(Trace<json::Position> const &) = 0;
     virtual void operator()(Trace<json::Order> const &) = 0;
     virtual void operator()(Trace<json::Fill> const &) = 0;
+    //
+    virtual void operator()(Trace<json::PlaceOrder> const &) = 0;
+    virtual void operator()(Trace<json::ModifyOrder> const &) = 0;
+    virtual void operator()(Trace<json::CancelOrder> const &) = 0;
   };
 
   static bool dispatch(Handler &, std::string_view const &message, core::json::BufferStack &, TraceInfo const &, bool allow_unknown_event_types);

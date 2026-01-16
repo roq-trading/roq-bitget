@@ -57,6 +57,25 @@ bool Parser::dispatch(
     case LOGIN:
       dispatch_helper<Login>(handler, message, buffer_stack, trace_info);
       return true;
+    case TRADE:
+      switch (message_2.topic) {
+        using enum WSAPITopic::type_t;
+        case UNDEFINED_INTERNAL:
+          break;
+        case UNKNOWN_INTERNAL:
+          return false;  // unexpected
+        case PLACE_ORDER:
+          dispatch_helper<PlaceOrder>(handler, message, buffer_stack, trace_info);
+          return true;
+        case MODIFY_ORDER:
+          dispatch_helper<ModifyOrder>(handler, message, buffer_stack, trace_info);
+          return true;
+        case CANCEL_ORDER:
+          dispatch_helper<CancelOrder>(handler, message, buffer_stack, trace_info);
+          return true;
+      }
+      // => topic
+      break;
   }
   switch (message_2.arg.topic) {
     using enum Topic::type_t;

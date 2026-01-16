@@ -79,6 +79,10 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
   void operator()(Trace<json::Order> const &) override;
   void operator()(Trace<json::Fill> const &) override;
 
+  void operator()(Trace<json::PlaceOrder> const &) override;
+  void operator()(Trace<json::ModifyOrder> const &) override;
+  void operator()(Trace<json::CancelOrder> const &) override;
+
  private:
   void operator()(ConnectionStatus);
 

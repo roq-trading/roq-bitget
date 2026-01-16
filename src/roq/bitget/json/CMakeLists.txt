@@ -27,6 +27,8 @@ set(AUTOGEN_SCHEMAS
     cancel_all_orders_ack.json
     cancel_order_ack_data.json
     cancel_order_ack.json
+    cancel_order_args.json
+    cancel_order.json
     category.json
     category_ws.json
     current_positions_ack_data.json
@@ -48,6 +50,8 @@ set(AUTOGEN_SCHEMAS
     message.json
     modify_order_ack_data.json
     modify_order_ack.json
+    modify_order_args.json
+    modify_order.json
     order_data_item_fee_detail_item.json
     order_data_item.json
     order.json
@@ -56,6 +60,8 @@ set(AUTOGEN_SCHEMAS
     order_type.json
     place_order_ack_data.json
     place_order_ack.json
+    place_order_args.json
+    place_order.json
     position_data_item.json
     position.json
     position_status.json
@@ -82,7 +88,8 @@ set(AUTOGEN_SCHEMAS
     unfilled_orders_ack_data.json
     unfilled_orders_ack_data_list_item_fee_detail_item.json
     unfilled_orders_ack_data_list_item.json
-    unfilled_orders_ack.json)
+    unfilled_orders_ack.json
+    wsapi_topic.json)
 
 roq_autogen_hpp(
   OUTPUT

@@ -41,6 +41,17 @@
     {
       "name": "id",
       "type": "std/string_view"
+    },
+    {
+      "name": "category",
+      "type": "std/string_view"
+    },
+    {
+      "name": "topic",
+      "type": "roq/bitget/json/WSAPITopic"
+    },
+    {
+      "name": "args"
     }
   ]
 }

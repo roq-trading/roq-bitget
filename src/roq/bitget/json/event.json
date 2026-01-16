@@ -10,6 +10,9 @@
     },
     {
       "name": "login"
+    },
+    {
+      "name": "trade"
     }
   ]
 }

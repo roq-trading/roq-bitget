@@ -22,6 +22,8 @@ cancel_all_orders_ack_data_list_item.hpp
 cancel_all_orders_ack.hpp
 cancel_order_ack_data.hpp
 cancel_order_ack.hpp
+cancel_order_args.hpp
+cancel_order.hpp
 category.hpp
 category_ws.hpp
 current_positions_ack_data.hpp
@@ -43,6 +45,8 @@ margin_mode.hpp
 message.hpp
 modify_order_ack_data.hpp
 modify_order_ack.hpp
+modify_order_args.hpp
+modify_order.hpp
 order_data_item_fee_detail_item.hpp
 order_data_item.hpp
 order.hpp
@@ -51,6 +55,8 @@ order_status.hpp
 order_type.hpp
 place_order_ack_data.hpp
 place_order_ack.hpp
+place_order_args.hpp
+place_order.hpp
 position_data_item.hpp
 position.hpp
 position_status.hpp
@@ -78,6 +84,7 @@ unfilled_orders_ack_data.hpp
 unfilled_orders_ack_data_list_item_fee_detail_item.hpp
 unfilled_orders_ack_data_list_item.hpp
 unfilled_orders_ack.hpp
+wsapi_topic.hpp
 account_assets_ack_data_assets_item.cpp
 account_assets_ack_data.cpp
 account_assets_ack.cpp
@@ -100,6 +107,8 @@ cancel_all_orders_ack_data_list_item.cpp
 cancel_all_orders_ack.cpp
 cancel_order_ack_data.cpp
 cancel_order_ack.cpp
+cancel_order_args.cpp
+cancel_order.cpp
 category.cpp
 category_ws.cpp
 current_positions_ack_data.cpp
@@ -121,6 +130,8 @@ margin_mode.cpp
 message.cpp
 modify_order_ack_data.cpp
 modify_order_ack.cpp
+modify_order_args.cpp
+modify_order.cpp
 order_data_item_fee_detail_item.cpp
 order_data_item.cpp
 order.cpp
@@ -129,6 +140,8 @@ order_status.cpp
 order_type.cpp
 place_order_ack_data.cpp
 place_order_ack.cpp
+place_order_args.cpp
+place_order.cpp
 position_data_item.cpp
 position.cpp
 position_status.cpp
@@ -156,3 +169,4 @@ unfilled_orders_ack_data.cpp
 unfilled_orders_ack_data_list_item_fee_detail_item.cpp
 unfilled_orders_ack_data_list_item.cpp
 unfilled_orders_ack.cpp
+wsapi_topic.cpp

@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/json/WSAPITopic",
+  "type": "enum",
+  "values": [
+    {
+      "name": "place-order"
+    },
+    {
+      "name": "modify-order"
+    },
+    {
+      "name": "cancel-order"
+    }
+  ]
+}
