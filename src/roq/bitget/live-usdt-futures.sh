@@ -18,7 +18,7 @@ FLAGFILE="../../../share/flags/prod/flags.cfg"
 
 API="USDT-FUTURES"
 
-WS_API=false
+WS_API=true
 
 $PREFIX ./roq-bitget \
   --name "$NAME" \
