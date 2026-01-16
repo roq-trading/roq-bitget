@@ -78,6 +78,7 @@ class Gateway final : public server::Handler, public Rest::Handler, public Order
   static void dispatch_helper(auto &self, Args &&...);
 
   OrderEntry &get_order_entry(std::string_view const &account);
+  DropCopy &get_drop_copy(std::string_view const &account);
 
  private:
   server::Dispatcher &dispatcher_;

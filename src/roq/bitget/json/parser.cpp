@@ -47,15 +47,9 @@ bool Parser::dispatch(
         return false;
       }
       break;
-    case ERROR: {
-      auto error = Error{
-          .event = message_2.event,
-          .code = message_2.code,
-          .msg = message_2.msg,
-      };
-      create_trace_and_dispatch(handler, trace_info, error);
+    case ERROR:
+      dispatch_helper<Error>(handler, message, buffer_stack, trace_info);
       return true;
-    }
     case SUBSCRIBE: {
       dispatch_helper<Subscribe>(handler, message, buffer_stack, trace_info);
       return true;

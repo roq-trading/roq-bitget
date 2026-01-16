@@ -10,7 +10,7 @@ namespace roq {
 namespace bitget {
 namespace json {
 
-Error guess_error(int code) {
+roq::Error guess_error(int32_t code) {
   switch (code) {
     case 429:  // Too Many Requests
       return Error::REQUEST_RATE_LIMIT_REACHED;

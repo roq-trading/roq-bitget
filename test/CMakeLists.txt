@@ -11,6 +11,7 @@ set(SOURCES
     json_cancel_order_ack.cpp
     json_current_positions_ack.cpp
     json_encoder.cpp
+    json_error.cpp
     json_fill.cpp
     json_instruments_ack.cpp
     json_message.cpp

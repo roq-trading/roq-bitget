@@ -49,7 +49,13 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
 
   void operator()(metrics::Writer &) const;
 
+  uint16_t operator()(Event<CreateOrder> const &, server::oms::Order const &, std::string_view const &request_id);
+  uint16_t operator()(Event<ModifyOrder> const &, server::oms::Order const &, std::string_view const &request_id, std::string_view const &previous_request_id);
+  uint16_t operator()(Event<CancelOrder> const &, server::oms::Order const &, std::string_view const &request_id, std::string_view const &previous_request_id);
+
  protected:
+  // web::socket::Client::Handler
+
   void operator()(web::socket::Client::Connected const &) override;
   void operator()(web::socket::Client::Disconnected const &) override;
   void operator()(web::socket::Client::Ready const &) override;
@@ -57,6 +63,8 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
   void operator()(web::socket::Client::Latency const &) override;
   void operator()(web::socket::Client::Text const &) override;
   void operator()(web::socket::Client::Binary const &) override;
+
+  // json::Parser::Handler
 
   void operator()(Trace<json::Error> const &) override;
   void operator()(Trace<json::Subscribe> const &) override;
@@ -91,12 +99,14 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
   std::unique_ptr<web::socket::Client> connection_;
   // buffers
   core::json::BufferStack decode_buffer_;
+  std::string encode_buffer_;
   // metrics
   struct {
     utils::metrics::Counter disconnect;
   } counter_;
   struct {
-    utils::metrics::Profile parse;
+    utils::metrics::Profile parse,  //
+        place_order, modify_order, cancel_order;
   } profile_;
   struct {
     utils::metrics::Latency ping, heartbeat;

@@ -10,6 +10,9 @@
 
 #include "roq/utils/metrics/factory.hpp"
 
+#include "roq/server/oms/exceptions.hpp"
+
+#include "roq/bitget/json/encoder.hpp"
 #include "roq/bitget/json/map.hpp"
 #include "roq/bitget/json/utils.hpp"
 
@@ -24,6 +27,17 @@ namespace {
 auto const NAME = "ex"sv;
 
 auto const SUPPORTS = Mask{
+    SupportType::ORDER,
+    SupportType::TRADE,
+    SupportType::FUNDS,
+    SupportType::POSITION,
+};
+
+auto const SUPPORTS_WS_API = Mask{
+    SupportType::CREATE_ORDER,
+    SupportType::MODIFY_ORDER,
+    SupportType::CANCEL_ORDER,
+    SupportType::ORDER_ACK,
     SupportType::ORDER,
     SupportType::TRADE,
     SupportType::FUNDS,
@@ -83,6 +97,9 @@ DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, A
       },
       profile_{
           .parse = create_metrics(shared.settings, name_, "parse"sv),
+          .place_order = create_metrics(shared.settings, name_, "place_order"sv),
+          .modify_order = create_metrics(shared.settings, name_, "modify_order"sv),
+          .cancel_order = create_metrics(shared.settings, name_, "cancel_order"sv),
       },
       latency_{
           .ping = create_metrics(shared.settings, name_, "ping"sv),
@@ -120,10 +137,56 @@ void DropCopy::operator()(metrics::Writer &writer) const {
       .write(counter_.disconnect, metrics::Type::COUNTER)
       // profile
       .write(profile_.parse, metrics::Type::PROFILE)
+      .write(profile_.place_order, metrics::Type::PROFILE)
+      .write(profile_.modify_order, metrics::Type::PROFILE)
+      .write(profile_.cancel_order, metrics::Type::PROFILE)
       // latency
       .write(latency_.ping, metrics::Type::LATENCY)
       .write(latency_.heartbeat, metrics::Type::LATENCY);
 }
+
+uint16_t DropCopy::operator()(Event<CreateOrder> const &event, server::oms::Order const &order, std::string_view const &request_id) {
+  profile_.place_order([&]() {
+    if (!ready()) {
+      throw server::oms::NotReady{"not ready"sv};
+    }
+    auto &[message_info, create_order] = event;
+    auto message = json::Encoder::place_order_ws(encode_buffer_, create_order, order, request_id, shared_.api.inst_type);
+    log::warn("DEBUG {}"sv, message);
+    (*connection_).send_text(message);
+  });
+  return stream_id_;
+}
+
+uint16_t DropCopy::operator()(
+    Event<ModifyOrder> const &event, server::oms::Order const &order, std::string_view const &request_id, std::string_view const &previous_request_id) {
+  profile_.modify_order([&]() {
+    if (!ready()) {
+      throw server::oms::NotReady{"not ready"sv};
+    }
+    auto &[message_info, modify_order] = event;
+    auto message = json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, request_id, previous_request_id, shared_.api.inst_type);
+    log::warn("DEBUG {}"sv, message);
+    (*connection_).send_text(message);
+  });
+  return stream_id_;
+}
+
+uint16_t DropCopy::operator()(
+    Event<CancelOrder> const &event, server::oms::Order const &order, std::string_view const &request_id, std::string_view const &previous_request_id) {
+  profile_.cancel_order([&]() {
+    if (!ready()) {
+      throw server::oms::NotReady{"not ready"sv};
+    }
+    auto &[message_info, cancel_order] = event;
+    auto message = json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, request_id, previous_request_id);
+    log::warn("DEBUG {}"sv, message);
+    (*connection_).send_text(message);
+  });
+  return stream_id_;
+}
+
+// web::socket::Client::Handler
 
 void DropCopy::operator()(web::socket::Client::Connected const &) {
   assert(logon_timeout_.count() == 0);
@@ -171,7 +234,7 @@ void DropCopy::operator()(ConnectionStatus status) {
     auto stream_status = StreamStatus{
         .stream_id = stream_id_,
         .account = account_.name,
-        .supports = SUPPORTS,
+        .supports = shared_.settings.ws_api ? SUPPORTS_WS_API : SUPPORTS,
         .transport = Transport::TCP,
         .protocol = Protocol::WS,
         .encoding = {Encoding::JSON},
@@ -218,6 +281,7 @@ void DropCopy::subscribe(std::string_view const &topic) {
 
 void DropCopy::parse(std::string_view const &message) {
   profile_.parse([&]() {
+    log::warn("DEBUG {}"sv, message);
     auto log_message = [&]() { log::warn(R"(*** PLEASE REPORT *** message="{}")"sv, message); };
     try {
       TraceInfo trace_info;
@@ -231,9 +295,36 @@ void DropCopy::parse(std::string_view const &message) {
   });
 }
 
+// json::Parser::Handler
+
 void DropCopy::operator()(Trace<json::Error> const &event) {
   auto &[trace_info, error] = event;
-  log::fatal("error={}"sv, error);
+  auto [request_type, request_id] = json::Encoder::parse_id(error.id);
+  switch (request_type) {
+    using enum RequestType;
+    case UNDEFINED:
+      log::error("error={}"sv, error);
+      break;
+    case CREATE_ORDER:
+    case MODIFY_ORDER:
+    case CANCEL_ORDER: {
+      log::warn("DEBUG request_type={}, request_id={}"sv, request_type, request_id);
+      auto response = server::oms::Response{
+          .request_type = request_type,
+          .origin = Origin::EXCHANGE,
+          .request_status = RequestStatus::REJECTED,
+          .error = json::guess_error(error.code),
+          .text = error.msg,
+          .version = {},
+          .request_id = {},
+          .external_order_id = {},
+          .quantity = NaN,
+          .price = NaN,
+      };
+      shared_.update_order(request_id, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+      break;
+    }
+  }
 }
 
 void DropCopy::operator()(Trace<json::Subscribe> const &event) {

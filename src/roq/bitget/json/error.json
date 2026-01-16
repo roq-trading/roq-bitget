@@ -1,6 +1,6 @@
 {
   "name": "roq/bitget/json/Error",
-  "type": "struct",
+  "type": "dictionary",
   "values": [
     {
       "name": "event",
@@ -8,10 +8,14 @@
     },
     {
       "name": "code",
-      "type": "std/int64"
+      "type": "std/int32"
     },
     {
       "name": "msg",
+      "type": "std/string_view"
+    },
+    {
+      "name": "id",
       "type": "std/string_view"
     }
   ]

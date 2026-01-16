@@ -23,7 +23,7 @@ inline void update(std::chrono::milliseconds &result, core::json::Value const &v
   result = core::json::get<result_type>(value);
 }
 
-extern Error guess_error(int code);
+extern roq::Error guess_error(int32_t code);
 
 }  // namespace json
 }  // namespace bitget

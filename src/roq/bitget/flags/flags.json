@@ -14,6 +14,12 @@
       "type": "std/string",
       "required": true,
       "description": "API (:code:`SPOT`, :code:`MARGIN`, :code:`USDT-FUTURES`, :code:`USDC-FUTURES`, :code:`COIN-FUTURES`)"
+    },
+    {
+      "name": "ws_api",
+      "type": "std/bool",
+      "default": false,
+      "description": "Use WebSocket API?"
     }
   ]
 }
