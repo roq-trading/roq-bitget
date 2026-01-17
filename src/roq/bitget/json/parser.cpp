@@ -33,8 +33,7 @@ void dispatch_helper(auto &handler, auto &message, auto &buffer_stack, auto &tra
 
 bool Parser::dispatch(
     Handler &handler, std::string_view const &message, core::json::BufferStack &buffer_stack, TraceInfo const &trace_info, bool allow_unknown_event_types) {
-  if (message == PONG) {
-    // note! not a json message -- just drop
+  if (message == PONG) {  // note! drop
     return true;
   }
   Message message_2{message, buffer_stack};
