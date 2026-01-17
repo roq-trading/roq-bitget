@@ -152,7 +152,6 @@ uint16_t DropCopy::operator()(Event<CreateOrder> const &event, server::oms::Orde
     }
     auto &[message_info, create_order] = event;
     auto message = json::Encoder::place_order_ws(encode_buffer_, create_order, order, request_id, shared_.api.inst_type);
-    log::warn("DEBUG {}"sv, message);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -166,7 +165,6 @@ uint16_t DropCopy::operator()(
     }
     auto &[message_info, modify_order] = event;
     auto message = json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, request_id, previous_request_id, shared_.api.inst_type);
-    log::warn("DEBUG {}"sv, message);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -180,7 +178,6 @@ uint16_t DropCopy::operator()(
     }
     auto &[message_info, cancel_order] = event;
     auto message = json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, request_id, previous_request_id);
-    log::warn("DEBUG {}"sv, message);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -281,7 +278,6 @@ void DropCopy::subscribe(std::string_view const &topic) {
 
 void DropCopy::parse(std::string_view const &message) {
   profile_.parse([&]() {
-    log::warn("DEBUG {}"sv, message);
     auto log_message = [&]() { log::warn(R"(*** PLEASE REPORT *** message="{}")"sv, message); };
     try {
       TraceInfo trace_info;
@@ -329,7 +325,9 @@ void DropCopy::operator()(Trace<json::Error> const &event) {
 
 void DropCopy::operator()(Trace<json::Subscribe> const &event) {
   auto &[trace_info, subscribe] = event;
-  log::warn("DEBUG subscribe={}"sv, subscribe);
+  if (subscribe.code != 0) {
+    log::error("subscribe={}"sv, subscribe);
+  }
 }
 
 void DropCopy::operator()(Trace<json::Ticker> const &) {
@@ -556,7 +554,7 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
 
 void DropCopy::operator()(Trace<json::PlaceOrder> const &event) {
   auto &[trace_info, place_order] = event;
-  log::warn("DEBUG place_order={}"sv, place_order);
+  log::info<2>("place_order={}"sv, place_order);
   auto [request_type, request_id] = json::Encoder::parse_id(place_order.id);
   for (auto &item : place_order.args) {
     auto response = server::oms::Response{
@@ -577,7 +575,7 @@ void DropCopy::operator()(Trace<json::PlaceOrder> const &event) {
 
 void DropCopy::operator()(Trace<json::ModifyOrder> const &event) {
   auto &[trace_info, modify_order] = event;
-  log::warn("DEBUG modify_order={}"sv, modify_order);
+  log::info<2>("modify_order={}"sv, modify_order);
   auto [request_type, request_id] = json::Encoder::parse_id(modify_order.id);
   for (auto &item : modify_order.args) {
     auto response = server::oms::Response{
@@ -598,7 +596,7 @@ void DropCopy::operator()(Trace<json::ModifyOrder> const &event) {
 
 void DropCopy::operator()(Trace<json::CancelOrder> const &event) {
   auto &[trace_info, cancel_order] = event;
-  log::warn("DEBUG cancel_order={}"sv, cancel_order);
+  log::info<2>("cancel_order={}"sv, cancel_order);
   auto [request_type, request_id] = json::Encoder::parse_id(cancel_order.id);
   for (auto &item : cancel_order.args) {
     auto response = server::oms::Response{

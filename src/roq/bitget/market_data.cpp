@@ -246,7 +246,9 @@ void MarketData::operator()(Trace<json::Error> const &event) {
 void MarketData::operator()(Trace<json::Subscribe> const &event) {
   profile_.subscribe([&]() {
     auto &[trace_info, subscribe] = event;
-    log::warn("DEBUG subscribe={}"sv, subscribe);
+    if (subscribe.code != 0) {
+      log::error("subscribe={}"sv, subscribe);
+    }
   });
 }
 
