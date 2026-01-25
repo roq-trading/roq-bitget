@@ -118,6 +118,14 @@
     {
       "name": "slLimitPrice",
       "comment": "undoc"
+    },
+    {
+      "name": "marginMode",
+      "type": "std/string_view"
+    },
+    {
+      "name": "delegateType",
+      "type": "std/string_view"
     }
   ]
 }
