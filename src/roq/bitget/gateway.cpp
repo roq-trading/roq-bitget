@@ -169,6 +169,9 @@ void Gateway::ensure_symbol_slices(size_t size) {
   }
 }
 
+void Gateway::operator()(Event<Subscribe> const &) {
+}
+
 uint16_t Gateway::operator()(Event<CreateOrder> const &event, server::oms::Order const &order, std::string_view const &request_id) {
   assert(!std::empty(event.value.account));
   if (shared_.settings.ws_api) {
