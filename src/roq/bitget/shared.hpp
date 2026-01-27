@@ -50,6 +50,7 @@ struct Shared final {
   API const api;
   core::limit::RateLimiter rate_limiter;
   core::Symbols symbols;
+  utils::unordered_set<std::string> all_symbols;
 };
 
 }  // namespace bitget
