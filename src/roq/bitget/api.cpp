@@ -11,24 +11,6 @@ using namespace std::literals;
 namespace roq {
 namespace bitget {
 
-// === HELPERS ===
-
-namespace {
-enum class Key {
-  SPOT,
-  MARGIN,
-  USDT_FUTURES,
-  USDC_FUTURES,
-  COIN_FUTURES,
-};
-
-auto parse_api(auto &api) {
-  std::string tmp{api};
-  std::replace(tmp.begin(), tmp.end(), '-', '_');
-  return utils::parse_enum<Key>(tmp);
-}
-}  // namespace
-
 // === IMPLEMENTATION ===
 
 API API::create(Settings const &settings) {
@@ -53,7 +35,7 @@ API API::create(Settings const &settings) {
         },
     };
   };
-  auto key = parse_api(settings.api);
+  auto key = parse_api(settings);
   switch (key) {
     using enum Key;
     case SPOT:
@@ -68,6 +50,12 @@ API API::create(Settings const &settings) {
       return helper("COIN-FUTURES"sv, "coin-futures"sv);
   }
   log::fatal("Unexpected"sv);
+}
+
+API::Key API::parse_api(Settings const &settings) {
+  std::string tmp{settings.api};
+  std::replace(tmp.begin(), tmp.end(), '-', '_');
+  return utils::parse_enum<Key>(tmp);
 }
 
 }  // namespace bitget

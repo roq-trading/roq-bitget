@@ -10,6 +10,14 @@ namespace roq {
 namespace bitget {
 
 struct API final {
+  enum class Key {
+    SPOT,
+    MARGIN,
+    USDT_FUTURES,
+    USDC_FUTURES,
+    COIN_FUTURES,
+  };
+
   std::string_view category;
   std::string_view inst_type;
   struct {
@@ -31,6 +39,8 @@ struct API final {
 
   // factory
   static API create(Settings const &);
+
+  static Key parse_api(Settings const &);
 };
 
 }  // namespace bitget
