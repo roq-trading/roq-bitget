@@ -272,6 +272,7 @@ void Rest::operator()(Trace<json::InstrumentsAck> const &event) {
         .symbol = item.symbol,
         .description = {},
         .security_type = map(item.category, item.type),
+        .external_security_id = {},
         .cfi_code = {},
         .base_currency = item.base_coin,
         .quote_currency = item.quote_coin,
