@@ -591,6 +591,8 @@ void OrderEntry::operator()(Trace<json::UnfilledOrdersAck> const &event) {
         .external_order_id = item.order_id,
         .client_order_id = item.client_oid,
         .order_status = map(item.order_status),
+        .error = {},
+        .text = {},
         .quantity = item.qty,
         .price = item.price,
         .stop_price = NaN,
