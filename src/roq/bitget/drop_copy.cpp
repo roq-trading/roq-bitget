@@ -146,13 +146,13 @@ void DropCopy::operator()(metrics::Writer &writer) const {
 }
 
 uint16_t DropCopy::operator()(
-    Event<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &, std::string_view const &request_id) {
+    Event<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
   profile_.place_order([&]() {
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
     auto &[message_info, create_order] = event;
-    auto message = json::Encoder::place_order_ws(encode_buffer_, create_order, order, request_id, shared_.api.inst_type);
+    auto message = json::Encoder::place_order_ws(encode_buffer_, create_order, order, ref_data, request_id, shared_.api.inst_type);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -161,7 +161,7 @@ uint16_t DropCopy::operator()(
 uint16_t DropCopy::operator()(
     Event<ModifyOrder> const &event,
     server::oms::Order const &order,
-    server::oms::RefData const &,
+    server::oms::RefData const &ref_data,
     std::string_view const &request_id,
     std::string_view const &previous_request_id) {
   profile_.modify_order([&]() {
@@ -169,7 +169,7 @@ uint16_t DropCopy::operator()(
       throw server::oms::NotReady{"not ready"sv};
     }
     auto &[message_info, modify_order] = event;
-    auto message = json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, request_id, previous_request_id, shared_.api.inst_type);
+    auto message = json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, ref_data, request_id, previous_request_id, shared_.api.inst_type);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -178,7 +178,7 @@ uint16_t DropCopy::operator()(
 uint16_t DropCopy::operator()(
     Event<CancelOrder> const &event,
     server::oms::Order const &order,
-    server::oms::RefData const &,
+    server::oms::RefData const &ref_data,
     std::string_view const &request_id,
     std::string_view const &previous_request_id) {
   profile_.cancel_order([&]() {
@@ -186,7 +186,7 @@ uint16_t DropCopy::operator()(
       throw server::oms::NotReady{"not ready"sv};
     }
     auto &[message_info, cancel_order] = event;
-    auto message = json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, request_id, previous_request_id);
+    auto message = json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, ref_data, request_id, previous_request_id);
     (*connection_).send_text(message);
   });
   return stream_id_;

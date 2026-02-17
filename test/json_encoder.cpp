@@ -35,17 +35,18 @@ TEST_CASE("create_order_market", "[json_encoder]") {
       .strategy_id = {},
   };
   server::oms::Order order;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::place_order(buffer, create_order, order, request_id, category);
+  auto message = json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"
@@ -83,17 +84,18 @@ TEST_CASE("create_order_limit", "[json_encoder]") {
       .strategy_id = {},
   };
   server::oms::Order order;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::place_order(buffer, create_order, order, request_id, category);
+  auto message = json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"
@@ -133,17 +135,18 @@ TEST_CASE("create_order_limit_post_only", "[json_encoder]") {
       .strategy_id = {},
   };
   server::oms::Order order;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::place_order(buffer, create_order, order, request_id, category);
+  auto message = json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"
@@ -178,16 +181,17 @@ TEST_CASE("modify_order_client_order_id_quantity", "[json_encoder]") {
   order.symbol = "BTCUSDT"sv;
   order.external_order_id = {};
   order.client_order_id = "1234"sv;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, request_id);
+  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("clientOid":"1234",)"
@@ -212,16 +216,17 @@ TEST_CASE("modify_order_client_order_id_price", "[json_encoder]") {
   order.symbol = "BTCUSDT"sv;
   order.external_order_id = {};
   order.client_order_id = "1234"sv;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, request_id);
+  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("clientOid":"1234",)"
@@ -248,16 +253,17 @@ TEST_CASE("modify_order_order_id_quantity", "[json_encoder]") {
   order.symbol = "BTCUSDT"sv;
   order.external_order_id = "2345"sv;
   order.client_order_id = "1234"sv;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, request_id);
+  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("orderId":"2345",)"
@@ -282,16 +288,17 @@ TEST_CASE("modify_order_order_id_price", "[json_encoder]") {
   order.symbol = "BTCUSDT"sv;
   order.external_order_id = "2345"sv;
   order.client_order_id = "1234"sv;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, request_id);
+  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("orderId":"2345",)"
@@ -316,16 +323,17 @@ TEST_CASE("cancel_order_client_order_id", "[json_encoder]") {
   order.symbol = "BTCUSDT"sv;
   order.external_order_id = {};
   order.client_order_id = "1234"sv;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::cancel_order(buffer, cancel_order, order, request_id);
+  auto message = json::Encoder::cancel_order(buffer, cancel_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("clientOid":"1234")"
@@ -345,16 +353,17 @@ TEST_CASE("cancel_order_order_id", "[json_encoder]") {
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
   order.external_order_id = "1234"sv, order.client_order_id = "2345"sv;
-  order.quantity_precision = {
+  server::oms::RefData ref_data;
+  ref_data.quantity = {
       .increment = 0.0001,
       .precision = Precision::_4,
   };
-  order.price_precision = {
+  ref_data.price = {
       .increment = 0.1,
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::cancel_order(buffer, cancel_order, order, request_id);
+  auto message = json::Encoder::cancel_order(buffer, cancel_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("orderId":"1234")"

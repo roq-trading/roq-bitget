@@ -14,6 +14,7 @@
 #include "roq/request_type.hpp"
 
 #include "roq/server/oms/order.hpp"
+#include "roq/server/oms/ref_data.hpp"
 
 namespace roq {
 namespace bitget {
@@ -23,11 +24,18 @@ struct Encoder final {
   // REST
 
   static std::string_view place_order(
-      std::string &buffer, CreateOrder const &, server::oms::Order const &, std::string_view const &request_id, std::string_view const &category);
+      std::string &buffer,
+      CreateOrder const &,
+      server::oms::Order const &,
+      server::oms::RefData const &,
+      std::string_view const &request_id,
+      std::string_view const &category);
 
-  static std::string_view modify_order(std::string &buffer, roq::ModifyOrder const &, server::oms::Order const &, std::string_view const &request_id);
+  static std::string_view modify_order(
+      std::string &buffer, roq::ModifyOrder const &, server::oms::Order const &, server::oms::RefData const &, std::string_view const &request_id);
 
-  static std::string_view cancel_order(std::string &buffer, roq::CancelOrder const &, server::oms::Order const &, std::string_view const &request_id);
+  static std::string_view cancel_order(
+      std::string &buffer, roq::CancelOrder const &, server::oms::Order const &, server::oms::RefData const &, std::string_view const &request_id);
 
   static std::string_view cancel_all_orders(std::string &buffer, CancelAllOrders const &, std::string_view const &request_id, std::string_view const &category);
 
@@ -36,12 +44,18 @@ struct Encoder final {
   // WS
 
   static std::string_view place_order_ws(
-      std::string &buffer, CreateOrder const &, server::oms::Order const &, std::string_view const &request_id, std::string_view const &category);
+      std::string &buffer,
+      CreateOrder const &,
+      server::oms::Order const &,
+      server::oms::RefData const &,
+      std::string_view const &request_id,
+      std::string_view const &category);
 
   static std::string_view modify_order_ws(
       std::string &buffer,
       roq::ModifyOrder const &,
       server::oms::Order const &,
+      server::oms::RefData const &,
       std::string_view const &request_id,
       std::string_view const &previous_request_id,
       std::string_view const &category);
@@ -50,6 +64,7 @@ struct Encoder final {
       std::string &buffer,
       roq::CancelOrder const &,
       server::oms::Order const &,
+      server::oms::RefData const &,
       std::string_view const &request_id,
       std::string_view const &previous_request_id);
 
