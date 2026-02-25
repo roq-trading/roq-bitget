@@ -95,7 +95,7 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
 
   // helpers
 
-  void operator()(ConnectionStatus);
+  void operator()(ConnectionStatus, std::string_view const &reason = {});
 
   void login();
 
@@ -132,7 +132,7 @@ class DropCopy final : public web::socket::Client::Handler, json::Parser::Handle
   Shared &shared_;
   // state
   bool ready_ = false;
-  ConnectionStatus status_ = {};
+  ConnectionStatus connection_status_ = {};
   std::chrono::nanoseconds logon_timeout_ = {};
   std::chrono::nanoseconds next_ping_ = {};
 };

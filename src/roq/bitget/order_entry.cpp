@@ -207,7 +207,6 @@ void OrderEntry::operator()(Trace<web::rest::Client::Connected> const &) {
   if (download_.downloading()) {
     download_.bump();
   } else {
-    (*this)(ConnectionStatus::DOWNLOADING);
     download_.begin();
   }
 }
@@ -232,26 +231,26 @@ void OrderEntry::operator()(Trace<web::rest::Client::Latency> const &event) {
   latency_.ping.update(latency.sample);
 }
 
-void OrderEntry::operator()(ConnectionStatus status) {
-  if (utils::update(status_, status)) {
-    TraceInfo trace_info;
-    auto stream_status = StreamStatus{
-        .stream_id = stream_id_,
-        .account = account_.name,
-        .supports = shared_.settings.ws_api ? SUPPORTS_WS_API : SUPPORTS,
-        .transport = Transport::TCP,
-        .protocol = Protocol::HTTP,
-        .encoding = {Encoding::JSON},
-        .priority = Priority::PRIMARY,
-        .connection_status = status_,
-        .interface = (*connection_).get_interface(),
-        .authority = (*connection_).get_current_authority(),
-        .path = (*connection_).get_current_path(),
-        .proxy = (*connection_).get_proxy(),
-    };
-    log::info("stream_status={}"sv, stream_status);
-    create_trace_and_dispatch(handler_, trace_info, stream_status);
-  }
+void OrderEntry::operator()(ConnectionStatus connection_status, std::string_view const &reason) {
+  connection_status_ = connection_status;
+  TraceInfo trace_info;
+  auto stream_status = StreamStatus{
+      .stream_id = stream_id_,
+      .account = account_.name,
+      .supports = shared_.settings.ws_api ? SUPPORTS_WS_API : SUPPORTS,
+      .transport = Transport::TCP,
+      .protocol = Protocol::HTTP,
+      .encoding = {Encoding::JSON},
+      .priority = Priority::PRIMARY,
+      .connection_status = connection_status_,
+      .reason = reason,
+      .interface = (*connection_).get_interface(),
+      .authority = (*connection_).get_current_authority(),
+      .path = (*connection_).get_current_path(),
+      .proxy = (*connection_).get_proxy(),
+  };
+  log::info("stream_status={}"sv, stream_status);
+  create_trace_and_dispatch(handler_, trace_info, stream_status);
 }
 
 uint32_t OrderEntry::download(OrderEntryState state) {
@@ -261,19 +260,24 @@ uint32_t OrderEntry::download(OrderEntryState state) {
       assert(false);
       break;
     case ACCOUNT_SETTINGS:
+      (*this)(ConnectionStatus::DOWNLOADING, "account-settings"sv);
       get_account_settings();
       return 1;
     case ACCOUNT_ASSETS:  // skip
+      (*this)(ConnectionStatus::DOWNLOADING, "account-assets"sv);
       get_account_assets();
       return 1;
     case CURRENT_POSITIONS:  // skip
+      (*this)(ConnectionStatus::DOWNLOADING, "current-positions"sv);
       get_current_positions();
       return 1;
     case UNFILLED_ORDERS:
+      (*this)(ConnectionStatus::DOWNLOADING, "unfilled-orders"sv);
       get_unfilled_orders();
       return 1;
     case TRADE_FILLS:
       if (shared_.settings.rest.download_fills_begin.count()) {
+        (*this)(ConnectionStatus::DOWNLOADING, "fills"sv);
         get_trade_fills();
         return 1;
       } else {
