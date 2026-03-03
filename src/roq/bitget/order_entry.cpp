@@ -429,6 +429,7 @@ void OrderEntry::operator()(Trace<json::AccountAssetsAck> const &event) {
         .balance = item.balance,  // ???
         .hold = item.locked,
         .borrowed = item.debt,
+        .unrealized_pnl = NaN,
         .external_account = {},
         .update_type = UpdateType::SNAPSHOT,
         .exchange_time_utc = {},
