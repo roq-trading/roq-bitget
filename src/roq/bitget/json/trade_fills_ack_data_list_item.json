@@ -70,6 +70,10 @@
     {
       "name": "execPnl",
       "type": "std/double"
+    },
+    {
+      "name": "isRPI",
+      "type": "std/string_view"
     }
   ]
 }

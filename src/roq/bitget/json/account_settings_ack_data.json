@@ -31,6 +31,10 @@
       "name": "coinConfigList",
       "type": "roq/bitget/json/AccountSettingsAckDataCoinConfigItem",
       "array": "std/span"
+    },
+    {
+      "name": "accountLevel",
+      "type": "std/string_view"
     }
   ]
 }

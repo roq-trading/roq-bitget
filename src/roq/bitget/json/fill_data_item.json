@@ -74,6 +74,10 @@
     {
       "name": "updatedTime",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "isRPI",
+      "type": "std/string_view"
     }
   ]
 }
