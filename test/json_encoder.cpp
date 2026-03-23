@@ -33,6 +33,7 @@ TEST_CASE("create_order_market", "[json_encoder]") {
       .leverage = NaN,
       .routing_id = {},
       .strategy_id = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   server::oms::RefData ref_data;
@@ -82,6 +83,7 @@ TEST_CASE("create_order_limit", "[json_encoder]") {
       .leverage = NaN,
       .routing_id = {},
       .strategy_id = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   server::oms::RefData ref_data;
@@ -133,6 +135,7 @@ TEST_CASE("create_order_limit_post_only", "[json_encoder]") {
       .leverage = NaN,
       .routing_id = {},
       .strategy_id = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   server::oms::RefData ref_data;
@@ -176,6 +179,7 @@ TEST_CASE("modify_order_client_order_id_quantity", "[json_encoder]") {
       .routing_id = {},
       .version = {},
       .conditional_on_version = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
@@ -211,6 +215,7 @@ TEST_CASE("modify_order_client_order_id_price", "[json_encoder]") {
       .routing_id = {},
       .version = {},
       .conditional_on_version = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
@@ -248,6 +253,7 @@ TEST_CASE("modify_order_order_id_quantity", "[json_encoder]") {
       .routing_id = {},
       .version = {},
       .conditional_on_version = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
@@ -283,6 +289,7 @@ TEST_CASE("modify_order_order_id_price", "[json_encoder]") {
       .routing_id = {},
       .version = {},
       .conditional_on_version = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
@@ -318,6 +325,7 @@ TEST_CASE("cancel_order_client_order_id", "[json_encoder]") {
       .routing_id = {},
       .version = {},
       .conditional_on_version = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
@@ -349,6 +357,7 @@ TEST_CASE("cancel_order_order_id", "[json_encoder]") {
       .routing_id = {},
       .version = {},
       .conditional_on_version = {},
+      .release_time_utc = {},
   };
   server::oms::Order order;
   order.symbol = "BTCUSDT"sv;
