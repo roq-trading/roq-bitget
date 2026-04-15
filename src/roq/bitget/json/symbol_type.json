@@ -10,6 +10,15 @@
     },
     {
       "name": "crypto"
+    },
+    {
+      "name": "metal"
+    },
+    {
+      "name": "commodity"
+    },
+    {
+      "name": "stock"
     }
   ]
 }

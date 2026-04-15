@@ -173,6 +173,10 @@
     {
       "name": "isRwa",
       "type": "std/string_view"
+    },
+    {
+      "name": "symbolType",
+      "type": "roq/bitget/json/SymbolType"
     }
   ]
 }
