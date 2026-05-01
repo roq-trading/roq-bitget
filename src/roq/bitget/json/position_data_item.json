@@ -101,6 +101,10 @@
     {
       "name": "closeFeeTotal",
       "type": "std/double"
+    },
+    {
+      "name": "realCreateTime",
+      "type": "std/milliseconds"
     }
   ]
 }
