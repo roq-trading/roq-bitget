@@ -15,10 +15,10 @@ namespace bitget {
 
 namespace {
 uint8_t const API_SPOT = 0x0;
-uint8_t const API_MARGIN = 0x1;
+uint8_t const API_MARGIN = 0x4;  // XXX FIXME TODO
 uint8_t const API_USDT_FUTURES = 0x2;
 uint8_t const API_USDC_FUTURES = 0x3;
-uint8_t const API_COIN_FUTURES = 0x4;
+uint8_t const API_COIN_FUTURES = 0x1;  // note!
 }  // namespace
 
 // === HELPERS ===
