@@ -30,6 +30,10 @@
     {
       "name": "ts",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "connId",
+      "type": "std/string_view"
     }
   ]
 }

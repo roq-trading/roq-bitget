@@ -29,6 +29,10 @@
     {
       "name": "ts",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "maxdepth",
+      "type": "std/uint32"
     }
   ]
 }

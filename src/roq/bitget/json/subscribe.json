@@ -17,6 +17,10 @@
     {
       "name": "arg",
       "type": "roq/bitget/json/Arg"
+    },
+    {
+      "name": "connId",
+      "type": "std/string_view"
     }
   ]
 }
