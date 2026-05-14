@@ -21,7 +21,6 @@
 #include "roq/server.hpp"
 
 #include "roq/bitget/account.hpp"
-#include "roq/bitget/rest_state.hpp"
 #include "roq/bitget/shared.hpp"
 
 #include "roq/bitget/json/instruments_ack.hpp"
@@ -65,7 +64,13 @@ class Rest final : public web::rest::Client::Handler {
 
   void operator()(ConnectionStatus, std::string_view const &reason = {});
 
-  uint32_t download(RestState);
+  enum class State {
+    UNDEFINED = 0,
+    INSTRUMENTS,
+    DONE,
+  };
+
+  uint32_t download(State);
 
   // instruments
 
@@ -100,7 +105,7 @@ class Rest final : public web::rest::Client::Handler {
   Shared &shared_;
   // state
   ConnectionStatus connection_status_ = {};
-  core::Download<RestState> download_;
+  core::Download<State> download_;
 };
 
 }  // namespace bitget

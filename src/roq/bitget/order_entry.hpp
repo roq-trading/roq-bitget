@@ -21,7 +21,6 @@
 #include "roq/server.hpp"
 
 #include "roq/bitget/account.hpp"
-#include "roq/bitget/order_entry_state.hpp"
 #include "roq/bitget/shared.hpp"
 
 #include "roq/bitget/json/account_assets_ack.hpp"
@@ -85,7 +84,17 @@ class OrderEntry final : public web::rest::Client::Handler {
 
   void operator()(ConnectionStatus, std::string_view const &reason = {});
 
-  uint32_t download(OrderEntryState state);
+  enum class State {
+    UNDEFINED = 0,
+    ACCOUNT_SETTINGS,
+    ACCOUNT_ASSETS,
+    CURRENT_POSITIONS,
+    UNFILLED_ORDERS,
+    TRADE_FILLS,
+    DONE,
+  };
+
+  uint32_t download(State);
 
   // account-settings
 
@@ -199,7 +208,7 @@ class OrderEntry final : public web::rest::Client::Handler {
   Shared &shared_;
   // state
   ConnectionStatus connection_status_ = {};
-  core::Download<OrderEntryState> download_;
+  core::Download<State> download_;
   //
   std::string encode_buffer_;
   std::chrono::nanoseconds next_heartbeat_ = {};

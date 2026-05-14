@@ -253,9 +253,9 @@ void OrderEntry::operator()(ConnectionStatus connection_status, std::string_view
   create_trace_and_dispatch(handler_, trace_info, stream_status);
 }
 
-uint32_t OrderEntry::download(OrderEntryState state) {
+uint32_t OrderEntry::download(State state) {
   switch (state) {
-    using enum OrderEntryState;
+    using enum State;
     case UNDEFINED:
       assert(false);
       break;
@@ -319,7 +319,7 @@ void OrderEntry::get_account_settings() {
 }
 
 void OrderEntry::get_account_settings_ack(Trace<web::rest::Response> const &event, uint32_t sequence) {
-  auto const state = OrderEntryState::ACCOUNT_SETTINGS;
+  auto const state = State::ACCOUNT_SETTINGS;
   profile_.account_settings_ack([&]() {
     auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
@@ -390,7 +390,7 @@ void OrderEntry::get_account_assets() {
 }
 
 void OrderEntry::get_account_assets_ack(Trace<web::rest::Response> const &event, uint32_t sequence) {
-  auto const state = OrderEntryState::ACCOUNT_ASSETS;
+  auto const state = State::ACCOUNT_ASSETS;
   profile_.account_assets_ack([&]() {
     auto &[trace_assets, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
@@ -468,7 +468,7 @@ void OrderEntry::get_current_positions() {
 }
 
 void OrderEntry::get_current_positions_ack(Trace<web::rest::Response> const &event, uint32_t sequence) {
-  auto const state = OrderEntryState::CURRENT_POSITIONS;
+  auto const state = State::CURRENT_POSITIONS;
   profile_.current_positions_ack([&]() {
     auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
@@ -557,7 +557,7 @@ void OrderEntry::get_unfilled_orders() {
 }
 
 void OrderEntry::get_unfilled_orders_ack(Trace<web::rest::Response> const &event, uint32_t sequence) {
-  auto const state = OrderEntryState::UNFILLED_ORDERS;
+  auto const state = State::UNFILLED_ORDERS;
   profile_.unfilled_orders_ack([&]() {
     auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
@@ -660,7 +660,7 @@ void OrderEntry::get_trade_fills() {
 }
 
 void OrderEntry::get_trade_fills_ack(Trace<web::rest::Response> const &event, uint32_t sequence) {
-  auto const state = OrderEntryState::TRADE_FILLS;
+  auto const state = State::TRADE_FILLS;
   profile_.trade_fills_ack([&]() {
     auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
