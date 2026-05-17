@@ -74,6 +74,10 @@
     {
       "name": "isRPI",
       "type": "std/string_view"
+    },
+    {
+      "name": "posSide",
+      "type": "std/string_view"
     }
   ]
 }

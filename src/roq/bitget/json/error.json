@@ -17,6 +17,10 @@
     {
       "name": "id",
       "type": "std/string_view"
+    },
+    {
+      "name": "connId",
+      "type": "std/string_view"
     }
   ]
 }
