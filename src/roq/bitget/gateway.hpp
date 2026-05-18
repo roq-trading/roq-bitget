@@ -13,12 +13,13 @@
 
 #include "roq/bitget/account.hpp"
 #include "roq/bitget/config.hpp"
+#include "roq/bitget/settings.hpp"
+#include "roq/bitget/shared.hpp"
+
 #include "roq/bitget/drop_copy.hpp"
 #include "roq/bitget/market_data.hpp"
 #include "roq/bitget/order_entry.hpp"
 #include "roq/bitget/rest.hpp"
-#include "roq/bitget/settings.hpp"
-#include "roq/bitget/shared.hpp"
 
 namespace roq {
 namespace bitget {

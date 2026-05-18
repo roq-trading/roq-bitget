@@ -68,7 +68,7 @@ Gateway::Gateway(server::Dispatcher &dispatcher, Settings const &settings, Confi
       drop_copy_(create_drop_copy<decltype(drop_copy_)>(*this, context_, stream_id_, accounts_, shared_)) {
 }
 
-// Server::Handler
+// server::Handler
 
 void Gateway::operator()(Event<Start> const &event) {
   log::info("Starting..."sv);
