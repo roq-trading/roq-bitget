@@ -68,6 +68,8 @@ Gateway::Gateway(server::Dispatcher &dispatcher, Settings const &settings, Confi
       drop_copy_(create_drop_copy<decltype(drop_copy_)>(*this, context_, stream_id_, accounts_, shared_)) {
 }
 
+// Server::Handler
+
 void Gateway::operator()(Event<Start> const &event) {
   log::info("Starting..."sv);
   assert(std::empty(market_data_));
@@ -103,69 +105,6 @@ void Gateway::operator()(Event<Connected> const &) {
 }
 
 void Gateway::operator()(Event<Disconnected> const &) {
-}
-
-void Gateway::operator()(Trace<StreamStatus> const &event) {
-  dispatcher_(event);
-}
-
-void Gateway::operator()(Trace<ExternalLatency> const &event) {
-  dispatcher_(event);
-}
-
-void Gateway::operator()(Trace<ReferenceData> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<MarketStatus> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<TopOfBook> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<MarketByPriceUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last, shared_.final_bids, shared_.final_asks, []([[maybe_unused]] auto &market_by_price) {});
-}
-
-void Gateway::operator()(Trace<TradeSummary> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<StatisticsUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<TradeUpdate> const &event, bool is_last, uint8_t user_id, std::string_view const &request_id) {
-  dispatcher_(event, is_last, user_id, request_id);
-}
-
-void Gateway::operator()(Trace<FundsUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<PositionUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Rest::SymbolsUpdate &symbols_update) {
-  auto [size, start_from] = shared_.symbols(symbols_update.symbols);
-  ensure_symbol_slices(size);
-  for (auto &iter : market_data_) {
-    (*iter).subscribe(start_from);
-  }
-}
-
-void Gateway::ensure_symbol_slices(size_t size) {
-  while (std::size(market_data_) < size) {
-    log::debug("Create market-data (user-stream)"sv);
-    auto market_data = std::make_unique<MarketData>(*this, context_, ++stream_id_, shared_, std::size(market_data_));
-    MessageInfo message_info;
-    Start start;
-    create_event_and_dispatch(*market_data, message_info, start);
-    market_data_.emplace_back(std::move(market_data));
-  }
 }
 
 void Gateway::operator()(Event<Subscribe> const &event) {
@@ -239,6 +178,73 @@ uint16_t Gateway::operator()(Event<CancelQuotes> const &) {
 
 void Gateway::operator()(metrics::Writer &writer) const {
   dispatch_helper(*this, writer);
+}
+
+// streams
+
+void Gateway::operator()(Trace<StreamStatus> const &event) {
+  dispatcher_(event);
+}
+
+void Gateway::operator()(Trace<ExternalLatency> const &event) {
+  dispatcher_(event);
+}
+
+void Gateway::operator()(Trace<ReferenceData> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Trace<MarketStatus> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Trace<TopOfBook> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Trace<MarketByPriceUpdate> const &event, bool is_last) {
+  dispatcher_(event, is_last, shared_.final_bids, shared_.final_asks, []([[maybe_unused]] auto &market_by_price) {});
+}
+
+void Gateway::operator()(Trace<TradeSummary> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Trace<StatisticsUpdate> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Trace<TradeUpdate> const &event, bool is_last, uint8_t user_id, std::string_view const &request_id) {
+  dispatcher_(event, is_last, user_id, request_id);
+}
+
+void Gateway::operator()(Trace<FundsUpdate> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Trace<PositionUpdate> const &event, bool is_last) {
+  dispatcher_(event, is_last);
+}
+
+void Gateway::operator()(Rest::SymbolsUpdate &symbols_update) {
+  auto [size, start_from] = shared_.symbols(symbols_update.symbols);
+  ensure_symbol_slices(size);
+  for (auto &iter : market_data_) {
+    (*iter).subscribe(start_from);
+  }
+}
+
+// utilities
+
+void Gateway::ensure_symbol_slices(size_t size) {
+  while (std::size(market_data_) < size) {
+    log::debug("Create market-data (user-stream)"sv);
+    auto market_data = std::make_unique<MarketData>(*this, context_, ++stream_id_, shared_, std::size(market_data_));
+    MessageInfo message_info;
+    Start start;
+    create_event_and_dispatch(*market_data, message_info, start);
+    market_data_.emplace_back(std::move(market_data));
+  }
 }
 
 template <typename... Args>
