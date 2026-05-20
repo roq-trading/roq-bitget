@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "roq/compat.hpp"
+
 #include <fmt/ranges.h>
 
 #include <string>
@@ -14,12 +16,13 @@
 #include "roq/server/config/dispatcher.hpp"
 #include "roq/server/config/reader.hpp"
 
-#include "roq/bitget/settings.hpp"
+#include "roq/bitget/gateway/settings.hpp"
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
-class Config final : public server::config::Dispatcher, public server::config::Reader::Handler {
+class ROQ_PUBLIC Config final : public server::config::Dispatcher, public server::config::Reader::Handler {
  public:
   explicit Config(Settings const &);
 
@@ -55,13 +58,14 @@ class Config final : public server::config::Dispatcher, public server::config::R
   server::config::RateLimits rate_limits;
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq
 
 template <>
-struct fmt::formatter<roq::bitget::Config> {
+struct fmt::formatter<roq::bitget::gateway::Config> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(roq::bitget::Config const &value, format_context &context) const {
+  auto format(roq::bitget::gateway::Config const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),

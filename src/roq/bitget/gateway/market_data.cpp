@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/market_data.hpp"
+#include "roq/bitget/gateway/market_data.hpp"
 
 #include <algorithm>
 
@@ -22,6 +22,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 // === CONSTANTS ===
 
@@ -467,5 +468,6 @@ void MarketData::operator()(Trace<json::CancelOrder> const &) {
   log::fatal("Unexpected"sv);
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

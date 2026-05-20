@@ -20,13 +20,14 @@
 
 #include "roq/server.hpp"
 
-#include "roq/bitget/account.hpp"
-#include "roq/bitget/shared.hpp"
+#include "roq/bitget/gateway/account.hpp"
+#include "roq/bitget/gateway/shared.hpp"
 
 #include "roq/bitget/json/instruments_ack.hpp"
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 class Rest final : public web::rest::Client::Handler {
  public:
@@ -108,5 +109,6 @@ class Rest final : public web::rest::Client::Handler {
   core::Download<State> download_;
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

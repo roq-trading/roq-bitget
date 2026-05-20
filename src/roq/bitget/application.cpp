@@ -2,9 +2,11 @@
 
 #include "roq/bitget/application.hpp"
 
-#include "roq/bitget/config.hpp"
-#include "roq/bitget/gateway.hpp"
-#include "roq/bitget/settings.hpp"
+#include "roq/bitget/flags/settings.hpp"
+
+#include "roq/bitget/gateway/api.hpp"
+#include "roq/bitget/gateway/config.hpp"
+#include "roq/bitget/gateway/controller.hpp"
 
 using namespace std::literals;
 
@@ -25,9 +27,9 @@ uint8_t const API_MARGIN = 0x4;  // XXX FIXME TODO
 
 namespace {
 auto parse_api(auto &settings) {
-  auto api = API::parse_api(settings);
+  auto api = gateway::API::parse_api(settings);
   switch (api) {
-    using enum API::Key;
+    using enum gateway::API::Key;
     case SPOT:
       return API_SPOT;
     case COIN_FUTURES:
@@ -46,12 +48,12 @@ auto parse_api(auto &settings) {
 // === IMPLEMENTATION ===
 
 int Application::main(args::Parser const &args) {
-  Settings settings{args};
+  flags::Settings settings{args};
   auto api = parse_api(settings);
-  Config config{settings};
+  gateway::Config config{settings};
   log::info<1>("config={}"sv, config);
   auto context = server::create_io_context(settings);
-  server::Trading<Gateway>(settings, config, *context, api).dispatch();
+  server::Trading<gateway::Controller>(settings, config, *context, api).dispatch();
   return EXIT_SUCCESS;
 }
 

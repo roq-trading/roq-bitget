@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/order_entry.hpp"
+#include "roq/bitget/gateway/order_entry.hpp"
 
 #include <utility>
 
@@ -22,6 +22,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 // === CONSTANTS ===
 
@@ -1181,5 +1182,6 @@ void OrderEntry::operator()(Trace<server::oms::OrderUpdate> const &event, std::s
   }
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

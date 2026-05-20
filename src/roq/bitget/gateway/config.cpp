@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/config.hpp"
+#include "roq/bitget/gateway/config.hpp"
 
 #include <utility>
 
@@ -10,6 +10,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 namespace {
 auto create_gateway_settings(auto &settings) -> GatewaySettings {
@@ -113,5 +114,6 @@ void Config::operator()(std::string_view const &key, toml::node &) {
   log::warn(R"(Unexpected: key="{}")"sv, key);
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

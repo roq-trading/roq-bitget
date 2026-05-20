@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/api.hpp"
+#include "roq/bitget/gateway/api.hpp"
 
 #include "roq/logging.hpp"
 
@@ -10,6 +10,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 // === IMPLEMENTATION ===
 
@@ -58,5 +59,6 @@ API::Key API::parse_api(Settings const &settings) {
   return utils::parse_enum<Key>(tmp);
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

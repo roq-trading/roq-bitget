@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "roq/compat.hpp"
+
 #include <memory>
 #include <string>
 #include <utility>
@@ -11,24 +13,29 @@
 
 #include "roq/io/context.hpp"
 
-#include "roq/bitget/account.hpp"
-#include "roq/bitget/config.hpp"
-#include "roq/bitget/settings.hpp"
-#include "roq/bitget/shared.hpp"
+#include "roq/bitget/gateway/account.hpp"
+#include "roq/bitget/gateway/config.hpp"
+#include "roq/bitget/gateway/settings.hpp"
+#include "roq/bitget/gateway/shared.hpp"
 
-#include "roq/bitget/drop_copy.hpp"
-#include "roq/bitget/market_data.hpp"
-#include "roq/bitget/order_entry.hpp"
-#include "roq/bitget/rest.hpp"
+#include "roq/bitget/gateway/drop_copy.hpp"
+#include "roq/bitget/gateway/market_data.hpp"
+#include "roq/bitget/gateway/order_entry.hpp"
+#include "roq/bitget/gateway/rest.hpp"
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
-class Gateway final : public server::Handler, public Rest::Handler, public OrderEntry::Handler, public DropCopy::Handler, public MarketData::Handler {
+class ROQ_PUBLIC Controller final : public server::Handler,
+                                    public Rest::Handler,
+                                    public OrderEntry::Handler,
+                                    public DropCopy::Handler,
+                                    public MarketData::Handler {
  public:
-  Gateway(server::Dispatcher &, Settings const &, Config const &, io::Context &);
+  Controller(server::Dispatcher &, Settings const &, Config const &, io::Context &);
 
-  Gateway(Gateway const &) = delete;
+  Controller(Controller const &) = delete;
 
  protected:
   // server::Handler
@@ -128,5 +135,6 @@ class Gateway final : public server::Handler, public Rest::Handler, public Order
   std::vector<std::unique_ptr<MarketData>> market_data_;
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

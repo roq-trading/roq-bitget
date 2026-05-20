@@ -20,8 +20,8 @@
 
 #include "roq/server.hpp"
 
-#include "roq/bitget/account.hpp"
-#include "roq/bitget/shared.hpp"
+#include "roq/bitget/gateway/account.hpp"
+#include "roq/bitget/gateway/shared.hpp"
 
 #include "roq/bitget/json/account_assets_ack.hpp"
 #include "roq/bitget/json/account_settings_ack.hpp"
@@ -36,6 +36,7 @@
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 class OrderEntry final : public web::rest::Client::Handler {
  public:
@@ -214,5 +215,6 @@ class OrderEntry final : public web::rest::Client::Handler {
   std::chrono::nanoseconds next_heartbeat_ = {};
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

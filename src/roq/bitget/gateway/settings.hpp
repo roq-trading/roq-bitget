@@ -6,8 +6,10 @@
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 using Settings = flags::Settings;
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

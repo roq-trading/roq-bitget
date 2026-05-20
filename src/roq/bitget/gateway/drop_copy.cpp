@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/drop_copy.hpp"
+#include "roq/bitget/gateway/drop_copy.hpp"
 
 #include "roq/mask.hpp"
 
@@ -20,6 +20,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 // === CONSTANTS ===
 
@@ -626,5 +627,6 @@ void DropCopy::operator()(Trace<json::CancelOrder> const &event) {
   }
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

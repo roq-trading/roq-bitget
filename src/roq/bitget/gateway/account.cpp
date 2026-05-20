@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/account.hpp"
+#include "roq/bitget/gateway/account.hpp"
 
 #include "roq/utils/safe_cast.hpp"
 
@@ -8,6 +8,7 @@
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 // === IMPLEMENTATION ===
 
@@ -25,5 +26,6 @@ std::string Account::create_headers(web::http::Method method, std::string_view c
   return crypto_.create_headers(method, path, query, body, utils::safe_cast(now));
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

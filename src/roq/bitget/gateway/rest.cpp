@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/bitget/rest.hpp"
+#include "roq/bitget/gateway/rest.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -19,6 +19,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 // === CONSTANTS ===
 
@@ -381,5 +382,6 @@ void Rest::process_response(web::rest::Response const &response, auto error_hand
   }
 }
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

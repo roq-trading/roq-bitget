@@ -1,4 +1,4 @@
-set(TARGET_NAME "${PROJECT_NAME}-json")
+set(TARGET_NAME ${PROJECT_NAME}-json)
 
 set(SOURCES encoder.cpp map.cpp parser.cpp utils.cpp)
 
@@ -113,10 +113,10 @@ roq_autogen_cpp(
   TEMPLATE_TYPE
   "json")
 
-roq_gitignore(OUTPUT .gitignore SOURCES "${TARGET_NAME}" ${AUTOGEN_HEADERS} ${AUTOGEN_SOURCES})
+roq_gitignore(OUTPUT .gitignore SOURCES ${TARGET_NAME} ${AUTOGEN_HEADERS} ${AUTOGEN_SOURCES})
 
-add_library("${TARGET_NAME}" OBJECT ${SOURCES} ${AUTOGEN_SOURCES})
+add_library(${TARGET_NAME} OBJECT ${SOURCES} ${AUTOGEN_SOURCES})
 
-add_dependencies("${TARGET_NAME}" autogen-json-headers)
+add_dependencies(${TARGET_NAME} autogen-json-headers)
 
-target_link_libraries("${TARGET_NAME}" PRIVATE roq-core::roq-core roq-codec::roq-codec roq-utils::roq-utils roq-logging::roq-logging fmt::fmt)
+target_link_libraries(${TARGET_NAME} PRIVATE roq-core::roq-core roq-codec::roq-codec roq-utils::roq-utils roq-logging::roq-logging fmt::fmt)

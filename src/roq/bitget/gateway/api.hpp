@@ -4,10 +4,11 @@
 
 #include <string_view>
 
-#include "roq/bitget/settings.hpp"
+#include "roq/bitget/gateway/settings.hpp"
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 struct API final {
   enum class Key {
@@ -43,5 +44,6 @@ struct API final {
   static Key parse_api(Settings const &);
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

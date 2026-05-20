@@ -7,12 +7,13 @@
 
 #include "roq/web/http/method.hpp"
 
-#include "roq/bitget/config.hpp"
+#include "roq/bitget/gateway/config.hpp"
 
 #include "roq/bitget/tools/crypto.hpp"
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 class Account final {
  public:
@@ -30,5 +31,6 @@ class Account final {
   tools::Crypto crypto_;
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq

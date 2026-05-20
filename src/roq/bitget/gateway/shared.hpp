@@ -14,11 +14,12 @@
 
 #include "roq/core/limit/rate_limiter.hpp"
 
-#include "roq/bitget/api.hpp"
-#include "roq/bitget/settings.hpp"
+#include "roq/bitget/gateway/api.hpp"
+#include "roq/bitget/gateway/settings.hpp"
 
 namespace roq {
 namespace bitget {
+namespace gateway {
 
 struct Shared final {
   Shared(server::Dispatcher &, Settings const &);
@@ -53,5 +54,6 @@ struct Shared final {
   utils::unordered_set<std::string> all_symbols;
 };
 
+}  // namespace gateway
 }  // namespace bitget
 }  // namespace roq
