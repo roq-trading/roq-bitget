@@ -22,8 +22,7 @@ namespace roq {
 namespace bitget {
 namespace gateway {
 
-class ROQ_PUBLIC Config final : public server::config::Dispatcher, public server::config::Reader::Handler {
- public:
+struct ROQ_PUBLIC Config final : public server::config::Dispatcher, public server::config::Reader::Handler {
   explicit Config(Settings const &);
 
   Config(Config const &) = delete;

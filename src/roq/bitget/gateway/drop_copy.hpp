@@ -28,8 +28,7 @@ namespace roq {
 namespace bitget {
 namespace gateway {
 
-class DropCopy final : public web::socket::Client::Handler, json::Parser::Handler {
- public:
+struct DropCopy final : public web::socket::Client::Handler, json::Parser::Handler {
   struct Handler {
     virtual void operator()(Trace<StreamStatus> const &) = 0;
     virtual void operator()(Trace<ExternalLatency> const &) = 0;

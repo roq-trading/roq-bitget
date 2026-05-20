@@ -15,8 +15,7 @@ namespace roq {
 namespace bitget {
 namespace tools {
 
-class Crypto final {
- public:
+struct Crypto final {
   Crypto(std::string_view const &key, std::string_view const &secret, std::string_view const &passphrase);
 
   Crypto(Crypto &&) = delete;

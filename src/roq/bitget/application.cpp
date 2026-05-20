@@ -53,7 +53,7 @@ int Application::main(args::Parser const &args) {
   gateway::Config config{settings};
   log::info<1>("config={}"sv, config);
   auto context = server::create_io_context(settings);
-  server::Trading<gateway::Controller>(settings, config, *context, api).dispatch();
+  server::Trading2<gateway::Controller>(settings, config, *context, api).dispatch();
   return EXIT_SUCCESS;
 }
 
