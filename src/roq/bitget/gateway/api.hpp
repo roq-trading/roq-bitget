@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "roq/compat.hpp"
+
 #include <string_view>
 
 #include "roq/bitget/gateway/settings.hpp"
@@ -10,7 +12,7 @@ namespace roq {
 namespace bitget {
 namespace gateway {
 
-struct API final {
+struct ROQ_PUBLIC API final {
   enum class Key {
     SPOT,
     MARGIN,
