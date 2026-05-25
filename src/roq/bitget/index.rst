@@ -13,8 +13,8 @@
 .. |footnote-3| unicode:: U+2778
 
 
-roq-bitget
-==========
+`roq-bitget <https://github.com/roq-trading/roq-bitget/>`__
+===========================================================
 
 
 .. tab:: Unstable
@@ -481,6 +481,13 @@ Common
 * :ref:`Using Flags <abseil-cpp>`
 * :ref:`Gateway Flags <gateway-flags>`
 * :ref:`Gateway Config <gateway-config>`
+
+
+GitHub
+~~~~~~
+
+* `roq-bitget <https://github.com/roq-trading/roq-bitget/>`__
+
 
 Exchange
 ~~~~~~~~
