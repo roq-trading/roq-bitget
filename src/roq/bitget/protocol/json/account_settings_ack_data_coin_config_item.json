@@ -1,0 +1,14 @@
+{
+  "name": "roq/bitget/protocol/json/AccountSettingsAckDataCoinConfigItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "coin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "leverage",
+      "type": "std/double"
+    }
+  ]
+}

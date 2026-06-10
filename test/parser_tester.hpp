@@ -2,13 +2,13 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/bitget/json/parser.hpp"
+#include "roq/bitget/protocol/json/parser.hpp"
 
 namespace roq {
 namespace bitget {
 
 template <typename T>
-struct ParserTester final : public json::Parser::Handler {
+struct ParserTester final : public protocol::json::Parser::Handler {
   using value_type = std::remove_cvref_t<T>;
   using callback_type = std::function<void(value_type const &)>;
 
@@ -21,7 +21,7 @@ struct ParserTester final : public json::Parser::Handler {
     // parser
     // XXX FIXME TODO catch2 block ???
     ParserTester handler{callback};
-    auto res = json::Parser::dispatch(handler, message, buffers, {}, false);
+    auto res = protocol::json::Parser::dispatch(handler, message, buffers, {}, false);
     CHECK(res == true);
     CHECK(handler.found_ == true);
   }
@@ -29,19 +29,19 @@ struct ParserTester final : public json::Parser::Handler {
  protected:
   explicit ParserTester(callback_type const &callback) : callback_{callback} {}
 
-  void operator()(Trace<json::Error> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Subscribe> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Ticker> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::PublicTrade> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Books> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Login> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Account> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Position> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Order> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::Fill> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::PlaceOrder> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::ModifyOrder> const &event) override { dispatch_helper(event); }
-  void operator()(Trace<json::CancelOrder> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Error> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Subscribe> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Ticker> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::PublicTrade> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Books> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Login> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Account> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Position> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Order> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::Fill> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::PlaceOrder> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::ModifyOrder> const &event) override { dispatch_helper(event); }
+  void operator()(Trace<protocol::json::CancelOrder> const &event) override { dispatch_helper(event); }
 
   template <typename U>
   void dispatch_helper(Trace<U> const &event) {

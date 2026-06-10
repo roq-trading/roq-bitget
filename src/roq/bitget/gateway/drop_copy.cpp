@@ -12,9 +12,9 @@
 
 #include "roq/server/oms/exceptions.hpp"
 
-#include "roq/bitget/json/encoder.hpp"
-#include "roq/bitget/json/map.hpp"
-#include "roq/bitget/json/utils.hpp"
+#include "roq/bitget/protocol/json/encoder.hpp"
+#include "roq/bitget/protocol/json/map.hpp"
+#include "roq/bitget/protocol/json/utils.hpp"
 
 using namespace std::literals;
 
@@ -152,7 +152,7 @@ uint16_t DropCopy::operator()(
       throw server::oms::NotReady{"not ready"sv};
     }
     auto &[message_info, create_order] = event;
-    auto message = json::Encoder::place_order_ws(encode_buffer_, create_order, order, ref_data, request_id, shared_.api.inst_type);
+    auto message = protocol::json::Encoder::place_order_ws(encode_buffer_, create_order, order, ref_data, request_id, shared_.api.inst_type);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -169,7 +169,8 @@ uint16_t DropCopy::operator()(
       throw server::oms::NotReady{"not ready"sv};
     }
     auto &[message_info, modify_order] = event;
-    auto message = json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, ref_data, request_id, previous_request_id, shared_.api.inst_type);
+    auto message =
+        protocol::json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, ref_data, request_id, previous_request_id, shared_.api.inst_type);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -186,7 +187,7 @@ uint16_t DropCopy::operator()(
       throw server::oms::NotReady{"not ready"sv};
     }
     auto &[message_info, cancel_order] = event;
-    auto message = json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, ref_data, request_id, previous_request_id);
+    auto message = protocol::json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, ref_data, request_id, previous_request_id);
     (*connection_).send_text(message);
   });
   return stream_id_;
@@ -290,7 +291,7 @@ void DropCopy::parse(std::string_view const &message) {
     auto log_message = [&]() { log::warn(R"(*** PLEASE REPORT *** message="{}")"sv, message); };
     try {
       TraceInfo trace_info;
-      if (!json::Parser::dispatch(*this, message, decode_buffer_, trace_info, shared_.settings.experimental.allow_unknown_event_types)) {
+      if (!protocol::json::Parser::dispatch(*this, message, decode_buffer_, trace_info, shared_.settings.experimental.allow_unknown_event_types)) {
         log_message();
       }
     } catch (...) {
@@ -300,11 +301,11 @@ void DropCopy::parse(std::string_view const &message) {
   });
 }
 
-// json::Parser::Handler
+// protocol::json::Parser::Handler
 
-void DropCopy::operator()(Trace<json::Error> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
   auto &[trace_info, error] = event;
-  auto [request_type, request_id] = json::Encoder::parse_id(error.id);
+  auto [request_type, request_id] = protocol::json::Encoder::parse_id(error.id);
   switch (request_type) {
     using enum RequestType;
     case UNDEFINED:
@@ -318,7 +319,7 @@ void DropCopy::operator()(Trace<json::Error> const &event) {
           .request_type = request_type,
           .origin = Origin::EXCHANGE,
           .request_status = RequestStatus::REJECTED,
-          .error = json::guess_error(error.code),
+          .error = protocol::json::guess_error(error.code),
           .text = error.msg,
           .version = {},
           .request_id = {},
@@ -332,26 +333,26 @@ void DropCopy::operator()(Trace<json::Error> const &event) {
   }
 }
 
-void DropCopy::operator()(Trace<json::Subscribe> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Subscribe> const &event) {
   auto &[trace_info, subscribe] = event;
   if (subscribe.code != 0) {
     log::error("subscribe={}"sv, subscribe);
   }
 }
 
-void DropCopy::operator()(Trace<json::Ticker> const &) {
+void DropCopy::operator()(Trace<protocol::json::Ticker> const &) {
   log::fatal("Unexpected"sv);
 }
 
-void DropCopy::operator()(Trace<json::PublicTrade> const &) {
+void DropCopy::operator()(Trace<protocol::json::PublicTrade> const &) {
   log::fatal("Unexpected"sv);
 }
 
-void DropCopy::operator()(Trace<json::Books> const &) {
+void DropCopy::operator()(Trace<protocol::json::Books> const &) {
   log::fatal("Unexpected"sv);
 }
 
-void DropCopy::operator()(Trace<json::Login> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Login> const &event) {
   auto &[trace_info, login] = event;
   log::info<2>("login={}"sv, login);
   if (login.code != 0) {
@@ -363,7 +364,7 @@ void DropCopy::operator()(Trace<json::Login> const &event) {
 }
 
 // note! snapshot + incremental
-void DropCopy::operator()(Trace<json::Account> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Account> const &event) {
   auto &[trace_info, account] = event;
   log::info<2>("account={}"sv, account);
   for (auto &item : account.data) {
@@ -389,18 +390,18 @@ void DropCopy::operator()(Trace<json::Account> const &event) {
 }
 
 // note! snapshot + incremental
-void DropCopy::operator()(Trace<json::Position> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Position> const &event) {
   auto &[trace_info, position] = event;
   log::info<2>("position={}"sv, position);
   for (auto &item : position.data) {
     auto long_quantity = [&]() -> double {
-      if (item.pos_side == json::PosSide::LONG) {
+      if (item.pos_side == protocol::json::PosSide::LONG) {
         return item.size;
       }
       return 0.0;
     }();
     auto short_quantity = [&]() -> double {
-      if (item.pos_side == json::PosSide::SHORT) {
+      if (item.pos_side == protocol::json::PosSide::SHORT) {
         return item.size;
       }
       return 0.0;
@@ -424,7 +425,7 @@ void DropCopy::operator()(Trace<json::Position> const &event) {
 }
 
 // note! incremental
-void DropCopy::operator()(Trace<json::Order> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Order> const &event) {
   auto &[trace_info, order] = event;
   log::info<2>("order={}"sv, order);
   for (auto &item : order.data) {
@@ -475,12 +476,12 @@ void DropCopy::operator()(Trace<json::Order> const &event) {
 }
 
 // note! incremental
-void DropCopy::operator()(Trace<json::Fill> const &event) {
+void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
   auto &[trace_info, fill] = event;
   log::info<2>("fill={}"sv, fill);
   std::string_view symbol, order_id, client_oid;
-  json::Side side = {};
-  json::TradeSide trade_side = {};
+  protocol::json::Side side = {};
+  protocol::json::TradeSide trade_side = {};
   std::chrono::nanoseconds exec_time = {};
   std::chrono::nanoseconds updated_time = {};
   auto dispatch = [&]() {
@@ -564,16 +565,16 @@ void DropCopy::operator()(Trace<json::Fill> const &event) {
   dispatch();
 }
 
-void DropCopy::operator()(Trace<json::PlaceOrder> const &event) {
+void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
   auto &[trace_info, place_order] = event;
   log::info<2>("place_order={}"sv, place_order);
-  auto [request_type, request_id] = json::Encoder::parse_id(place_order.id);
+  auto [request_type, request_id] = protocol::json::Encoder::parse_id(place_order.id);
   for (auto &item : place_order.args) {
     auto response = server::oms::Response{
         .request_type = RequestType::CREATE_ORDER,
         .origin = Origin::EXCHANGE,
         .request_status = RequestStatus::ACCEPTED,
-        .error = json::guess_error(place_order.code),
+        .error = protocol::json::guess_error(place_order.code),
         .text = place_order.msg,
         .version = {},
         .request_id = request_id,
@@ -585,16 +586,16 @@ void DropCopy::operator()(Trace<json::PlaceOrder> const &event) {
   }
 }
 
-void DropCopy::operator()(Trace<json::ModifyOrder> const &event) {
+void DropCopy::operator()(Trace<protocol::json::ModifyOrder> const &event) {
   auto &[trace_info, modify_order] = event;
   log::info<2>("modify_order={}"sv, modify_order);
-  auto [request_type, request_id] = json::Encoder::parse_id(modify_order.id);
+  auto [request_type, request_id] = protocol::json::Encoder::parse_id(modify_order.id);
   for (auto &item : modify_order.args) {
     auto response = server::oms::Response{
         .request_type = RequestType::MODIFY_ORDER,
         .origin = Origin::EXCHANGE,
         .request_status = RequestStatus::ACCEPTED,
-        .error = json::guess_error(modify_order.code),
+        .error = protocol::json::guess_error(modify_order.code),
         .text = modify_order.msg,
         .version = {},
         .request_id = request_id,
@@ -606,16 +607,16 @@ void DropCopy::operator()(Trace<json::ModifyOrder> const &event) {
   }
 }
 
-void DropCopy::operator()(Trace<json::CancelOrder> const &event) {
+void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
   auto &[trace_info, cancel_order] = event;
   log::info<2>("cancel_order={}"sv, cancel_order);
-  auto [request_type, request_id] = json::Encoder::parse_id(cancel_order.id);
+  auto [request_type, request_id] = protocol::json::Encoder::parse_id(cancel_order.id);
   for (auto &item : cancel_order.args) {
     auto response = server::oms::Response{
         .request_type = RequestType::CANCEL_ORDER,
         .origin = Origin::EXCHANGE,
         .request_status = RequestStatus::ACCEPTED,
-        .error = json::guess_error(cancel_order.code),
+        .error = protocol::json::guess_error(cancel_order.code),
         .text = cancel_order.msg,
         .version = {},
         .request_id = request_id,

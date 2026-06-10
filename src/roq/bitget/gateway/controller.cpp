@@ -12,7 +12,7 @@
 
 #include "roq/server/oms/exceptions.hpp"
 
-#include "roq/bitget/json/utils.hpp"
+#include "roq/bitget/protocol/json/utils.hpp"
 
 using namespace std::literals;
 

@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/trade_fills_ack.hpp"
+#include "roq/bitget/protocol/json/trade_fills_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::TradeFillsAck;
+using value_type = protocol::json::TradeFillsAck;
 
 // TODO empty
 

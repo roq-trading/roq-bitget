@@ -1,0 +1,151 @@
+{
+  "name": "roq/bitget/protocol/json/OrderDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "category",
+      "type": "roq/bitget/protocol/json/CategoryWS"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "qty",
+      "type": "std/double"
+    },
+    {
+      "name": "amount",
+      "type": "std/double"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/protocol/json/HoldMode"
+    },
+    {
+      "name": "tradeSide",
+      "type": "roq/bitget/protocol/json/TradeSide"
+    },
+    {
+      "name": "orderType",
+      "type": "roq/bitget/protocol/json/OrderType"
+    },
+    {
+      "name": "timeInForce",
+      "type": "roq/bitget/protocol/json/TimeInForce"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/protocol/json/Side"
+    },
+    {
+      "name": "holdSide",
+      "type": "roq/bitget/protocol/json/HoldSide"
+    },
+    {
+      "name": "marginMode",
+      "type": "roq/bitget/protocol/json/MarginMode"
+    },
+    {
+      "name": "reduceOnly",
+      "type": "std/bool"
+    },
+    {
+      "name": "marginCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "cumExecQty",
+      "type": "std/double"
+    },
+    {
+      "name": "cumExecValue",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "totalProfit",
+      "type": "std/double"
+    },
+    {
+      "name": "orderStatus",
+      "type": "roq/bitget/protocol/json/OrderStatus"
+    },
+    {
+      "name": "cancelReason",
+      "type": "std/string_view"
+    },
+    {
+      "name": "leverage",
+      "type": "std/double"
+    },
+    {
+      "name": "feeDetail",
+      "type": "roq/bitget/protocol/json/OrderDataItemFeeDetailItem",
+      "array": "std/span"
+    },
+    {
+      "name": "createdTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "updatedTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "stpMode",
+      "type": "roq/bitget/protocol/json/StpMode"
+    },
+    {
+      "name": "tpTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "slTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "takeprofit",
+      "comment": "undoc"
+    },
+    {
+      "name": "stoploss",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "slOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpLimitPrice",
+      "comment": "undoc"
+    },
+    {
+      "name": "slLimitPrice",
+      "comment": "undoc"
+    },
+    {
+      "name": "delegateType",
+      "type": "std/string_view"
+    }
+  ]
+}

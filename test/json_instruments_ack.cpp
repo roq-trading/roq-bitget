@@ -4,14 +4,14 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/instruments_ack.hpp"
+#include "roq/bitget/protocol/json/instruments_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
 
 using namespace std::literals;
 
-using value_type = json::InstrumentsAck;
+using value_type = protocol::json::InstrumentsAck;
 
 // note! reduced
 TEST_CASE("simple", "[json_instruments_ack]") {

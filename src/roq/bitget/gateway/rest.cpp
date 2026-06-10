@@ -11,9 +11,9 @@
 
 #include "roq/utils/metrics/factory.hpp"
 
-#include "roq/bitget/json/map.hpp"
-#include "roq/bitget/json/message.hpp"
-#include "roq/bitget/json/utils.hpp"
+#include "roq/bitget/protocol/json/map.hpp"
+#include "roq/bitget/protocol/json/message.hpp"
+#include "roq/bitget/protocol/json/utils.hpp"
 
 using namespace std::literals;
 
@@ -223,13 +223,13 @@ void Rest::get_instruments_ack(Trace<web::rest::Response> const &event, uint32_t
       if (download_.skip(sequence, state)) {
         log::info("Download state={} has already been processed"sv, state);
       } else {
-        json::InstrumentsAck instruments_ack{body, decode_buffer_};
+        protocol::json::InstrumentsAck instruments_ack{body, decode_buffer_};
         if (instruments_ack.code == 0) {
           Trace event{trace_info, instruments_ack};
           (*this)(event);
           download_.check(state);
         } else {
-          handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, json::guess_error(instruments_ack.code), instruments_ack.msg);
+          handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, protocol::json::guess_error(instruments_ack.code), instruments_ack.msg);
         }
       }
     };
@@ -237,7 +237,7 @@ void Rest::get_instruments_ack(Trace<web::rest::Response> const &event, uint32_t
   });
 }
 
-void Rest::operator()(Trace<json::InstrumentsAck> const &event) {
+void Rest::operator()(Trace<protocol::json::InstrumentsAck> const &event) {
   auto &[trace_info, instruments_ack] = event;
   log::info<4>("instruments_ack={}"sv, instruments_ack);
   std::vector<Symbol> symbols;
@@ -249,7 +249,7 @@ void Rest::operator()(Trace<json::InstrumentsAck> const &event) {
     auto discard = shared_.discard_symbol(item.symbol);
     auto settlement_currency = [&]() -> std::string_view {
       switch (item.category) {
-        using enum json::Category::type_t;
+        using enum protocol::json::Category::type_t;
         case UNDEFINED_INTERNAL:
         case UNKNOWN_INTERNAL:
           break;
@@ -362,8 +362,8 @@ void Rest::process_response(web::rest::Response const &response, auto error_hand
             assert(false);
             [[fallthrough]];
           default: {
-            json::Message error{body};
-            error_handler(Origin::EXCHANGE, RequestStatus::REJECTED, json::guess_error(error.code), error.msg);
+            protocol::json::Message error{body};
+            error_handler(Origin::EXCHANGE, RequestStatus::REJECTED, protocol::json::guess_error(error.code), error.msg);
           }
         }
         break;

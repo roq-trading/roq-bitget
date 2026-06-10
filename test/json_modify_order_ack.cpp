@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/modify_order_ack.hpp"
+#include "roq/bitget/protocol/json/modify_order_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::ModifyOrderAck;
+using value_type = protocol::json::ModifyOrderAck;
 
 TEST_CASE("simple", "[json_modify_order_ack]") {
   auto message = R"({)"

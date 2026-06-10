@@ -23,7 +23,7 @@
 #include "roq/bitget/gateway/account.hpp"
 #include "roq/bitget/gateway/shared.hpp"
 
-#include "roq/bitget/json/instruments_ack.hpp"
+#include "roq/bitget/protocol/json/instruments_ack.hpp"
 
 namespace roq {
 namespace bitget {
@@ -76,7 +76,7 @@ struct Rest final : public web::rest::Client::Handler {
 
   void get_instruments();
   void get_instruments_ack(Trace<web::rest::Response> const &, uint32_t sequence);
-  void operator()(Trace<json::InstrumentsAck> const &);
+  void operator()(Trace<protocol::json::InstrumentsAck> const &);
 
   // helpers
 

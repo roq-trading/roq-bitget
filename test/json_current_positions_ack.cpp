@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/current_positions_ack.hpp"
+#include "roq/bitget/protocol/json/current_positions_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::CurrentPositionsAck;
+using value_type = protocol::json::CurrentPositionsAck;
 
 TEST_CASE("empty", "[json_current_positions_ack]") {
   auto message = R"({)"

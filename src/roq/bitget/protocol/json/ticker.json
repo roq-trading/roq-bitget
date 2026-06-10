@@ -1,0 +1,23 @@
+{
+  "name": "roq/bitget/protocol/json/Ticker",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "arg",
+      "type": "roq/bitget/protocol/json/Arg"
+    },
+    {
+      "name": "action",
+      "type": "roq/bitget/protocol/json/Action"
+    },
+    {
+      "name": "data",
+      "type": "roq/bitget/protocol/json/TickerDataItem",
+      "array": "std/span"
+    },
+    {
+      "name": "ts",
+      "type": "std/milliseconds"
+    }
+  ]
+}

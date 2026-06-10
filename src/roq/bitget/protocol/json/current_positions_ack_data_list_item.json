@@ -1,0 +1,106 @@
+{
+  "name": "roq/bitget/protocol/json/CurrentPositionsAckDataListItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "category",
+      "type": "roq/bitget/protocol/json/Category"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "marginCoin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "posSide",
+      "type": "roq/bitget/protocol/json/PosSide"
+    },
+    {
+      "name": "positionBalance",
+      "type": "std/double"
+    },
+    {
+      "name": "available",
+      "type": "std/double"
+    },
+    {
+      "name": "frozen",
+      "type": "std/double"
+    },
+    {
+      "name": "total",
+      "type": "std/double"
+    },
+    {
+      "name": "leverage",
+      "type": "std/double"
+    },
+    {
+      "name": "curRealisedPnl",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "marginMode",
+      "type": "roq/bitget/protocol/json/MarginMode"
+    },
+    {
+      "name": "positionStatus",
+      "type": "roq/bitget/protocol/json/PositionStatus"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/protocol/json/HoldMode"
+    },
+    {
+      "name": "unrealisedPnl",
+      "type": "std/double"
+    },
+    {
+      "name": "liquidationPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "mmr",
+      "type": "std/double"
+    },
+    {
+      "name": "profitRate",
+      "type": "std/double"
+    },
+    {
+      "name": "markPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "breakEvenPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "totalFunding",
+      "type": "std/double"
+    },
+    {
+      "name": "openFeeTotal",
+      "type": "std/double"
+    },
+    {
+      "name": "closeFeeTotal",
+      "type": "std/double"
+    },
+    {
+      "name": "createdTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "updatedTime",
+      "type": "std/milliseconds"
+    }
+  ]
+}

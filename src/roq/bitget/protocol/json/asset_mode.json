@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/protocol/json/AssetMode",
+  "type": "enum",
+  "values": [
+    {
+      "name": "single"
+    },
+    {
+      "name": "union"
+    },
+    {
+      "name": "multi_assets"
+    }
+  ]
+}

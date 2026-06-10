@@ -9,7 +9,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-using value_type = json::Books;
+using value_type = protocol::json::Books;
 
 TEST_CASE("simple", "[json_books]") {
   auto message = R"({)"
@@ -54,7 +54,7 @@ TEST_CASE("simple", "[json_books]") {
                  R"("ts":1758111262300)"
                  R"(})";
   auto helper = [](value_type const &obj) {
-    CHECK(obj.action == json::Action::UPDATE);
+    CHECK(obj.action == protocol::json::Action::UPDATE);
     CHECK(obj.arg.symbol == "ETHUSDT"sv);
     REQUIRE(std::size(obj.data) == 1);
     auto &data = obj.data[0];

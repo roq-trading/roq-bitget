@@ -1,0 +1,40 @@
+{
+  "name": "roq/bitget/protocol/json/AccountSettingsAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "uid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "accountMode",
+      "type": "roq/bitget/protocol/json/AccountMode"
+    },
+    {
+      "name": "assetMode",
+      "type": "roq/bitget/protocol/json/AssetMode"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/protocol/json/HoldMode"
+    },
+    {
+      "name": "stpMode",
+      "type": "roq/bitget/protocol/json/StpMode"
+    },
+    {
+      "name": "symbolConfigList",
+      "type": "roq/bitget/protocol/json/AccountSettingsAckDataSymbolConfigItem",
+      "array": "std/span"
+    },
+    {
+      "name": "coinConfigList",
+      "type": "roq/bitget/protocol/json/AccountSettingsAckDataCoinConfigItem",
+      "array": "std/span"
+    },
+    {
+      "name": "accountLevel",
+      "type": "std/string_view"
+    }
+  ]
+}

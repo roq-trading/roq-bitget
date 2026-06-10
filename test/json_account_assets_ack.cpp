@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/account_assets_ack.hpp"
+#include "roq/bitget/protocol/json/account_assets_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::AccountAssetsAck;
+using value_type = protocol::json::AccountAssetsAck;
 
 TEST_CASE("simple", "[json_account_assets_ack]") {
   auto message = R"({)"

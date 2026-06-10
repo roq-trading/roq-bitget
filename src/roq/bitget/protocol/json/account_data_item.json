@@ -1,0 +1,39 @@
+{
+  "name": "roq/bitget/protocol/json/AccountDataItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "totalEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "effEquity",
+      "type": "std/double"
+    },
+    {
+      "name": "mmr",
+      "type": "std/double"
+    },
+    {
+      "name": "imr",
+      "type": "std/double"
+    },
+    {
+      "name": "mgnRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "positionMgnRatio",
+      "type": "std/double"
+    },
+    {
+      "name": "unrealisedPnL",
+      "type": "std/double"
+    },
+    {
+      "name": "coin",
+      "type": "roq/bitget/protocol/json/AccountDataItemCoinItem",
+      "array": "std/span"
+    }
+  ]
+}

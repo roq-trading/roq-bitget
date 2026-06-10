@@ -2,7 +2,7 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/bitget/json/encoder.hpp"
+#include "roq/bitget/protocol/json/encoder.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -47,7 +47,7 @@ TEST_CASE("create_order_market", "[json_encoder]") {
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
+  auto message = protocol::json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"
@@ -97,7 +97,7 @@ TEST_CASE("create_order_limit", "[json_encoder]") {
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
+  auto message = protocol::json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"
@@ -149,7 +149,7 @@ TEST_CASE("create_order_limit_post_only", "[json_encoder]") {
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
+  auto message = protocol::json::Encoder::place_order(buffer, create_order, order, ref_data, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"
@@ -195,7 +195,7 @@ TEST_CASE("modify_order_client_order_id_quantity", "[json_encoder]") {
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
+  auto message = protocol::json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("clientOid":"1234",)"
@@ -231,7 +231,7 @@ TEST_CASE("modify_order_client_order_id_price", "[json_encoder]") {
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
+  auto message = protocol::json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("clientOid":"1234",)"
@@ -269,7 +269,7 @@ TEST_CASE("modify_order_order_id_quantity", "[json_encoder]") {
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
+  auto message = protocol::json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("orderId":"2345",)"
@@ -305,7 +305,7 @@ TEST_CASE("modify_order_order_id_price", "[json_encoder]") {
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
+  auto message = protocol::json::Encoder::modify_order(buffer, modify_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("orderId":"2345",)"
@@ -341,7 +341,7 @@ TEST_CASE("cancel_order_client_order_id", "[json_encoder]") {
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::cancel_order(buffer, cancel_order, order, ref_data, request_id);
+  auto message = protocol::json::Encoder::cancel_order(buffer, cancel_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("clientOid":"1234")"
@@ -372,7 +372,7 @@ TEST_CASE("cancel_order_order_id", "[json_encoder]") {
       .precision = Precision::_1,
   };
   auto request_id = "2345"sv;
-  auto message = json::Encoder::cancel_order(buffer, cancel_order, order, ref_data, request_id);
+  auto message = protocol::json::Encoder::cancel_order(buffer, cancel_order, order, ref_data, request_id);
   CHECK(
       message == R"({)"
                  R"("orderId":"1234")"
@@ -393,7 +393,7 @@ TEST_CASE("cancel_all_orders_simple", "[json_encoder]") {
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, category);
+  auto message = protocol::json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES")"
@@ -412,7 +412,7 @@ TEST_CASE("cancel_all_orders_symbol", "[json_encoder]") {
   };
   auto request_id = "1234"sv;
   auto category = "USDT-FUTURES"sv;
-  auto message = json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, category);
+  auto message = protocol::json::Encoder::cancel_all_orders(buffer, cancel_all_orders, request_id, category);
   CHECK(
       message == R"({)"
                  R"("category":"USDT-FUTURES",)"

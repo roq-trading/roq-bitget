@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/message.hpp"
+#include "roq/bitget/protocol/json/message.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -23,7 +23,7 @@ TEST_CASE("json_message_error_not_working", "[json_message]") {
                  R"("msg":"Unrecognized request:{\"ping\":1559291007437691}")"
                  R"(})";
   core::json::BufferStack buffer{8192,1};
-  [[maybe_unused]] json::Message obj{message, buffer};
+  [[maybe_unused]] protocol::json::Message obj{message, buffer};
 }
 TEST_CASE("json_message_error_modified", "[json_message]") {
   auto message = R"({)"
@@ -32,7 +32,7 @@ TEST_CASE("json_message_error_modified", "[json_message]") {
                  R"("msg":"instType:SP, channel:ticker, instId:XRPETH_SPBL doesn't exist")"
                  R"(})";
   core::json::BufferStack buffer{8192, 1};
-  [[maybe_unused]] json::Message obj{message, buffer};
+  [[maybe_unused]] protocol::json::Message obj{message, buffer};
 }
 */
 
@@ -46,5 +46,5 @@ TEST_CASE("json_message_subscribe", "[json_message]") {
                  R"(})"
                  R"(})";
   core::json::BufferStack buffer{8192, 1};
-  [[maybe_unused]] json::Message obj{message, buffer};
+  [[maybe_unused]] protocol::json::Message obj{message, buffer};
 }

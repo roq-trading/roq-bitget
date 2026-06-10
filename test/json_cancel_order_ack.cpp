@@ -4,7 +4,7 @@
 
 #include "roq/core/json/buffer_stack.hpp"
 
-#include "roq/bitget/json/cancel_order_ack.hpp"
+#include "roq/bitget/protocol/json/cancel_order_ack.hpp"
 
 using namespace roq;
 using namespace roq::bitget;
@@ -14,7 +14,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::CancelOrderAck;
+using value_type = protocol::json::CancelOrderAck;
 
 TEST_CASE("simple", "[json_cancel_order_ack]") {
   auto message = R"({)"

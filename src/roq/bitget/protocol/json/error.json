@@ -1,0 +1,26 @@
+{
+  "name": "roq/bitget/protocol/json/Error",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "event",
+      "type": "roq/bitget/protocol/json/Event"
+    },
+    {
+      "name": "code",
+      "type": "std/int32"
+    },
+    {
+      "name": "msg",
+      "type": "std/string_view"
+    },
+    {
+      "name": "id",
+      "type": "std/string_view"
+    },
+    {
+      "name": "connId",
+      "type": "std/string_view"
+    }
+  ]
+}

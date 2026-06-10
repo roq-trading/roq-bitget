@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/protocol/json/UnfilledOrdersAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "list",
+      "type": "roq/bitget/protocol/json/UnfilledOrdersAckDataListItem",
+      "array": "std/span"
+    },
+    {
+      "name": "cursor",
+      "type": "std/int64"
+    }
+  ]
+}

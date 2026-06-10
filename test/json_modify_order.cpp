@@ -12,7 +12,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::ModifyOrder;
+using value_type = protocol::json::ModifyOrder;
 
 TEST_CASE("simple", "[json_modify_order]") {
   auto message = R"({)"
@@ -28,9 +28,9 @@ TEST_CASE("simple", "[json_modify_order]") {
                  R"("ts":"1768582143239")"
                  R"(})";
   auto helper = [](value_type const &obj) {
-    CHECK(obj.event == json::Event::TRADE);
+    CHECK(obj.event == protocol::json::Event::TRADE);
     CHECK(obj.id == "M:oAACpuF5lUwAAgAAAAAA"sv);
-    CHECK(obj.topic == json::WSAPITopic::MODIFY_ORDER);
+    CHECK(obj.topic == protocol::json::WSAPITopic::MODIFY_ORDER);
     REQUIRE(std::size(obj.args) == 1);
   };
   ParserTester<value_type>::dispatch(helper, message, 8192, 1);

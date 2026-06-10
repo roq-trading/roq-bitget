@@ -9,7 +9,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-using value_type = json::PublicTrade;
+using value_type = protocol::json::PublicTrade;
 
 TEST_CASE("simple", "[json_public_trade]") {
   auto message = R"({)"
@@ -31,7 +31,7 @@ TEST_CASE("simple", "[json_public_trade]") {
                  R"("ts":1758111262141)"
                  R"(})";
   auto helper = [](value_type const &obj) {
-    CHECK(obj.action == json::Action::UPDATE);
+    CHECK(obj.action == protocol::json::Action::UPDATE);
     REQUIRE(std::size(obj.data) == 1);
   };
   ParserTester<value_type>::dispatch(helper, message, 8192, 1);

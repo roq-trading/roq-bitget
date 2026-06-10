@@ -1,0 +1,39 @@
+{
+  "name": "roq/bitget/protocol/json/ModifyOrder",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "event",
+      "type": "roq/bitget/protocol/json/Event"
+    },
+    {
+      "name": "id",
+      "type": "std/string_view"
+    },
+    {
+      "name": "topic",
+      "type": "roq/bitget/protocol/json/WSAPITopic"
+    },
+    {
+      "name": "args",
+      "type": "roq/bitget/protocol/json/ModifyOrderArgs",
+      "array": "std/span"
+    },
+    {
+      "name": "code",
+      "type": "std/int32"
+    },
+    {
+      "name": "msg",
+      "type": "std/string_view"
+    },
+    {
+      "name": "ts",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "connId",
+      "type": "std/string_view"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "roq/bitget/protocol/json/OrderStatus",
+  "type": "enum",
+  "values": [
+    {
+      "name": "live"
+    },
+    {
+      "name": "new"
+    },
+    {
+      "name": "partially_filled"
+    },
+    {
+      "name": "filled"
+    },
+    {
+      "name": "cancelled"
+    }
+  ]
+}

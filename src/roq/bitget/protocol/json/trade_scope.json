@@ -1,0 +1,12 @@
+{
+  "name": "roq/bitget/protocol/json/TradeScope",
+  "type": "enum",
+  "values": [
+    {
+      "name": "taker"
+    },
+    {
+      "name": "maker"
+    }
+  ]
+}

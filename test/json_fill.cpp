@@ -12,7 +12,7 @@ using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using value_type = json::Fill;
+using value_type = protocol::json::Fill;
 
 TEST_CASE("snapshot", "[json_fill]") {
   auto message = R"({)"
@@ -49,7 +49,7 @@ TEST_CASE("snapshot", "[json_fill]") {
                  R"("ts":1758185294056)"
                  R"(})";
   auto helper = [](value_type const &obj) {
-    CHECK(obj.action == json::Action::SNAPSHOT);
+    CHECK(obj.action == protocol::json::Action::SNAPSHOT);
     REQUIRE(std::size(obj.data) == 1);
   };
   ParserTester<value_type>::dispatch(helper, message, 8192, 2);

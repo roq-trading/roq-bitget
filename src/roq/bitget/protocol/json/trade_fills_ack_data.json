@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/protocol/json/TradeFillsAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "list",
+      "type": "roq/bitget/protocol/json/TradeFillsAckDataListItem",
+      "array": "std/span"
+    },
+    {
+      "name": "cursor",
+      "type": "std/int64"
+    }
+  ]
+}

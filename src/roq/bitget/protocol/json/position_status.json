@@ -1,0 +1,15 @@
+{
+  "name": "roq/bitget/protocol/json/PositionStatus",
+  "type": "enum",
+  "values": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "opening"
+    },
+    {
+      "name": "ended"
+    }
+  ]
+}

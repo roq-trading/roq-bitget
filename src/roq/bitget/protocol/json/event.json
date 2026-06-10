@@ -1,0 +1,18 @@
+{
+  "name": "roq/bitget/protocol/json/Event",
+  "type": "enum",
+  "values": [
+    {
+      "name": "error"
+    },
+    {
+      "name": "subscribe"
+    },
+    {
+      "name": "login"
+    },
+    {
+      "name": "trade"
+    }
+  ]
+}

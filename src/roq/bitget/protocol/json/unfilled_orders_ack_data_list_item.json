@@ -1,0 +1,131 @@
+{
+  "name": "roq/bitget/protocol/json/UnfilledOrdersAckDataListItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "category",
+      "type": "roq/bitget/protocol/json/Category"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "qty",
+      "type": "std/double"
+    },
+    {
+      "name": "amount",
+      "type": "std/double"
+    },
+    {
+      "name": "orderType",
+      "type": "roq/bitget/protocol/json/OrderType"
+    },
+    {
+      "name": "cumExecQty",
+      "type": "std/double"
+    },
+    {
+      "name": "cumExecValue",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "orderStatus",
+      "type": "roq/bitget/protocol/json/OrderStatus"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/protocol/json/Side"
+    },
+    {
+      "name": "timeInForce",
+      "type": "roq/bitget/protocol/json/TimeInForce"
+    },
+    {
+      "name": "posSide",
+      "type": "roq/bitget/protocol/json/PosSide"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/protocol/json/HoldMode"
+    },
+    {
+      "name": "stpMode",
+      "type": "roq/bitget/protocol/json/StpMode"
+    },
+    {
+      "name": "reduceOnly",
+      "type": "std/bool"
+    },
+    {
+      "name": "feeDetail",
+      "type": "roq/bitget/protocol/json/UnfilledOrdersAckDataListItemFeeDetailItem",
+      "array": "std/span"
+    },
+    {
+      "name": "createdTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "updatedTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "tpTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "slTriggerBy",
+      "comment": "undoc"
+    },
+    {
+      "name": "takeProfit",
+      "comment": "undoc"
+    },
+    {
+      "name": "stopLoss",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "slOrderType",
+      "comment": "undoc"
+    },
+    {
+      "name": "tpLimitPrice",
+      "comment": "undoc"
+    },
+    {
+      "name": "slLimitPrice",
+      "comment": "undoc"
+    },
+    {
+      "name": "marginMode",
+      "type": "std/string_view"
+    },
+    {
+      "name": "delegateType",
+      "type": "std/string_view"
+    }
+  ]
+}

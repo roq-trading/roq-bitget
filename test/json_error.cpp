@@ -9,7 +9,7 @@ using namespace roq::bitget;
 
 using namespace std::literals;
 
-using value_type = json::Error;
+using value_type = protocol::json::Error;
 
 TEST_CASE("param", "[json_error]") {
   auto message = R"({)"

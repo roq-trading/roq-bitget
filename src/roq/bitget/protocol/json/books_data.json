@@ -1,0 +1,38 @@
+{
+  "name": "roq/bitget/protocol/json/BooksData",
+  "type": "dictionary",
+  "values": [
+    {
+      "raw": "a",
+      "name": "asks",
+      "type": "roq/bitget/protocol/json/BooksItem",
+      "array": "std/span"
+    },
+    {
+      "raw": "b",
+      "name": "bids",
+      "type": "roq/bitget/protocol/json/BooksItem",
+      "array": "std/span"
+    },
+    {
+      "name": "checksum",
+      "type": "std/int64"
+    },
+    {
+      "name": "pseq",
+      "type": "std/uint64"
+    },
+    {
+      "name": "seq",
+      "type": "std/uint64"
+    },
+    {
+      "name": "ts",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "maxdepth",
+      "type": "std/uint32"
+    }
+  ]
+}
