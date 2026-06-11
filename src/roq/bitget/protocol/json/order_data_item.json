@@ -146,6 +146,10 @@
     {
       "name": "delegateType",
       "type": "std/string_view"
+    },
+    {
+      "name": "matchType",
+      "type": "std/string_view"
     }
   ]
 }
