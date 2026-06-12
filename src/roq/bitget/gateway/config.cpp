@@ -42,6 +42,7 @@ auto create_gateway_settings(auto &settings) -> GatewaySettings {
 
 Config::Config(Settings const &settings) : exchange_{settings.exchange}, gateway_settings_{create_gateway_settings(settings)} {
   server::config::Reader::parse_file(*this, settings);
+  log::info<1>("config={}"sv, *this);
 }
 
 Account const &Config::get_master_account() const {

@@ -14,11 +14,23 @@
 
 #include "roq/bitget/protocol/json/utils.hpp"
 
+#include "roq/bitget/gateway/api.hpp"
+
 using namespace std::literals;
 
 namespace roq {
 namespace bitget {
 namespace gateway {
+
+// === CONSTANTS ===
+
+namespace {
+uint8_t const API_SPOT = 0x0;
+uint8_t const API_COIN_FUTURES = 0x1;
+uint8_t const API_USDT_FUTURES = 0x2;
+uint8_t const API_USDC_FUTURES = 0x3;
+uint8_t const API_MARGIN = 0x4;  // XXX FIXME TODO
+}  // namespace
 
 // === HELPERS ===
 
@@ -64,6 +76,24 @@ R create_drop_copy(auto &gateway, auto &context, auto &stream_id, auto &accounts
 
 std::unique_ptr<server::Handler> Controller::create(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context) {
   return std::make_unique<Controller>(dispatcher, settings, config, context);
+}
+
+uint8_t Controller::parse_api(Settings const &settings) {
+  auto api = API::parse_api(settings);
+  switch (api) {
+    using enum gateway::API::Key;
+    case SPOT:
+      return API_SPOT;
+    case COIN_FUTURES:
+      return API_COIN_FUTURES;
+    case USDT_FUTURES:
+      return API_USDT_FUTURES;
+    case USDC_FUTURES:
+      return API_USDC_FUTURES;
+    case MARGIN:
+      return API_MARGIN;
+  }
+  log::fatal(R"(Unexpected: api="{}")"sv, settings.app.api);
 }
 
 Controller::Controller(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context)
