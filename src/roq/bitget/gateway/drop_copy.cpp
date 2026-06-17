@@ -322,13 +322,13 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
           .error = protocol::json::guess_error(error.code),
           .text = error.msg,
           .version = {},
-          .request_id = {},
+          .request_id = request_id,
           .external_order_id = {},
           .client_order_id = {},
           .quantity = NaN,
           .price = NaN,
       };
-      shared_.update_order(request_id, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+      shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
       break;
     }
   }
@@ -467,7 +467,7 @@ void DropCopy::operator()(Trace<protocol::json::Order> const &event) {
         .update_type = map(order.action),
         .sending_time_utc = order.ts,
     };
-    if (shared_.update_order(item.client_oid, stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {
+    if (shared_.update_order(stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {
           // no fills here
         })) {
     } else {
@@ -509,7 +509,7 @@ void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
           .user = {},
           .strategy_id = {},
       };
-      create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE, client_oid);
+      create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE);
       shared_.fills.clear();
     }
   };
@@ -580,11 +580,11 @@ void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
         .version = {},
         .request_id = request_id,
         .external_order_id = item.order_id,
-        .client_order_id = {},
+        .client_order_id = item.client_oid,
         .quantity = NaN,
         .price = NaN,
     };
-    shared_.update_order(item.client_oid, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+    shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
   }
 }
 
@@ -602,11 +602,11 @@ void DropCopy::operator()(Trace<protocol::json::ModifyOrder> const &event) {
         .version = {},
         .request_id = request_id,
         .external_order_id = item.order_id,
-        .client_order_id = {},
+        .client_order_id = item.client_oid,
         .quantity = NaN,
         .price = NaN,
     };
-    shared_.update_order(item.client_oid, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+    shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
   }
 }
 
@@ -624,11 +624,11 @@ void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
         .version = {},
         .request_id = request_id,
         .external_order_id = item.order_id,
-        .client_order_id = {},
+        .client_order_id = item.client_oid,
         .quantity = NaN,
         .price = NaN,
     };
-    shared_.update_order(item.client_oid, stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+    shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
   }
 }
 
