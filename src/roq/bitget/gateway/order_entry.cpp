@@ -625,8 +625,7 @@ void OrderEntry::operator()(Trace<protocol::json::UnfilledOrdersAck> const &even
         .update_type = UpdateType::SNAPSHOT,
         .sending_time_utc = unfilled_orders_ack.request_time,
     };
-    Trace event_2{trace_info, order_update};
-    (*this)(event_2);
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id_);
   }
 }
 
@@ -811,6 +810,7 @@ void OrderEntry::place_order(
 
 void OrderEntry::place_order_ack(Trace<web::rest::Response> const &event, uint8_t user_id, uint64_t order_id, uint32_t version) {
   profile_.place_order_ack([&]() {
+    auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
       log::warn(R"(DEBUG origin={}, error={}, status={}, text="{}")"sv, origin, error, status, text);
       auto response = server::oms::Response{
@@ -826,8 +826,7 @@ void OrderEntry::place_order_ack(Trace<web::rest::Response> const &event, uint8_
           .quantity = NaN,
           .price = NaN,
       };
-      Trace event_2{event, response};
-      (*this)(event_2, user_id, order_id);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_, user_id, order_id);
     };
     auto handle_success = [&](auto &body) {
       protocol::json::PlaceOrderAck place_order_ack{body, decode_buffer_};
@@ -891,6 +890,7 @@ void OrderEntry::modify_order(
 
 void OrderEntry::modify_order_ack(Trace<web::rest::Response> const &event, uint8_t user_id, uint64_t order_id, uint32_t version) {
   profile_.modify_order_ack([&]() {
+    auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
       log::warn(R"(DEBUG origin={}, error={}, status={}, text="{}")"sv, origin, error, status, text);
       auto response = server::oms::Response{
@@ -906,8 +906,7 @@ void OrderEntry::modify_order_ack(Trace<web::rest::Response> const &event, uint8
           .quantity = NaN,
           .price = NaN,
       };
-      Trace event_2{event, response};
-      (*this)(event_2, user_id, order_id);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_, user_id, order_id);
     };
     auto handle_success = [&](auto &body) {
       protocol::json::ModifyOrderAck modify_order_ack{body, decode_buffer_};
@@ -971,6 +970,7 @@ void OrderEntry::cancel_order(
 
 void OrderEntry::cancel_order_ack(Trace<web::rest::Response> const &event, uint8_t user_id, uint64_t order_id, uint32_t version) {
   profile_.cancel_order_ack([&]() {
+    auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
       log::warn(R"(DEBUG origin={}, error={}, status={}, text="{}")"sv, origin, error, status, text);
       auto response = server::oms::Response{
@@ -986,8 +986,7 @@ void OrderEntry::cancel_order_ack(Trace<web::rest::Response> const &event, uint8
           .quantity = NaN,
           .price = NaN,
       };
-      Trace event_2{event, response};
-      (*this)(event_2, user_id, order_id);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_, user_id, order_id);
     };
     auto handle_success = [&](auto &body) {
       protocol::json::CancelOrderAck cancel_order_ack{body, decode_buffer_};
@@ -1175,23 +1174,6 @@ void OrderEntry::process_response(web::rest::Response const &response, auto erro
   } catch (std::exception &e) {
     log::warn(R"(Exception type={}, what="{}")"sv, typeid(e).name(), e.what());
     error_handler(Origin::EXCHANGE, RequestStatus::ERROR, Error::UNKNOWN, e.what());
-  }
-}
-
-template <typename... Args>
-void OrderEntry::operator()(Trace<server::oms::Response> const &event, uint8_t user_id, uint64_t order_id, Args &&...args) {
-  auto &[trace_info, response] = event;
-  if (shared_.update_order(user_id, order_id, stream_id_, trace_info, response, std::forward<Args>(args)..., []([[maybe_unused]] auto &order) {})) {
-  } else {
-    log::warn("Did not find order: user_id={}, order_id={}"sv, user_id, order_id);
-  }
-}
-
-void OrderEntry::operator()(Trace<server::oms::OrderUpdate> const &event) {
-  auto &[trace_info, order_update] = event;
-  if (shared_.update_order(stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {})) {
-  } else {
-    log::warn("*** EXTERNAL ORDER ***"sv);
   }
 }
 

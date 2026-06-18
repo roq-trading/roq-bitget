@@ -328,7 +328,7 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
           .quantity = NaN,
           .price = NaN,
       };
-      shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_);
       break;
     }
   }
@@ -467,12 +467,7 @@ void DropCopy::operator()(Trace<protocol::json::Order> const &event) {
         .update_type = map(order.action),
         .sending_time_utc = order.ts,
     };
-    if (shared_.update_order(stream_id_, trace_info, order_update, [&]([[maybe_unused]] auto &order) {
-          // no fills here
-        })) {
-    } else {
-      log::warn<1>(R"(*** EXTERNAL ORDER *** (order_id="{}", client_oid="{}"))"sv, item.order_id, item.client_oid);
-    }
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id_);
   }
 }
 
@@ -584,7 +579,7 @@ void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
         .quantity = NaN,
         .price = NaN,
     };
-    shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_);
   }
 }
 
@@ -606,7 +601,7 @@ void DropCopy::operator()(Trace<protocol::json::ModifyOrder> const &event) {
         .quantity = NaN,
         .price = NaN,
     };
-    shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_);
   }
 }
 
@@ -628,7 +623,7 @@ void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
         .quantity = NaN,
         .price = NaN,
     };
-    shared_.update_order(stream_id_, trace_info, response, [&]([[maybe_unused]] auto &order) {});
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id_);
   }
 }
 

@@ -26,16 +26,11 @@ struct Shared final {
 
   Shared(Shared const &) = delete;
 
-  auto discard_symbol(std::string_view const &name) const { return dispatcher_.discard_symbol(name); }
-
-  template <typename... Args>
-  auto update_order(Args &&...args) {
-    return dispatcher_.update_order(std::forward<Args>(args)...);
-  }
+  auto discard_symbol(std::string_view const &name) const { return dispatcher.discard_symbol(name); }
 
   template <typename... Args>
   auto operator()(Args &&...args) {
-    return dispatcher_(std::forward<Args>(args)...);
+    return dispatcher(std::forward<Args>(args)...);
   }
 
  public:
@@ -43,8 +38,7 @@ struct Shared final {
   std::vector<Trade> trades;
   std::vector<Fill> fills;
 
- private:
-  server::Dispatcher &dispatcher_;
+  server::Dispatcher &dispatcher;
 
  public:
   Settings const &settings;
