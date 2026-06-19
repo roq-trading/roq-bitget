@@ -164,7 +164,7 @@ void MarketData::operator()(web::socket::Client::Latency const &latency) {
       .account = {},
       .latency = latency.sample,
   };
-  create_trace_and_dispatch(handler_, trace_info, external_latency);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, external_latency);
   latency_.ping.update(latency.sample);
 }
 
@@ -195,7 +195,7 @@ void MarketData::operator()(ConnectionStatus connection_status, std::string_view
       .proxy = (*connection_).get_proxy(),
   };
   log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(handler_, trace_info, stream_status);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
 }
 
 void MarketData::subscribe(std::span<Symbol const> const &symbols) {
@@ -271,7 +271,7 @@ void MarketData::operator()(Trace<protocol::json::Ticker> const &event) {
           .exchange_sequence = {},
           .sending_time_utc = ticker.ts,
       };
-      create_trace_and_dispatch(handler_, trace_info, top_of_book, true);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, top_of_book, true);
       // XXX mark_price ???
       std::array<Statistics, 7> statistics{{
           {
@@ -327,7 +327,7 @@ void MarketData::operator()(Trace<protocol::json::Ticker> const &event) {
           .exchange_sequence = {},
           .sending_time_utc = ticker.ts,
       };
-      create_trace_and_dispatch(handler_, trace_info, statistics_update, true);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, statistics_update, true);
     }
   });
 }
@@ -364,7 +364,7 @@ void MarketData::operator()(Trace<protocol::json::PublicTrade> const &event) {
           .exchange_sequence = {},
           .sending_time_utc = public_trade.ts,
       };
-      create_trace_and_dispatch(handler_, trace_info, trade_summary, true);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, trade_summary, true);
     }
   });
 }
@@ -431,7 +431,7 @@ void MarketData::operator()(Trace<protocol::json::Books> const &event) {
           .max_depth = {},
           .checksum = {},
       };
-      create_trace_and_dispatch(handler_, trace_info, market_by_price_update, true);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, market_by_price_update, true, shared_.final_bids, shared_.final_asks);
     }
   });
 }

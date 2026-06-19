@@ -223,7 +223,7 @@ void DropCopy::operator()(web::socket::Client::Latency const &latency) {
       .account = account_.name,
       .latency = latency.sample,
   };
-  create_trace_and_dispatch(handler_, trace_info, external_latency);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, external_latency);
   latency_.ping.update(latency.sample);
 }
 
@@ -254,7 +254,7 @@ void DropCopy::operator()(ConnectionStatus connection_status, std::string_view c
       .proxy = (*connection_).get_proxy(),
   };
   log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(handler_, trace_info, stream_status);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
 }
 
 void DropCopy::login() {
@@ -385,7 +385,7 @@ void DropCopy::operator()(Trace<protocol::json::Account> const &event) {
           .exchange_sequence = {},
           .sending_time_utc = account.ts,
       };
-      create_trace_and_dispatch(handler_, trace_info, funds_update, true);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, funds_update, true);
     }
   }
 }
@@ -421,7 +421,7 @@ void DropCopy::operator()(Trace<protocol::json::Position> const &event) {
         .exchange_sequence = {},
         .sending_time_utc = position.ts,
     };
-    create_trace_and_dispatch(handler_, trace_info, position_update, true);
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, position_update, true);
   }
 }
 
@@ -504,7 +504,7 @@ void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
           .user = {},
           .strategy_id = {},
       };
-      create_trace_and_dispatch(handler_, trace_info, trade_update, true, SOURCE_NONE);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, trade_update, true, SOURCE_NONE);
       shared_.fills.clear();
     }
   };

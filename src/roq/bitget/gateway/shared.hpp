@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include <chrono>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "roq/api.hpp"
+
 #include "roq/server.hpp"
 
 #include "roq/core/symbols.hpp"
@@ -26,26 +25,19 @@ struct Shared final {
 
   Shared(Shared const &) = delete;
 
-  auto discard_symbol(std::string_view const &name) const { return dispatcher.discard_symbol(name); }
+  server::Dispatcher &dispatcher;
 
-  template <typename... Args>
-  auto operator()(Args &&...args) {
-    return dispatcher(std::forward<Args>(args)...);
-  }
+  Settings const &settings;
+  API const api;
 
- public:
+  core::limit::RateLimiter rate_limiter;
+
+  core::Symbols symbols;
+  utils::unordered_set<std::string> all_symbols;
+
   std::vector<MBPUpdate> bids, asks, final_bids, final_asks;
   std::vector<Trade> trades;
   std::vector<Fill> fills;
-
-  server::Dispatcher &dispatcher;
-
- public:
-  Settings const &settings;
-  API const api;
-  core::limit::RateLimiter rate_limiter;
-  core::Symbols symbols;
-  utils::unordered_set<std::string> all_symbols;
 };
 
 }  // namespace gateway
