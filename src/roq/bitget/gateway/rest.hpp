@@ -3,8 +3,6 @@
 #pragma once
 
 #include <string>
-#include <string_view>
-#include <vector>
 
 #include "roq/utils/metrics/counter.hpp"
 #include "roq/utils/metrics/latency.hpp"
@@ -20,7 +18,6 @@
 
 #include "roq/server.hpp"
 
-#include "roq/bitget/gateway/account.hpp"
 #include "roq/bitget/gateway/shared.hpp"
 
 #include "roq/bitget/protocol/json/instruments_ack.hpp"
@@ -42,8 +39,6 @@ struct Rest final : public web::rest::Client::Handler {
 
   Rest(Rest const &) = delete;
 
-  bool ready() const { return connection_status_ == ConnectionStatus::READY; }
-
   void operator()(Event<Start> const &);
   void operator()(Event<Stop> const &);
   void operator()(Event<Timer> const &);
@@ -56,6 +51,10 @@ struct Rest final : public web::rest::Client::Handler {
   void operator()(Trace<web::rest::Client::Connected> const &) override;
   void operator()(Trace<web::rest::Client::Disconnected> const &) override;
   void operator()(Trace<web::rest::Client::Latency> const &) override;
+
+  // helpers
+
+  bool ready() const { return connection_status_ == ConnectionStatus::READY; }
 
   void operator()(ConnectionStatus, std::string_view const &reason = {});
 

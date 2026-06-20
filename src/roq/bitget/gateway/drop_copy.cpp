@@ -4,8 +4,6 @@
 
 #include "roq/mask.hpp"
 
-#include "roq/utils/update.hpp"
-
 #include "roq/utils/exceptions/unhandled.hpp"
 
 #include "roq/utils/metrics/factory.hpp"

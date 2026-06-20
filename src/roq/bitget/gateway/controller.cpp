@@ -2,17 +2,9 @@
 
 #include "roq/bitget/gateway/controller.hpp"
 
-#include <algorithm>
-#include <cctype>
-#include <limits>
-
 #include "roq/logging.hpp"
 
-#include "roq/clock.hpp"
-
 #include "roq/server/oms/exceptions.hpp"
-
-#include "roq/bitget/protocol/json/utils.hpp"
 
 #include "roq/bitget/gateway/api.hpp"
 

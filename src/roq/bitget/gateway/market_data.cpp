@@ -2,8 +2,6 @@
 
 #include "roq/bitget/gateway/market_data.hpp"
 
-#include <algorithm>
-
 #include "roq/logging.hpp"
 
 #include "roq/mask.hpp"

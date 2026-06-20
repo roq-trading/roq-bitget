@@ -3,7 +3,6 @@
 #pragma once
 
 #include <string>
-#include <string_view>
 
 #include "roq/utils/metrics/counter.hpp"
 #include "roq/utils/metrics/latency.hpp"
@@ -34,8 +33,6 @@ struct DropCopy final : public web::socket::Client::Handler, protocol::json::Par
   DropCopy(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &);
 
   DropCopy(DropCopy const &) = delete;
-
-  bool ready() const;
 
   void operator()(Event<Start> const &);
   void operator()(Event<Stop> const &);
@@ -88,6 +85,8 @@ struct DropCopy final : public web::socket::Client::Handler, protocol::json::Par
   void operator()(Trace<protocol::json::CancelOrder> const &) override;
 
   // helpers
+
+  bool ready() const;
 
   void operator()(ConnectionStatus, std::string_view const &reason = {});
 
