@@ -99,7 +99,7 @@ struct DropCopy final : public web::socket::Client::Handler, protocol::json::Par
   void parse(std::string_view const &message);
 
  private:
-  Handler &handler_;
+  [[maybe_unused]] Handler &handler_;
   // config
   uint16_t const stream_id_;
   std::string const name_;
