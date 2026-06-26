@@ -23,6 +23,9 @@ struct ROQ_PUBLIC Settings final : public server::flags::Settings, public flags:
   flags::Misc misc;
   flags::REST rest;
   flags::WS ws;
+
+ private:
+  explicit Settings(args::Parser const &, flags::Flags const &);
 };
 
 }  // namespace flags
