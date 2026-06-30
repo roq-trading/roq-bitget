@@ -90,6 +90,7 @@ constexpr Helper<bitget::protocol::json::Category, bitget::protocol::json::Futur
     case MARGIN:
       return roq::SecurityType::SPOT;
     case USDT_FUTURES:
+    case USDT_FUTURES_2:
     case USDC_FUTURES:
     case COIN_FUTURES:
       switch (std::get<1>(args_)) {

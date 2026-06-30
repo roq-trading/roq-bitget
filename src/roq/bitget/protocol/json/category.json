@@ -13,6 +13,10 @@
       "name": "USDT_FUTURES"
     },
     {
+      "raw": "usdt-futures",
+      "name": "USDT_FUTURES_2"
+    },
+    {
       "raw": "USDC-FUTURES",
       "name": "USDC_FUTURES"
     },
