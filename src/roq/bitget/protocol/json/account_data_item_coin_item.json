@@ -33,6 +33,10 @@
     {
       "name": "debts",
       "type": "std/double"
+    },
+    {
+      "name": "bonus",
+      "type": "std/double"
     }
   ]
 }
