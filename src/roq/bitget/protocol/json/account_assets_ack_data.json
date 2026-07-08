@@ -50,6 +50,14 @@
       "name": "assets",
       "type": "roq/bitget/protocol/json/AccountAssetsAckDataAssetsItem",
       "array": "std/span"
+    },
+    {
+      "name": "leverage",
+      "type": "std/double"
+    },
+    {
+      "name": "positionValue",
+      "type": "std/double"
     }
   ]
 }
