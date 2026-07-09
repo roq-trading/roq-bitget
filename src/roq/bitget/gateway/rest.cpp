@@ -258,6 +258,8 @@ void Rest::operator()(Trace<protocol::json::InstrumentsAck> const &event) {
           return item.quote_coin;  // linear ???
         case COIN_FUTURES:
           return item.quote_coin;  // linear ???
+        case USDT_FUTURES_2:
+          return item.base_coin;  // inverse ???
       }
       return {};
     }();
