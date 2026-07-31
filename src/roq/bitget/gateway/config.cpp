@@ -15,6 +15,9 @@ namespace gateway {
 namespace {
 auto create_gateway_settings(auto &settings) -> GatewaySettings {
   return {
+      .api = {},
+      .instance = {},
+      .is_uat = {},
       .supports{
           SupportType::REFERENCE_DATA,
           SupportType::TOP_OF_BOOK,
