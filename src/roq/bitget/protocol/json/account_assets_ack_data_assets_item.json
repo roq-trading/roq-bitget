@@ -29,6 +29,10 @@
     {
       "name": "locked",
       "type": "std/double"
+    },
+    {
+      "name": "bonus",
+      "type": "std/double"
     }
   ]
 }

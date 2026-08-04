@@ -101,6 +101,10 @@
     {
       "name": "updatedTime",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "cashDividend",
+      "type": "std/double"
     }
   ]
 }

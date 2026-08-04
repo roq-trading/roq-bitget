@@ -105,6 +105,10 @@
     {
       "name": "realCreateTime",
       "type": "std/milliseconds"
+    },
+    {
+      "name": "cashDividend",
+      "type": "std/double"
     }
   ]
 }

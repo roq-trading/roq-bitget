@@ -38,6 +38,9 @@
     {
       "name": "connId",
       "type": "std/string_view"
+    },
+    {
+      "name": "rateLimit"
     }
   ]
 }
