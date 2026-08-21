@@ -24,6 +24,14 @@
     },
     {
       "name": "rateLimit"
+    },
+    {
+      "name": "pushTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "receiveTime",
+      "type": "std/milliseconds"
     }
   ]
 }

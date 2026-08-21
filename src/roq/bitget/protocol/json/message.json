@@ -59,6 +59,12 @@
     },
     {
       "name": "rateLimit"
+    },
+    {
+      "name": "pushTime"
+    },
+    {
+      "name": "receiveTime"
     }
   ]
 }
