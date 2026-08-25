@@ -25,6 +25,18 @@ roq::Error guess_error(int32_t code) {
   return Error::UNKNOWN;
 }
 
+bool is_logon_error(int32_t code) {
+  switch (code) {
+    case 30005:  // Login failed
+    case 30011:  // Invalid ACCESS_KEY
+    case 30012:  // Invalid ACCESS_PASSPHRASE
+    case 30013:  // Invalid ACCESS_TIMESTAMP
+    case 30015:  // Invalid signature
+      return true;
+  }
+  return false;
+}
+
 }  // namespace json
 }  // namespace protocol
 }  // namespace bitget

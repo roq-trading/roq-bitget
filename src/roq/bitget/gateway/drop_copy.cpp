@@ -307,7 +307,17 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
   switch (request_type) {
     using enum RequestType;
     case UNDEFINED:
-      log::error("error={}"sv, error);
+      if (protocol::json::is_logon_error(error.code)) {
+        if (shared_.settings.experimental.retry_logon) {
+          log::error("error={}"sv, error);
+          log::warn("Closing connection..."sv);
+          (*connection_).close();
+        } else {
+          log::fatal("error={}"sv, error);
+        }
+      } else {
+        log::error("error={}"sv, error);
+      }
       break;
     case CREATE_ORDER:
     case MODIFY_ORDER:
