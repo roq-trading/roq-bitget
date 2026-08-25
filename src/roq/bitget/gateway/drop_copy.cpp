@@ -309,14 +309,14 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
     case UNDEFINED:
       if (protocol::json::is_logon_error(error.code)) {
         if (shared_.settings.experimental.retry_logon) {
-          log::error("error={}"sv, error);
+          log::error("[{}] error={}"sv, account_.name, error);
           log::warn("Closing connection..."sv);
           (*connection_).close();
         } else {
-          log::fatal("error={}"sv, error);
+          log::fatal("[{}] error={}"sv, account_.name, error);
         }
       } else {
-        log::error("error={}"sv, error);
+        log::error("[{}] error={}"sv, account_.name, error);
       }
       break;
     case CREATE_ORDER:
