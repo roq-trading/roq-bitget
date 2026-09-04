@@ -46,10 +46,6 @@ find_package(roq-web REQUIRED)
 find_package(tomlplusplus REQUIRED)
 find_package(unordered_dense REQUIRED)
 
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(UUID REQUIRED uuid)
-
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   include(CTest)
 endif()
