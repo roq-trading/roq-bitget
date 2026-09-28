@@ -10,14 +10,14 @@
 
 #include "roq/web/socket/interceptor.hpp"
 
-#include "roq/bitget/flags/settings.hpp"
+#include "roq/server/settings.hpp"
 
 namespace roq {
 namespace bitget {
 namespace tools {
 
-struct RateLimit final : public web::rest::Interceptor, public web::socket::Interceptor {
-  explicit RateLimit(flags::Settings const &);
+struct Throttle final : public web::rest::Interceptor, public web::socket::Interceptor {
+  explicit Throttle(server::Settings const &);
 
   struct Params {
     int32_t used_remain_limit = {};
@@ -37,7 +37,7 @@ struct RateLimit final : public web::rest::Interceptor, public web::socket::Inte
   // web::socket::Interceptor
 
  private:
-  bool const suspend_on_rate_limit_;
+  bool const enabled_;
 
   Params params_;
 
@@ -49,9 +49,9 @@ struct RateLimit final : public web::rest::Interceptor, public web::socket::Inte
 }  // namespace roq
 
 template <>
-struct fmt::formatter<roq::bitget::tools::RateLimit::Params> {
+struct fmt::formatter<roq::bitget::tools::Throttle::Params> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(roq::bitget::tools::RateLimit::Params const &value, format_context &context) const {
+  auto format(roq::bitget::tools::Throttle::Params const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),

@@ -16,7 +16,7 @@
 #include "roq/bitget/gateway/api.hpp"
 #include "roq/bitget/gateway/settings.hpp"
 
-#include "roq/bitget/tools/rate_limit.hpp"
+#include "roq/bitget/tools/throttle.hpp"
 
 namespace roq {
 namespace bitget {
@@ -32,7 +32,7 @@ struct Shared final {
   Settings const &settings;
   API const api;
 
-  tools::RateLimit rate_limit;
+  tools::Throttle throttle;
 
   core::limit::RateLimiter rate_limiter;
 
