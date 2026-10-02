@@ -343,6 +343,8 @@ void MarketData::operator()(Trace<protocol::json::PublicTrade> const &event) {
     decltype(protocol::json::PublicTradeDataItem::timestamp) timestamp = {};
     for (auto &item : public_trade.data) {
       auto item_2 = Trade{
+          .trade_conditions = {},
+          .trade_type = {},
           .side = map(item.side),
           .price = item.price,
           .quantity = item.size,
