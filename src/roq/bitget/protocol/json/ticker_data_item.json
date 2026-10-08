@@ -77,6 +77,10 @@
     {
       "name": "deliveryStatus",
       "type": "std/string_view"
+    },
+    {
+      "name": "platformTurnover24h",
+      "type": "std/double"
     }
   ]
 }

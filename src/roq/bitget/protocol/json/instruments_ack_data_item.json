@@ -177,6 +177,14 @@
     {
       "name": "symbolType",
       "type": "roq/bitget/protocol/json/SymbolType"
+    },
+    {
+      "name": "maxMarketOrderAmount",
+      "type": "std/double"
+    },
+    {
+      "name": "isReality",
+      "type": "std/bool"
     }
   ]
 }
