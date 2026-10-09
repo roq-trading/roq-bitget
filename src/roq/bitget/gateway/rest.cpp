@@ -205,11 +205,8 @@ void Rest::get_instruments() {
         .quality_of_service = {},
     };
     auto sequence = download_.sequence();
-    (*connection_)("instruments"sv, request, [this, sequence]([[maybe_unused]] auto &request_id, auto &response) {
-      TraceInfo trace_info;
-      Trace event{trace_info, response};
-      get_instruments_ack(event, sequence);
-    });
+    auto callback = [this, sequence](auto &event, [[maybe_unused]] auto &request_id) { get_instruments_ack(event, sequence); };
+    (*connection_)(request, callback, "instruments"sv);
   });
 }
 
