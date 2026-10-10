@@ -33,6 +33,14 @@
     {
       "name": "bonus",
       "type": "std/double"
+    },
+    {
+      "name": "balanceOriginal",
+      "type": "std/double"
+    },
+    {
+      "name": "interestBase",
+      "type": "std/double"
     }
   ]
 }

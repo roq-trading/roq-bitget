@@ -35,6 +35,14 @@
     {
       "name": "accountLevel",
       "type": "std/string_view"
+    },
+    {
+      "name": "deltaSwitch",
+      "type": "std/string_view"
+    },
+    {
+      "name": "repayMode",
+      "type": "std/string_view"
     }
   ]
 }
