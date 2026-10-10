@@ -112,15 +112,15 @@ bool DropCopy::ready() const {
   return (*connection_).ready();
 }
 
-void DropCopy::operator()(Event<Start> const &) {
+void DropCopy::operator()(Trace<Start> const &) {
   (*connection_).start();
 }
 
-void DropCopy::operator()(Event<Stop> const &) {
+void DropCopy::operator()(Trace<Stop> const &) {
   (*connection_).stop();
 }
 
-void DropCopy::operator()(Event<Timer> const &event) {
+void DropCopy::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
   (*connection_).refresh(timer.now);
   if (ready()) {

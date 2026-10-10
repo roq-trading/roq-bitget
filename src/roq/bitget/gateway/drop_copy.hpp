@@ -41,9 +41,9 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   bool ready() const override;
 
-  void operator()(Event<Start> const &) override;
-  void operator()(Event<Stop> const &) override;
-  void operator()(Event<Timer> const &) override;
+  void operator()(Trace<Start> const &) override;
+  void operator()(Trace<Stop> const &) override;
+  void operator()(Trace<Timer> const &) override;
 
   void operator()(metrics::Writer &) const override;
 
