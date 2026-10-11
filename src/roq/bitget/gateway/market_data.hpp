@@ -90,7 +90,7 @@ struct MarketData final : public Base<MarketData>,
   void subscribe(std::span<Symbol const> const &symbols);
   void subscribe(std::string_view const &topic, std::span<Symbol const> const &symbols);
 
-  void parse(std::string_view const &message);
+  void parse(TraceInfo const &, std::string_view const &message);
 
  private:
   [[maybe_unused]] Handler &handler_;

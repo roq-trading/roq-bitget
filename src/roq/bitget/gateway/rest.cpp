@@ -323,10 +323,10 @@ void Rest::operator()(Trace<protocol::json::InstrumentsAck> const &event) {
     ++counter;
   }
   if (!std::empty(symbols)) {
-    auto instruments_update = SymbolsUpdate{
+    auto symbols_update = SymbolsUpdate{
         .symbols = symbols,
     };
-    handler_(instruments_update);
+    create_trace_and_dispatch(handler_, trace_info, symbols_update);
   }
   if (counter > 0) [[unlikely]] {
     log::info("Symbols {} / {}"sv, counter, std::size(instruments_ack.data));

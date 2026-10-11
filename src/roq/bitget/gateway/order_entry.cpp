@@ -1035,7 +1035,6 @@ void OrderEntry::cancel_all_orders_ack(Trace<web::rest::Response> const &event, 
           .user = {},
           .strategy_id = {},
       };
-      TraceInfo trace_info;
       create_trace_and_dispatch(shared_.dispatcher, trace_info, cancel_all_orders_ack);
     };
     auto handle_success = [&](auto &body) {
