@@ -20,9 +20,9 @@ struct Account final {
 
   Account(Account const &) = delete;
 
-  std::string create_ws_login();
+  std::string create_ws_login(TraceInfo const &);
 
-  std::string create_headers(web::http::Method, std::string_view const &path, std::string_view const &query, std::string_view const &body);
+  std::string create_headers(TraceInfo const &, web::http::Method, std::string_view const &path, std::string_view const &query, std::string_view const &body);
 
   std::string const name;
 

@@ -137,7 +137,7 @@ void OrderEntry::operator()(Trace<Timer> const &event) {
   }
   if (shared_.settings.rest.cancel_on_disconnect && next_heartbeat_ < timer.now) {
     next_heartbeat_ = timer.now + (shared_.settings.rest.ping_freq / 3);
-    countdown_cancel_all();
+    countdown_cancel_all(trace_info);
   }
 }
 
@@ -268,24 +268,24 @@ int32_t OrderEntry::download(Trace<State> const &event) {
       break;
     case ACCOUNT_SETTINGS:
       create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "account-settings"sv);
-      get_account_settings();
+      get_account_settings(trace_info);
       return 1;
     case ACCOUNT_ASSETS:  // skip
       create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "account-assets"sv);
-      get_account_assets();
+      get_account_assets(trace_info);
       return 1;
     case CURRENT_POSITIONS:  // skip
       create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "current-positions"sv);
-      get_current_positions();
+      get_current_positions(trace_info);
       return 1;
     case UNFILLED_ORDERS:
       create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "unfilled-orders"sv);
-      get_unfilled_orders();
+      get_unfilled_orders(trace_info);
       return 1;
     case TRADE_FILLS:
       if (shared_.settings.rest.download_fills_begin.count()) {
         create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "fills"sv);
-        get_trade_fills();
+        get_trade_fills(trace_info);
         return 1;
       } else {
         return 0;
@@ -300,12 +300,12 @@ int32_t OrderEntry::download(Trace<State> const &event) {
 
 // account-settings
 
-void OrderEntry::get_account_settings() {
+void OrderEntry::get_account_settings(TraceInfo const &trace_info) {
   profile_.account_settings([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.account_settings;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
-    auto headers = account_.create_headers(method, path, query, {});
+    auto headers = account_.create_headers(trace_info, method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -367,12 +367,12 @@ void OrderEntry::operator()(Trace<protocol::json::AccountSettingsAck> const &eve
 
 // account-assets
 
-void OrderEntry::get_account_assets() {
+void OrderEntry::get_account_assets(TraceInfo const &trace_info) {
   profile_.account_assets([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.account_assets;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
-    auto headers = account_.create_headers(method, path, query, {});
+    auto headers = account_.create_headers(trace_info, method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -441,12 +441,12 @@ void OrderEntry::operator()(Trace<protocol::json::AccountAssetsAck> const &event
 
 // current-positions
 
-void OrderEntry::get_current_positions() {
+void OrderEntry::get_current_positions(TraceInfo const &trace_info) {
   profile_.current_positions([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.current_positions;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
-    auto headers = account_.create_headers(method, path, query, {});
+    auto headers = account_.create_headers(trace_info, method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -526,12 +526,12 @@ void OrderEntry::operator()(Trace<protocol::json::CurrentPositionsAck> const &ev
 
 // unfilled-orders
 
-void OrderEntry::get_unfilled_orders() {
+void OrderEntry::get_unfilled_orders(TraceInfo const &trace_info) {
   profile_.unfilled_orders([&]() {
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.unfilled_orders;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
-    auto headers = account_.create_headers(method, path, query, {});
+    auto headers = account_.create_headers(trace_info, method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -622,15 +622,14 @@ void OrderEntry::operator()(Trace<protocol::json::UnfilledOrdersAck> const &even
 
 // trade-fills
 
-void OrderEntry::get_trade_fills() {
+void OrderEntry::get_trade_fills(TraceInfo const &trace_info) {
   assert(shared_.settings.rest.download_fills_begin.count() > 0);
   profile_.trade_fills([&]() {
-    auto now = clock::get_realtime();
-    auto start_time = std::chrono::duration_cast<std::chrono::milliseconds>(now - shared_.settings.rest.download_fills_begin);
+    auto start_time = std::chrono::duration_cast<std::chrono::milliseconds>(trace_info.origin_create_time_utc - shared_.settings.rest.download_fills_begin);
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.trade_fills;
     auto query = fmt::format("?category={}&startTime={}"sv, shared_.api.category, start_time.count());
-    auto headers = account_.create_headers(method, path, query, {});
+    auto headers = account_.create_headers(trace_info, method, path, query, {});
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -774,7 +773,7 @@ void OrderEntry::place_order(
     auto path = shared_.api.order_management.place_order;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::place_order(encode_buffer_, create_order, order, ref_data, request_id, shared_.api.category);
-    auto headers = account_.create_headers(method, path, query, body);
+    auto headers = account_.create_headers(message_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -851,7 +850,7 @@ void OrderEntry::modify_order(
     auto path = shared_.api.order_management.modify_order;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::modify_order(encode_buffer_, modify_order, order, ref_data, request_id);
-    auto headers = account_.create_headers(method, path, query, body);
+    auto headers = account_.create_headers(message_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -926,7 +925,7 @@ void OrderEntry::cancel_order(
     auto path = shared_.api.order_management.cancel_order;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::cancel_order(encode_buffer_, cancel_order, order, ref_data, request_id);
-    auto headers = account_.create_headers(method, path, query, body);
+    auto headers = account_.create_headers(message_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -996,7 +995,7 @@ void OrderEntry::cancel_all_orders(Event<CancelAllOrders> const &event, std::str
     auto path = shared_.api.order_management.cancel_all_orders;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::cancel_all_orders(encode_buffer_, cancel_all_orders, request_id, shared_.api.category);
-    auto headers = account_.create_headers(method, path, query, body);
+    auto headers = account_.create_headers(message_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -1056,13 +1055,13 @@ void OrderEntry::operator()(Trace<protocol::json::CancelAllOrdersAck> const &eve
 
 // countdown-cancel-all
 
-void OrderEntry::countdown_cancel_all() {
+void OrderEntry::countdown_cancel_all(TraceInfo const &trace_info) {
   profile_.countdown_cancel_all([&]() {
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.countdown_cancel_all;
     auto body =
         protocol::json::Encoder::countdown_cancel_all(encode_buffer_, std::chrono::duration_cast<std::chrono::seconds>(shared_.settings.rest.ping_freq));
-    auto headers = account_.create_headers(method, path, {}, body);
+    auto headers = account_.create_headers(trace_info, method, path, {}, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,

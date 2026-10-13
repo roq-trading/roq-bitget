@@ -101,31 +101,31 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
 
   // account-settings
 
-  void get_account_settings();
+  void get_account_settings(TraceInfo const &);
   void get_account_settings_ack(Trace<web::rest::Response> const &, uint32_t sequence);
   void operator()(Trace<protocol::json::AccountSettingsAck> const &);
 
   // account-assets
 
-  void get_account_assets();
+  void get_account_assets(TraceInfo const &);
   void get_account_assets_ack(Trace<web::rest::Response> const &, uint32_t sequence);
   void operator()(Trace<protocol::json::AccountAssetsAck> const &);
 
   // current-positions
 
-  void get_current_positions();
+  void get_current_positions(TraceInfo const &);
   void get_current_positions_ack(Trace<web::rest::Response> const &, uint32_t sequence);
   void operator()(Trace<protocol::json::CurrentPositionsAck> const &);
 
   // unfilled-orders
 
-  void get_unfilled_orders();
+  void get_unfilled_orders(TraceInfo const &);
   void get_unfilled_orders_ack(Trace<web::rest::Response> const &, uint32_t sequence);
   void operator()(Trace<protocol::json::UnfilledOrdersAck> const &);
 
   // trade-fills
 
-  void get_trade_fills();
+  void get_trade_fills(TraceInfo const &);
   void get_trade_fills_ack(Trace<web::rest::Response> const &, uint32_t sequence);
   void operator()(Trace<protocol::json::TradeFillsAck> const &);
 
@@ -165,7 +165,7 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
 
   // countdown-cancel-all
 
-  void countdown_cancel_all();
+  void countdown_cancel_all(TraceInfo const &);
   void countdown_cancel_all_ack(Trace<web::rest::Response> const &);
   // void operator()(Trace<protocol::json::CancelAllOrdersAck> const &, uint8_t user_id);
 

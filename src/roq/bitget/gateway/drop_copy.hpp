@@ -99,7 +99,7 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   // helpers
 
-  void login();
+  void login(TraceInfo const &);
 
   void subscribe();
 
