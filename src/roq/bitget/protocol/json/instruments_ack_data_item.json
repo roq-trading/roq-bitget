@@ -185,6 +185,22 @@
     {
       "name": "isReality",
       "type": "std/bool"
+    },
+    {
+      "name": "fullName",
+      "type": "std/string_view"
+    },
+    {
+      "name": "instrumentType",
+      "type": "roq/bitget/protocol/json/InstrumentType"
+    },
+    {
+      "name": "isin",
+      "type": "std/string_view"
+    },
+    {
+      "name": "marketRegion",
+      "type": "std/string_view"
     }
   ]
 }

@@ -5,90 +5,91 @@ set(SOURCES encoder.cpp map.cpp parser.cpp utils.cpp)
 include(RoqAutogen)
 
 set(AUTOGEN_SCHEMAS
-    account_assets_ack_data_assets_item.json
-    account_assets_ack_data.json
-    account_assets_ack.json
-    account_data_item_coin_item.json
-    account_data_item.json
     account.json
+    account_assets_ack.json
+    account_assets_ack_data.json
+    account_assets_ack_data_assets_item.json
+    account_data_item.json
+    account_data_item_coin_item.json
     account_mode.json
-    account_settings_ack_data_coin_config_item.json
-    account_settings_ack_data.json
-    account_settings_ack_data_symbol_config_item.json
     account_settings_ack.json
+    account_settings_ack_data.json
+    account_settings_ack_data_coin_config_item.json
+    account_settings_ack_data_symbol_config_item.json
     action.json
     arg.json
     asset_mode.json
+    books.json
     books_data.json
     books_item.json
-    books.json
+    cancel_all_orders_ack.json
     cancel_all_orders_ack_data.json
     cancel_all_orders_ack_data_list_item.json
-    cancel_all_orders_ack.json
-    cancel_order_ack_data.json
-    cancel_order_ack.json
-    cancel_order_args.json
     cancel_order.json
+    cancel_order_ack.json
+    cancel_order_ack_data.json
+    cancel_order_args.json
     category.json
     category_ws.json
+    current_positions_ack.json
     current_positions_ack_data.json
     current_positions_ack_data_list_item.json
-    current_positions_ack.json
     delivery_period.json
     error.json
     event.json
-    fill_data_item_fee_detail_item.json
-    fill_data_item.json
     fill.json
+    fill_data_item.json
+    fill_data_item_fee_detail_item.json
     futures_type.json
     hold_mode.json
     hold_side.json
-    instruments_ack_data_item.json
+    instrument_type.json
     instruments_ack.json
+    instruments_ack_data_item.json
     login.json
     margin_mode.json
     message.json
-    modify_order_ack_data.json
-    modify_order_ack.json
-    modify_order_args.json
     modify_order.json
-    order_data_item_fee_detail_item.json
-    order_data_item.json
+    modify_order_ack.json
+    modify_order_ack_data.json
+    modify_order_args.json
     order.json
+    order_data_item.json
+    order_data_item_fee_detail_item.json
     order_source.json
     order_status.json
     order_type.json
-    place_order_ack_data.json
-    place_order_ack.json
-    place_order_args.json
     place_order.json
-    position_data_item.json
-    position.json
-    position_status.json
+    place_order_ack.json
+    place_order_ack_data.json
+    place_order_args.json
     pos_mode.json
     pos_side.json
-    public_trade_data_item.json
+    position.json
+    position_data_item.json
+    position_status.json
     public_trade.json
+    public_trade_data_item.json
     side.json
     stp_mode.json
     subscribe.json
     symbol_status.json
     symbol_type.json
-    ticker_data_item.json
     ticker.json
+    ticker_data_item.json
     time_in_force.json
     topic.json
-    trade_fills_ack_data.json
-    trade_fills_ack_data_list_item_fee_detail_item.json
-    trade_fills_ack_data_list_item.json
     trade_fills_ack.json
+    trade_fills_ack_data.json
+    trade_fills_ack_data_list_item.json
+    trade_fills_ack_data_list_item_fee_detail_item.json
     trade_scope.json
     trade_side.json
     trading_status.json
-    unfilled_orders_ack_data.json
-    unfilled_orders_ack_data_list_item_fee_detail_item.json
-    unfilled_orders_ack_data_list_item.json
     unfilled_orders_ack.json
+    unfilled_orders_ack_data.json
+    unfilled_orders_ack_data_list_item.json
+    unfilled_orders_ack_data_list_item_fee_detail_item.json
     wsapi_topic.json)
 
 roq_autogen_hpp(

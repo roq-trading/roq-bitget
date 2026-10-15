@@ -1,0 +1,27 @@
+{
+  "name": "roq/bitget/protocol/json/InstrumentType",
+  "type": "enum",
+  "values": [
+    {
+      "name": "crypto"
+    },
+    {
+      "name": "stock"
+    },
+    {
+      "name": "etf"
+    },
+    {
+      "name": "energy"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "fx"
+    },
+    {
+      "name": "metal"
+    }
+  ]
+}
