@@ -8,6 +8,7 @@ set(SOURCES
     drop_copy.cpp
     market_data.cpp
     order_entry.cpp
+    request.cpp
     rest.cpp
     shared.cpp)
 

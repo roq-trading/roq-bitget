@@ -12,8 +12,6 @@
 
 #include "roq/web/rest/client.hpp"
 
-#include "roq/core/download_2.hpp"
-
 #include "roq/core/json/buffer_stack.hpp"
 
 #include "roq/server.hpp"
@@ -21,6 +19,7 @@
 #include "roq/server/stream.hpp"
 
 #include "roq/bitget/gateway/account.hpp"
+#include "roq/bitget/gateway/request.hpp"
 #include "roq/bitget/gateway/shared.hpp"
 
 #include "roq/bitget/protocol/json/account_assets_ack.hpp"
@@ -41,7 +40,7 @@ namespace gateway {
 struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStream, public web::rest::Client::Handler {
   struct Handler {};
 
-  OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &);
+  OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &, Request &, bool master);
 
   // protected:
   friend base_type;
@@ -85,48 +84,34 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   void operator()(Trace<web::rest::Disconnected> const &) override;
   void operator()(Trace<web::rest::Latency> const &) override;
 
-  // core::Download
-
-  enum class State {
-    UNDEFINED = 0,
-    ACCOUNT_SETTINGS,
-    ACCOUNT_ASSETS,
-    CURRENT_POSITIONS,
-    UNFILLED_ORDERS,
-    TRADE_FILLS,
-    DONE,
-  };
-
-  int32_t download(Trace<State> const &);
-
   // account-settings
 
   void get_account_settings(TraceInfo const &);
-  void get_account_settings_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void get_account_settings_ack(Trace<web::rest::Response> const &);
   void operator()(Trace<protocol::json::AccountSettingsAck> const &);
 
   // account-assets
 
   void get_account_assets(TraceInfo const &);
-  void get_account_assets_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void get_account_assets_ack(Trace<web::rest::Response> const &);
   void operator()(Trace<protocol::json::AccountAssetsAck> const &);
 
   // current-positions
 
   void get_current_positions(TraceInfo const &);
-  void get_current_positions_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void get_current_positions_ack(Trace<web::rest::Response> const &);
   void operator()(Trace<protocol::json::CurrentPositionsAck> const &);
 
   // unfilled-orders
 
   void get_unfilled_orders(TraceInfo const &);
-  void get_unfilled_orders_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void get_unfilled_orders_ack(Trace<web::rest::Response> const &);
   void operator()(Trace<protocol::json::UnfilledOrdersAck> const &);
 
   // trade-fills
 
   void get_trade_fills(TraceInfo const &);
-  void get_trade_fills_ack(Trace<web::rest::Response> const &, uint32_t sequence);
+  void get_trade_fills_ack(Trace<web::rest::Response> const &);
   void operator()(Trace<protocol::json::TradeFillsAck> const &);
 
   // place-order
@@ -171,6 +156,10 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
 
   // helper
 
+  void send_heartbeat(TraceInfo const &);
+
+  void check_request_queue(TraceInfo const &);
+
   void process_response(Trace<web::rest::Response> const &, auto error_handler, auto success_handler);
 
  private:
@@ -178,6 +167,7 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   // config
   uint16_t const stream_id_;
   std::string const name_;
+  bool const master_;
   // connection
   std::unique_ptr<web::rest::Client> connection_;
   // buffers
@@ -204,9 +194,9 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   // account
   Account &account_;
   Shared &shared_;
+  Request &request_;
   // state
   ConnectionStatus connection_status_ = {};
-  core::Download2<State> download_;
   //
   std::string encode_buffer_;
   std::chrono::nanoseconds next_heartbeat_ = {};

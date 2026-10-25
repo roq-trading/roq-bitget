@@ -14,6 +14,7 @@
 
 #include "roq/bitget/gateway/account.hpp"
 #include "roq/bitget/gateway/config.hpp"
+#include "roq/bitget/gateway/request.hpp"
 #include "roq/bitget/gateway/settings.hpp"
 #include "roq/bitget/gateway/shared.hpp"
 
@@ -120,6 +121,7 @@ struct Controller final : public Base<Controller>,
   io::Context &context_;
   // shared
   Shared shared_;
+  utils::unordered_map<std::string, std::unique_ptr<Request>> const requests_;
   // seed
   uint16_t stream_id_ = {};
   // streams

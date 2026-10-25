@@ -12,6 +12,8 @@
 
 #include "roq/web/socket/client.hpp"
 
+#include "roq/core/download_2.hpp"
+
 #include "roq/core/json/buffer_stack.hpp"
 
 #include "roq/server.hpp"
@@ -19,6 +21,7 @@
 #include "roq/server/stream.hpp"
 
 #include "roq/bitget/gateway/account.hpp"
+#include "roq/bitget/gateway/request.hpp"
 #include "roq/bitget/gateway/shared.hpp"
 
 #include "roq/bitget/protocol/json/parser.hpp"
@@ -30,7 +33,7 @@ namespace gateway {
 struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream, public web::socket::Client::Handler, protocol::json::Parser::Handler {
   struct Handler {};
 
-  DropCopy(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &);
+  DropCopy(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &, Request &);
 
   // protected:
   friend base_type;
@@ -78,6 +81,20 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
   void operator()(Trace<web::socket::Text> const &) override;
   void operator()(Trace<web::socket::Binary> const &) override;
 
+  // core::Download
+
+  enum class State {
+    UNDEFINED = 0,
+    ACCOUNT_SETTINGS,
+    ACCOUNT_ASSETS,
+    CURRENT_POSITIONS,
+    UNFILLED_ORDERS,
+    TRADE_FILLS,
+    DONE,
+  };
+
+  int32_t download(Trace<State> const &);
+
   // protocol::json::Parser::Handler
 
   void operator()(Trace<protocol::json::Error> const &) override;
@@ -99,11 +116,15 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   // helpers
 
-  void login(TraceInfo const &);
+  void send_login(TraceInfo const &);
+
+  void send_heartbeat(TraceInfo const &);
 
   void subscribe();
 
   void subscribe(std::string_view const &topic);
+
+  void check_request_queue(TraceInfo const &);
 
   void parse(TraceInfo const &, std::string_view const &message);
 
@@ -132,9 +153,11 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
   Account &account_;
   // cache
   Shared &shared_;
+  Request &request_;
   // state
   bool ready_ = false;
   ConnectionStatus connection_status_ = {};
+  core::Download2<State> download_;
   std::chrono::nanoseconds logon_timeout_ = {};
   std::chrono::nanoseconds next_ping_ = {};
 };

@@ -87,7 +87,7 @@ struct create_metrics final : public utils::metrics::Factory {
 
 // === IMPLEMENTATION ===
 
-DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared)
+DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request)
     : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)},
       connection_{create_connection(*this, shared.settings, context, shared)}, decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
       counter_{
@@ -103,7 +103,7 @@ DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, A
           .ping = create_metrics(shared.settings, name_, "ping"sv),
           .heartbeat = create_metrics(shared.settings, name_, "heartbeat"sv),
       },
-      account_{account}, shared_{shared} {
+      account_{account}, shared_{shared}, request_{request}, download_{shared.settings.rest.request_timeout, [this](auto &event) { return download(event); }} {
 }
 
 // server::Stream
@@ -122,11 +122,10 @@ void DropCopy::operator()(Trace<Stop> const &) {
 
 void DropCopy::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
-  (*connection_).refresh(timer.now);
-  if (ready()) {
-    if (next_ping_ < timer.now) {
-      next_ping_ = timer.now + shared_.settings.ws.ping_freq;
-      (*connection_).send_text(PING);
+  if ((*connection_).refresh(timer.now)) {
+    if (ready()) {
+      send_heartbeat(trace_info);
+      check_request_queue(trace_info);
     }
   }
 }
@@ -232,11 +231,12 @@ void DropCopy::operator()(Trace<web::socket::Disconnected> const &event) {
   create_trace_and_dispatch_2(trace_info, ConnectionStatus::DISCONNECTED);
   logon_timeout_ = {};
   next_ping_ = {};
+  download_.reset();
 }
 
 void DropCopy::operator()(Trace<web::socket::Ready> const &event) {
   auto &[trace_info, ready] = event;
-  login(trace_info);
+  send_login(trace_info);
 }
 
 void DropCopy::operator()(Trace<web::socket::Close> const &event) {
@@ -262,6 +262,47 @@ void DropCopy::operator()(Trace<web::socket::Text> const &event) {
 
 void DropCopy::operator()(Trace<web::socket::Binary> const &) {
   log::fatal("Unexpected"sv);
+}
+
+// core::Download
+
+int32_t DropCopy::download(Trace<State> const &event) {
+  auto &[trace_info, state] = event;
+  switch (state) {
+    using enum State;
+    case UNDEFINED:
+      assert(false);
+      break;
+    case ACCOUNT_SETTINGS:
+      create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "account-settings"sv);
+      request_.account_settings.request(trace_info);
+      return 1;
+    case ACCOUNT_ASSETS:  // skip
+      create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "account-assets"sv);
+      request_.account_assets.request(trace_info);
+      return 1;
+    case CURRENT_POSITIONS:  // skip
+      create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "current-positions"sv);
+      request_.current_positions.request(trace_info);
+      return 1;
+    case UNFILLED_ORDERS:
+      create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "unfilled-orders"sv);
+      request_.unfilled_orders.request(trace_info);
+      return 1;
+    case TRADE_FILLS:
+      if (shared_.settings.rest.download_fills_begin.count()) {
+        create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "trade-fills"sv);
+        request_.trade_fills.request(trace_info);
+        return 1;
+      } else {
+        return 0;
+      }
+    case DONE:
+      create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);
+      return 0;
+  }
+  assert(false);
+  return 0;
 }
 
 // protocol::json::Parser::Handler
@@ -333,6 +374,7 @@ void DropCopy::operator()(Trace<protocol::json::Login> const &event) {
     log::fatal("Unexpected: login={}"sv, login);
   }
   subscribe();
+  download_.begin(trace_info);  // XXX FIXME TODO wait for subscribe-ack
   ready_ = true;
   create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);
 }
@@ -607,10 +649,17 @@ uint16_t DropCopy::operator()(Event<CancelAllOrders> const &, [[maybe_unused]] s
 
 // helpers
 
-void DropCopy::login(TraceInfo const &trace_info) {
+void DropCopy::send_login(TraceInfo const &trace_info) {
   auto message = account_.create_ws_login(trace_info);
   log::debug("message={}"sv, message);
   (*connection_).send_text(message);
+}
+
+void DropCopy::send_heartbeat(TraceInfo const &trace_info) {
+  if (next_ping_ < trace_info.origin_create_time) {
+    next_ping_ = trace_info.origin_create_time + shared_.settings.ws.ping_freq;
+    (*connection_).send_text(PING);
+  }
 }
 
 void DropCopy::subscribe() {
@@ -634,6 +683,42 @@ void DropCopy::subscribe(std::string_view const &topic) {
       topic);
   log::debug("message={}"sv, message);
   (*connection_).send_text(message);
+}
+
+void DropCopy::check_request_queue(TraceInfo const &trace_info) {
+  auto state = download_.state();
+  switch (state) {
+    using enum State;
+    case UNDEFINED:
+      break;
+    case ACCOUNT_SETTINGS:
+      if (request_.account_settings.has_response()) {
+        download_.check(trace_info, state);
+      }
+      break;
+    case ACCOUNT_ASSETS:
+      if (request_.account_assets.has_response()) {
+        download_.check(trace_info, state);
+      }
+      break;
+    case CURRENT_POSITIONS:
+      if (request_.current_positions.has_response()) {
+        download_.check(trace_info, state);
+      }
+      break;
+    case UNFILLED_ORDERS:
+      if (request_.unfilled_orders.has_response()) {
+        download_.check(trace_info, state);
+      }
+      break;
+    case TRADE_FILLS:
+      if (request_.trade_fills.has_response()) {
+        download_.check(trace_info, state);
+      }
+      break;
+    case DONE:
+      break;
+  }
 }
 
 void DropCopy::parse(TraceInfo const &trace_info, std::string_view const &message) {
