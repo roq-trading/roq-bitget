@@ -123,10 +123,8 @@ void DropCopy::operator()(Trace<Stop> const &) {
 void DropCopy::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
   if ((*connection_).refresh(timer.now)) {
-    if (ready()) {
-      send_heartbeat(trace_info);
-      check_request_queue(trace_info);
-    }
+    send_heartbeat(trace_info);
+    check_request_queue(trace_info);
   }
 }
 
