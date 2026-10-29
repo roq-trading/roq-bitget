@@ -575,8 +575,6 @@ void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
 }
 
 void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
-  (*connection_).close();
-  return;
   auto &[trace_info, place_order] = event;
   log::info<2>("place_order={}"sv, place_order);
   auto [request_type, request_id] = protocol::json::Encoder::parse_id(place_order.id);
