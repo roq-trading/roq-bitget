@@ -16,7 +16,7 @@ namespace bitget {
 namespace gateway {
 
 struct Account final {
-  Account(Config const &, std::string_view const &name);
+  Account(Settings const &, Config const &, std::string_view const &name);
 
   Account(Account const &) = delete;
 

@@ -16,7 +16,7 @@ namespace bitget {
 namespace tools {
 
 struct Crypto final {
-  Crypto(std::string_view const &key, std::string_view const &secret, std::string_view const &passphrase);
+  Crypto(std::string_view const &key, std::string_view const &secret, std::string_view const &passphrase, bool paptrading);
 
   Crypto(Crypto &&) = delete;
   Crypto(Crypto const &) = delete;
@@ -34,6 +34,7 @@ struct Crypto final {
   MAC mac_;
   Digest digest_;
   std::string const passphrase_;
+  bool const paptrading_;
 };
 
 }  // namespace tools

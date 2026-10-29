@@ -16,8 +16,8 @@ namespace tools {
 
 // === IMPLEMENTATION ===
 
-Crypto::Crypto(std::string_view const &key, std::string_view const &secret, std::string_view const &passphrase)
-    : key_{key}, mac_{secret}, passphrase_{passphrase} {
+Crypto::Crypto(std::string_view const &key, std::string_view const &secret, std::string_view const &passphrase, bool paptrading)
+    : key_{key}, mac_{secret}, passphrase_{passphrase}, paptrading_{paptrading} {
 }
 
 std::string Crypto::create_ws_login(std::chrono::milliseconds timestamp) {
@@ -58,11 +58,13 @@ std::string Crypto::create_headers(
       "ACCESS-KEY: {}\r\n"
       "ACCESS-SIGN: {}\r\n"
       "ACCESS-TIMESTAMP: {}\r\n"
-      "ACCESS-PASSPHRASE: {}\r\n"sv,
+      "ACCESS-PASSPHRASE: {}\r\n"
+      "paptrading: {}\r\n"sv,
       key_,
       signature,
       timestamp.count(),
-      passphrase_);
+      passphrase_,
+      paptrading_ ? 1 : 0);
   return result;
 }
 

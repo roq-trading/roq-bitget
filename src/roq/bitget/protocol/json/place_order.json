@@ -40,7 +40,9 @@
       "type": "std/string_view"
     },
     {
-      "name": "rateLimit"
+      "name": "rateLimit",
+      "type": "roq/bitget/protocol/json/RateLimitItem",
+      "array": "std/span"
     },
     {
       "name": "pushTime",

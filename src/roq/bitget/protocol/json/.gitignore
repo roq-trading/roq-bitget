@@ -65,6 +65,7 @@ position_data_item.hpp
 position_status.hpp
 public_trade.hpp
 public_trade_data_item.hpp
+rate_limit_item.hpp
 side.hpp
 stp_mode.hpp
 subscribe.hpp
@@ -151,6 +152,7 @@ position_data_item.cpp
 position_status.cpp
 public_trade.cpp
 public_trade_data_item.cpp
+rate_limit_item.cpp
 side.cpp
 stp_mode.cpp
 subscribe.cpp

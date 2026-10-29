@@ -34,6 +34,19 @@
     {
       "name": "connId",
       "type": "std/string_view"
+    },
+    {
+      "name": "rateLimit",
+      "type": "roq/bitget/protocol/json/RateLimitItem",
+      "array": "std/span"
+    },
+    {
+      "name": "pushTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "receiveTime",
+      "type": "std/milliseconds"
     }
   ]
 }

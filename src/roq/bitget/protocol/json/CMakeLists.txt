@@ -70,6 +70,7 @@ set(AUTOGEN_SCHEMAS
     position_status.json
     public_trade.json
     public_trade_data_item.json
+    rate_limit_item.json
     side.json
     stp_mode.json
     subscribe.json

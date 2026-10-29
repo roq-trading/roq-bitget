@@ -504,6 +504,7 @@ void OrderEntry::get_unfilled_orders_ack(Trace<web::rest::Response> const &event
 void OrderEntry::operator()(Trace<protocol::json::UnfilledOrdersAck> const &event) {
   auto &[trace_info, unfilled_orders_ack] = event;
   log::info<4>("unfilled_orders_ack={}"sv, unfilled_orders_ack);
+  log::warn("DEBUG len(orders)={}"sv, std::size(unfilled_orders_ack.data.list));
   for (auto &item : unfilled_orders_ack.data.list) {
     log::info<2>("item={}"sv, item);
     auto remaining_quantity = item.qty - item.cum_exec_qty;
@@ -544,6 +545,7 @@ void OrderEntry::operator()(Trace<protocol::json::UnfilledOrdersAck> const &even
         .update_type = UpdateType::SNAPSHOT,
         .sending_time_utc = unfilled_orders_ack.request_time,
     };
+    log::warn("DEBUG order_update={}"sv, order_update);
     create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id_);
   }
 }
@@ -595,6 +597,7 @@ void OrderEntry::get_trade_fills_ack(Trace<web::rest::Response> const &event) {
 void OrderEntry::operator()(Trace<protocol::json::TradeFillsAck> const &event) {
   auto &[trace_info, trade_fills_ack] = event;
   log::info<4>("trade_fills_ack={}"sv, trade_fills_ack);
+  log::warn("DEBUG len(trades)={}"sv, std::size(trade_fills_ack.data.list));
   std::string_view symbol, order_id, client_oid;
   protocol::json::Side side = {};
   protocol::json::TradeSide trade_side = {};
@@ -630,7 +633,7 @@ void OrderEntry::operator()(Trace<protocol::json::TradeFillsAck> const &event) {
   };
   shared_.fills.clear();
   for (auto &item : trade_fills_ack.data.list) {
-    log::warn("DEBUG item={}"sv, item);
+    // log::warn("DEBUG item={}"sv, item);
     if (item.symbol != symbol || item.order_id != order_id || item.client_oid != client_oid || item.side != side || item.trade_side != trade_side) {
       dispatch();
       symbol = item.symbol;

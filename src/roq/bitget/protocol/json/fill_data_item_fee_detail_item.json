@@ -9,6 +9,10 @@
     {
       "name": "fee",
       "type": "std/double"
+    },
+    {
+      "name": "grantFee",
+      "type": "std/double"
     }
   ]
 }

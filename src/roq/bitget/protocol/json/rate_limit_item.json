@@ -1,0 +1,14 @@
+{
+  "name": "roq/bitget/protocol/json/RateLimitItem",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "limit",
+      "type": "std/int32"
+    },
+    {
+      "name": "remaining",
+      "type": "std/int32"
+    }
+  ]
+}

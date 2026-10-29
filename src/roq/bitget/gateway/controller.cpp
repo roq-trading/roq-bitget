@@ -28,11 +28,11 @@ uint8_t const API_USDC_FUTURES = 0x5;
 
 namespace {
 template <typename R>
-R create_accounts(auto &config) {
+R create_accounts(auto &settings, auto &config) {
   using value_type = std::remove_cvref_t<R>;
   value_type result;
   for (auto &[_, iter] : config.accounts) {
-    result.try_emplace(static_cast<std::string_view>(iter.name), std::make_unique<Account>(config, iter.name));
+    result.try_emplace(static_cast<std::string_view>(iter.name), std::make_unique<Account>(settings, config, iter.name));
   }
   return result;
 }
@@ -115,8 +115,9 @@ uint8_t Controller::parse_api(Settings const &settings) {
 }
 
 Controller::Controller(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context)
-    : dispatcher_(dispatcher), master_account_(config.get_master_account()), accounts_(create_accounts<decltype(accounts_)>(config)), context_(context),
-      shared_(dispatcher, settings), requests_{create_requests<decltype(requests_)>(config, shared_)}, rest_(*this, context_, ++stream_id_, shared_),
+    : dispatcher_(dispatcher), master_account_(config.get_master_account()), accounts_(create_accounts<decltype(accounts_)>(settings, config)),
+      context_(context), shared_(dispatcher, settings), requests_{create_requests<decltype(requests_)>(config, shared_)},
+      rest_(*this, context_, ++stream_id_, shared_),
       order_entry_(create_order_entry<decltype(order_entry_)>(*this, context_, stream_id_, accounts_, shared_, requests_)),
       drop_copy_(create_drop_copy<decltype(drop_copy_)>(*this, context_, stream_id_, accounts_, shared_, requests_)) {
 }
