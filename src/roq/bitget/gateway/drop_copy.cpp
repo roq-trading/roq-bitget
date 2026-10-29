@@ -288,7 +288,7 @@ int32_t DropCopy::download(Trace<State> const &event) {
       request_.unfilled_orders.request(trace_info);
       return 1;
     case TRADE_FILLS:
-      if (shared_.settings.rest.download_fills_begin.count()) {
+      if (shared_.settings.download.trades_lookback.count()) {
         create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, "trade-fills"sv);
         request_.trade_fills.request(trace_info);
         return 1;
@@ -706,6 +706,15 @@ void DropCopy::check_request_queue(TraceInfo const &trace_info) {
     case UNFILLED_ORDERS:
       if (request_.unfilled_orders.has_response()) {
         download_.check(trace_info, state);
+        // DEBUG
+        auto helper = [&](auto &order) {
+          log::warn(
+              R"(DEBUG should download final order status for stale order: order_id={}, client_order_id="{}", external_order_id="{}")"sv,
+              order.order_id,
+              order.client_order_id,
+              order.external_order_id);
+        };
+        shared_.dispatcher.get_all_stale_orders(helper, account_.name);
       }
       break;
     case TRADE_FILLS:

@@ -545,7 +545,6 @@ void OrderEntry::operator()(Trace<protocol::json::UnfilledOrdersAck> const &even
         .update_type = UpdateType::SNAPSHOT,
         .sending_time_utc = unfilled_orders_ack.request_time,
     };
-    log::warn("DEBUG order_update={}"sv, order_update);
     create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id_);
   }
 }

@@ -187,6 +187,15 @@ Environments
    .. include:: flags/prod/flags.cfg
      :code: shell
 
+.. tab:: Test
+
+   .. code-block:: shell
+
+      $ --flagfile $CONDA_PREFIX/share/roq-bitget/flags/test/flags.cfg
+
+   .. include:: flags/test/flags.cfg
+     :code: shell
+
 
 Configuration
 -------------
