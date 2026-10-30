@@ -4,6 +4,10 @@ All notable changes will be documented in this file.
 
 ## Head
 
+### Changed
+
+* Review `OrderAck` and `OrderUpdate` following disconnect (#657)
+
 ### Fixed
 
 * Missing WS/REST synchronization (#653)

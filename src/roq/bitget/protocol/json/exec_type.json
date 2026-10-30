@@ -1,0 +1,9 @@
+{
+  "name": "roq/bitget/protocol/json/ExecType",
+  "type": "enum",
+  "values": [
+    {
+      "name": "normal"
+    }
+  ]
+}

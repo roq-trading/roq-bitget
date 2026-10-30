@@ -25,6 +25,7 @@
 #include "roq/bitget/protocol/json/account_assets_ack.hpp"
 #include "roq/bitget/protocol/json/account_settings_ack.hpp"
 #include "roq/bitget/protocol/json/current_positions_ack.hpp"
+#include "roq/bitget/protocol/json/order_details_ack.hpp"
 #include "roq/bitget/protocol/json/trade_fills_ack.hpp"
 #include "roq/bitget/protocol/json/unfilled_orders_ack.hpp"
 
@@ -108,6 +109,12 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   void get_unfilled_orders_ack(Trace<web::rest::Response> const &);
   void operator()(Trace<protocol::json::UnfilledOrdersAck> const &);
 
+  // order-details
+
+  void get_order_details(TraceInfo const &, std::string_view const &client_order_id, std::string_view const &external_order_id);
+  void get_order_details_ack(Trace<web::rest::Response> const &, std::string_view const &client_order_id);
+  void operator()(Trace<protocol::json::OrderDetailsAck> const &, std::string_view const &client_order_id);
+
   // trade-fills
 
   void get_trade_fills(TraceInfo const &);
@@ -181,6 +188,7 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
         account_assets, account_assets_ack,                          //
         current_positions, current_positions_ack,                    //
         unfilled_orders, unfilled_orders_ack,                        //
+        order_details, order_details_ack,                            //
         trade_fills, trade_fills_ack,                                //
         place_order, place_order_ack,                                //
         modify_order, modify_order_ack,                              //
@@ -200,6 +208,8 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   //
   std::string encode_buffer_;
   std::chrono::nanoseconds next_heartbeat_ = {};
+  //
+  size_t download_lost_orders_counter_ = {};
 };
 
 }  // namespace gateway

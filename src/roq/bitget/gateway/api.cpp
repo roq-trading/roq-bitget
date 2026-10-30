@@ -27,6 +27,7 @@ API API::create(Settings const &settings) {
             .account_assets = "/api/v3/account/assets"sv,
             .current_positions = "/api/v3/position/current-position"sv,
             .unfilled_orders = "/api/v3/trade/unfilled-orders"sv,
+            .order_details = "/api/v3/trade/order-info"sv,
             .trade_fills = "/api/v3/trade/fills"sv,
             .place_order = "/api/v3/trade/place-order"sv,
             .modify_order = "/api/v3/trade/modify-order"sv,

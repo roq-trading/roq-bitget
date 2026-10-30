@@ -1,0 +1,149 @@
+{
+  "name": "roq/bitget/protocol/json/OrderDetailsAckData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "orderId",
+      "type": "std/string_view"
+    },
+    {
+      "name": "clientOid",
+      "type": "std/string_view"
+    },
+    {
+      "name": "category",
+      "type": "roq/bitget/protocol/json/Category"
+    },
+    {
+      "name": "symbol",
+      "type": "std/string_view"
+    },
+    {
+      "name": "orderType",
+      "type": "roq/bitget/protocol/json/OrderType"
+    },
+    {
+      "name": "side",
+      "type": "roq/bitget/protocol/json/Side"
+    },
+    {
+      "name": "price",
+      "type": "std/double"
+    },
+    {
+      "name": "qty",
+      "type": "std/double"
+    },
+    {
+      "name": "amount",
+      "type": "std/double"
+    },
+    {
+      "name": "cumExecQty",
+      "type": "std/double"
+    },
+    {
+      "name": "cumExecValue",
+      "type": "std/double"
+    },
+    {
+      "name": "avgPrice",
+      "type": "std/double"
+    },
+    {
+      "name": "timeInForce",
+      "type": "roq/bitget/protocol/json/TimeInForce"
+    },
+    {
+      "name": "orderStatus",
+      "type": "roq/bitget/protocol/json/OrderStatus"
+    },
+    {
+      "name": "posSide",
+      "type": "roq/bitget/protocol/json/PosSide"
+    },
+    {
+      "name": "tradeSide",
+      "type": "roq/bitget/protocol/json/TradeSide"
+    },
+    {
+      "name": "holdMode",
+      "type": "roq/bitget/protocol/json/HoldMode"
+    },
+    {
+      "name": "reduceOnly",
+      "type": "std/bool"
+    },
+    {
+      "name": "feeDetail"
+    },
+    {
+      "name": "createdTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "updatedTime",
+      "type": "std/milliseconds"
+    },
+    {
+      "name": "cancelReason",
+      "type": "std/string_view"
+    },
+    {
+      "name": "execType",
+      "type": "roq/bitget/protocol/json/ExecType"
+    },
+    {
+      "name": "stpMode",
+      "type": "roq/bitget/protocol/json/StpMode"
+    },
+    {
+      "name": "tpTriggerBy",
+      "type": "std/string_view"
+    },
+    {
+      "name": "slTriggerBy",
+      "type": "std/string_view"
+    },
+    {
+      "name": "takeProfit",
+      "type": "std/string_view"
+    },
+    {
+      "name": "stopLoss",
+      "type": "std/string_view"
+    },
+    {
+      "name": "tpOrderType",
+      "type": "std/string_view"
+    },
+    {
+      "name": "slOrderType",
+      "type": "std/string_view"
+    },
+    {
+      "name": "tpLimitPrice",
+      "type": "std/string_view"
+    },
+    {
+      "name": "slLimitPrice",
+      "type": "std/string_view"
+    },
+    {
+      "name": "marginMode",
+      "type": "roq/bitget/protocol/json/MarginMode"
+    },
+    {
+      "name": "delegateType",
+      "type": "std/string_view"
+    },
+    {
+      "name": "venue",
+      "type": "std/string_view"
+    },
+    {
+      "name": "rTokenTimeInForce",
+      "type": "std/string_view"
+    }
+  ]
+}

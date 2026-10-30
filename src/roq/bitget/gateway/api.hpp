@@ -30,6 +30,7 @@ struct API final {
     std::string_view account_assets;
     std::string_view current_positions;
     std::string_view unfilled_orders;
+    std::string_view order_details;
     std::string_view trade_fills;
     std::string_view place_order;
     std::string_view modify_order;

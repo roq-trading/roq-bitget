@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "roq/utils/container.hpp"
+
 #include "roq/core/limit/request.hpp"
 
 #include "roq/bitget/gateway/shared.hpp"
@@ -20,11 +22,14 @@ struct Request final : public core::limit::Request::Handler {
 
   // ...
 
-  core::limit::Request account_settings;
-  core::limit::Request account_assets;
-  core::limit::Request current_positions;
-  core::limit::Request unfilled_orders;
-  core::limit::Request trade_fills;
+  core::limit::Request account;
+  core::limit::Request balances;
+  core::limit::Request positions;
+  core::limit::Request open_orders;
+  core::limit::Request lost_orders;
+  core::limit::Request fills;
+
+  utils::unordered_map<std::string, std::string> details_lost_orders;
 
  private:
   Shared &shared_;

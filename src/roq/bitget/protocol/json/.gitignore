@@ -32,6 +32,7 @@ current_positions_ack_data_list_item.hpp
 delivery_period.hpp
 error.hpp
 event.hpp
+exec_type.hpp
 fill.hpp
 fill_data_item.hpp
 fill_data_item_fee_detail_item.hpp
@@ -51,6 +52,8 @@ modify_order_args.hpp
 order.hpp
 order_data_item.hpp
 order_data_item_fee_detail_item.hpp
+order_details_ack.hpp
+order_details_ack_data.hpp
 order_source.hpp
 order_status.hpp
 order_type.hpp
@@ -119,6 +122,7 @@ current_positions_ack_data_list_item.cpp
 delivery_period.cpp
 error.cpp
 event.cpp
+exec_type.cpp
 fill.cpp
 fill_data_item.cpp
 fill_data_item_fee_detail_item.cpp
@@ -138,6 +142,8 @@ modify_order_args.cpp
 order.cpp
 order_data_item.cpp
 order_data_item_fee_detail_item.cpp
+order_details_ack.cpp
+order_details_ack_data.cpp
 order_source.cpp
 order_status.cpp
 order_type.cpp

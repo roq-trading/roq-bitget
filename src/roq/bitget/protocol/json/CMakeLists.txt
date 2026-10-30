@@ -37,6 +37,7 @@ set(AUTOGEN_SCHEMAS
     delivery_period.json
     error.json
     event.json
+    exec_type.json
     fill.json
     fill_data_item.json
     fill_data_item_fee_detail_item.json
@@ -56,6 +57,8 @@ set(AUTOGEN_SCHEMAS
     order.json
     order_data_item.json
     order_data_item_fee_detail_item.json
+    order_details_ack.json
+    order_details_ack_data.json
     order_source.json
     order_status.json
     order_type.json

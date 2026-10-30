@@ -85,11 +85,16 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   enum class State {
     UNDEFINED = 0,
-    ACCOUNT_SETTINGS,
-    ACCOUNT_ASSETS,
-    CURRENT_POSITIONS,
-    UNFILLED_ORDERS,
-    TRADE_FILLS,
+    GET_ACCOUNT,
+    SUBSCRIBE_BALANCES,
+    GET_BALANCES,
+    SUBSCRIBE_POSITIONS,
+    GET_CURRENT_POSITIONS,
+    SUBSCRIBE_ORDERS,
+    GET_OPEN_ORDERS,
+    GET_LOST_ORDERS,
+    SUBSCRIBE_FILLS,
+    GET_FILLS,
     DONE,
   };
 
@@ -118,13 +123,13 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   void send_login(TraceInfo const &);
 
-  void send_heartbeat(TraceInfo const &);
-
-  void subscribe();
+  void send_ping(TraceInfo const &);
 
   void subscribe(std::string_view const &topic);
 
   void check_request_queue(TraceInfo const &);
+
+  void check_stale_orders();
 
   void parse(TraceInfo const &, std::string_view const &message);
 
@@ -155,7 +160,6 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
   Shared &shared_;
   Request &request_;
   // state
-  bool ready_ = false;
   ConnectionStatus connection_status_ = {};
   core::Download2<State> download_;
   std::chrono::nanoseconds logon_timeout_ = {};
