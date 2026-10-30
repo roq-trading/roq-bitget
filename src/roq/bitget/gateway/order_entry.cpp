@@ -1151,6 +1151,7 @@ void OrderEntry::check_request_queue(TraceInfo const &trace_info) {
       get_order_details(trace_info, client_order_id, external_order_id);
       ++download_lost_orders_counter_;
     }
+    request_.details_lost_orders.clear();
   });
   request_.fills.check_pending(trace_info, [this](auto &trace_info) { get_trade_fills(trace_info); });
 }

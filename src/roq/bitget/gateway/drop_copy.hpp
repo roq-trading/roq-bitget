@@ -42,7 +42,7 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   uint16_t stream_id() const override { return stream_id_; }
 
-  bool ready() const override;
+  bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
 
   void operator()(Trace<Start> const &) override;
   void operator()(Trace<Stop> const &) override;
@@ -129,7 +129,8 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
 
   void check_request_queue(TraceInfo const &);
 
-  void check_stale_orders();
+  bool check_stale_orders();
+  void check_stale_orders(TraceInfo const &);
 
   void parse(TraceInfo const &, std::string_view const &message);
 
@@ -165,6 +166,7 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
   core::Download2<State> download_;
   std::chrono::nanoseconds logon_timeout_ = {};
   std::chrono::nanoseconds next_ping_ = {};
+  std::chrono::nanoseconds next_check_stale_orders_ = {};
 };
 
 }  // namespace gateway

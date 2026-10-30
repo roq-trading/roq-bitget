@@ -46,6 +46,8 @@ auto const SUPPORTS_WS_API = Mask{
 auto const PING = "ping"sv;
 
 size_t const MAX_DECODE_BUFFER_DEPTH = 2;
+
+auto const CHECK_STALE_ORDERS_FREQ = 10s;
 }  // namespace
 
 // === HELPERS ===
@@ -108,10 +110,6 @@ DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, A
 
 // server::Stream
 
-bool DropCopy::ready() const {
-  return (*connection_).ready();
-}
-
 void DropCopy::operator()(Trace<Start> const &) {
   (*connection_).start();
 }
@@ -124,7 +122,12 @@ void DropCopy::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
   if ((*connection_).refresh(timer.now)) {
     send_ping(trace_info);
-    check_request_queue(trace_info);
+    if (master_) {
+      check_request_queue(trace_info);
+      if (ready()) {
+        check_stale_orders(trace_info);
+      }
+    }
   }
 }
 
@@ -758,7 +761,9 @@ void DropCopy::check_request_queue(TraceInfo const &trace_info) {
       break;
     case GET_LOST_ORDERS:
       if (request_.lost_orders.has_response()) {
-        request_.details_lost_orders.clear();  // note!
+        if (!std::empty(request_.details_lost_orders)) {
+          log::fatal("Unexpected"sv);
+        }
         download_.check(trace_info, state);
       }
       break;
@@ -774,22 +779,38 @@ void DropCopy::check_request_queue(TraceInfo const &trace_info) {
   }
 }
 
-void DropCopy::check_stale_orders() {
-  if (!std::empty(request_.details_lost_orders)) {
-    for (auto &[client_order_id, external_order_id] : request_.details_lost_orders) {
-      log::warn("DEBUG {} {}"sv, client_order_id, external_order_id);
-    }
-    log::fatal("Unexpected"sv);
-  }
+bool DropCopy::check_stale_orders() {
+  size_t counter = 0;
   auto helper = [&](auto &order) {
-    log::warn(
-        R"(DEBUG stale order: order_id={}, client_order_id="{}", external_order_id="{}")"sv, order.order_id, order.client_order_id, order.external_order_id);
-    request_.details_lost_orders[order.client_order_id] = order.external_order_id;
+    auto res = request_.details_lost_orders.try_emplace(order.client_order_id, order.external_order_id);
+    if (res.second) {
+      log::warn(
+          R"(DEBUG stale order: )"
+          R"(order_id={}, client_order_id="{}", external_order_id="{}")"sv,
+          order.order_id,
+          order.client_order_id,
+          order.external_order_id);
+      ++counter;
+    }
   };
   if (shared_.dispatcher.get_all_stale_orders(helper, account_.name)) {
   } else {
   }
-  log::info("Found {} lost order(s)"sv, std::size(request_.details_lost_orders));
+  if (counter) {
+    log::info("Found {} new lost order(s)"sv, counter);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void DropCopy::check_stale_orders(TraceInfo const &trace_info) {
+  if (next_check_stale_orders_ < trace_info.origin_create_time) {
+    next_check_stale_orders_ = trace_info.origin_create_time + CHECK_STALE_ORDERS_FREQ;
+    if (check_stale_orders()) {
+      request_.lost_orders.request(trace_info);
+    }
+  }
 }
 
 void DropCopy::parse(TraceInfo const &trace_info, std::string_view const &message) {
