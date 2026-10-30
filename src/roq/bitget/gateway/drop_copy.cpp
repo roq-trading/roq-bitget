@@ -350,8 +350,6 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
     case CREATE_ORDER:
     case MODIFY_ORDER:
     case CANCEL_ORDER: {
-      (*connection_).close();
-      return;
       auto response = server::oms::Response{
           .request_type = request_type,
           .origin = Origin::EXCHANGE,
@@ -625,8 +623,6 @@ void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
 }
 
 void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
-  (*connection_).close();
-  return;
   auto &[trace_info, place_order] = event;
   log::info<2>("place_order={}"sv, place_order);
   auto [request_type, request_id] = protocol::json::Encoder::parse_id(place_order.id);
