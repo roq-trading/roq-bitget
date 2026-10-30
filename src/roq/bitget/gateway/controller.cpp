@@ -66,14 +66,9 @@ R create_order_entry(auto &gateway, auto &context, auto &stream_id, auto &accoun
   }
   for (auto &[_, item] : accounts) {
     auto &account = *item;
-    std::vector<std::unique_ptr<OrderEntry>> order_entry;
-    for (size_t i = 0; i < shared.settings.misc.number_of_order_entry_connections; ++i) {
-      auto &request = get_request(requests, account.name);
-      auto master = i == 0;
-      auto obj = std::make_unique<OrderEntry>(gateway, context, ++stream_id, account, shared, request, master);
-      order_entry.emplace_back(std::move(obj));
-    }
-    result.try_emplace(account.name, std::move(order_entry));
+    auto &request = get_request(requests, account.name);
+    auto obj = std::make_unique<OrderEntry>(gateway, context, ++stream_id, account, shared, request);
+    result.try_emplace(account.name, std::move(obj));
   }
   return result;
 }
@@ -84,8 +79,13 @@ R create_drop_copy(auto &gateway, auto &context, auto &stream_id, auto &accounts
   for (auto &[_, item] : accounts) {
     auto &account = *item;
     auto &request = get_request(requests, account.name);
-    auto obj = std::make_unique<DropCopy>(gateway, context, ++stream_id, account, shared, request);
-    result.try_emplace(account.name, std::move(obj));
+    std::vector<std::unique_ptr<DropCopy>> drop_copy;
+    for (size_t i = 0; i < shared.settings.misc.number_of_order_entry_connections; ++i) {
+      auto master = i == 0;
+      auto obj = std::make_unique<DropCopy>(gateway, context, ++stream_id, account, shared, request, master);
+      drop_copy.emplace_back(std::move(obj));
+    }
+    result.try_emplace(account.name, std::move(drop_copy));
   }
   return result;
 }
@@ -272,12 +272,12 @@ void Controller::dispatch_helper(auto &self, Args &&...args) {
   auto helper = [&](auto &target) { target(args...); };
   helper(self.rest_);
   for (auto &[_, order_entry] : self.order_entry_) {
-    helper(order_entry);
+    if (static_cast<bool>(order_entry)) {
+      helper(*order_entry);
+    }
   }
   for (auto &[_, drop_copy] : self.drop_copy_) {
-    if (static_cast<bool>(drop_copy)) {
-      helper(*drop_copy);
-    }
+    helper(drop_copy);
   }
   for (auto &iter : self.market_data_) {
     helper(*iter);
@@ -287,7 +287,7 @@ void Controller::dispatch_helper(auto &self, Args &&...args) {
 OrderEntry &Controller::get_order_entry(std::string_view const &account) {
   auto iter = order_entry_.find(account);
   if (iter != std::end(order_entry_)) {
-    return (*iter).second.get_next();
+    return *(*iter).second;
   }
   throw RuntimeError(R"(Unknown account="{}")"sv, account);
 }
@@ -295,15 +295,15 @@ OrderEntry &Controller::get_order_entry(std::string_view const &account) {
 DropCopy &Controller::get_drop_copy(std::string_view const &account) {
   auto iter = drop_copy_.find(account);
   if (iter != std::end(drop_copy_)) {
-    return *(*iter).second;
+    return (*iter).second.get_next();
   }
   throw RuntimeError(R"(Unknown account="{}")"sv, account);
 }
 
-// OrderEntryRR
+// DropCopyRR
 
-Controller::OrderEntryRR::OrderEntryRR(std::vector<std::unique_ptr<OrderEntry>> &&order_entry) : order_entry_{std::move(order_entry)} {
-  for (auto &item : order_entry_) {
+Controller::DropCopyRR::DropCopyRR(std::vector<std::unique_ptr<DropCopy>> &&drop_copy) : drop_copy_{std::move(drop_copy)} {
+  for (auto &item : drop_copy_) {
     if (item == nullptr) {
       log::fatal("HERE"sv);
     }
@@ -311,29 +311,29 @@ Controller::OrderEntryRR::OrderEntryRR(std::vector<std::unique_ptr<OrderEntry>> 
 }
 
 template <typename... Args>
-void Controller::OrderEntryRR::operator()(Args &&...args) {
-  for (auto &item : order_entry_) {
+void Controller::DropCopyRR::operator()(Args &&...args) {
+  for (auto &item : drop_copy_) {
     (*item)(args...);
   }
 }
 
 template <typename... Args>
-void Controller::OrderEntryRR::operator()(Args &&...args) const {
-  for (auto &item : order_entry_) {
+void Controller::DropCopyRR::operator()(Args &&...args) const {
+  for (auto &item : drop_copy_) {
     (*item)(args...);
   }
 }
 
-OrderEntry &Controller::OrderEntryRR::get_next() {
-  auto length = std::size(order_entry_);
+DropCopy &Controller::DropCopyRR::get_next() {
+  auto length = std::size(drop_copy_);
   for (size_t offset = 0; offset < length; ++offset) {
     auto index = (index_ + offset) % length;
-    auto &order_entry = *(order_entry_[index]);
-    if (!order_entry.ready()) {
+    auto &drop_copy = *(drop_copy_[index]);
+    if (!drop_copy.ready()) {
       continue;
     }
     index_ = (index + 1) % length;
-    return order_entry;
+    return drop_copy;
   }
   throw server::oms::NotReady{"get_next"sv};
 }

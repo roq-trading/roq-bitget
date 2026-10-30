@@ -95,8 +95,8 @@ struct Controller final : public Base<Controller>,
   OrderEntry &get_order_entry(std::string_view const &account);
   DropCopy &get_drop_copy(std::string_view const &account);
 
-  struct OrderEntryRR final {
-    OrderEntryRR(std::vector<std::unique_ptr<OrderEntry>> &&);
+  struct DropCopyRR final {
+    DropCopyRR(std::vector<std::unique_ptr<DropCopy>> &&);
 
     template <typename... Args>
     void operator()(Args &&...);
@@ -104,10 +104,10 @@ struct Controller final : public Base<Controller>,
     template <typename... Args>
     void operator()(Args &&...) const;
 
-    OrderEntry &get_next();
+    DropCopy &get_next();
 
    private:
-    std::vector<std::unique_ptr<OrderEntry>> order_entry_;
+    std::vector<std::unique_ptr<DropCopy>> drop_copy_;
     size_t index_ = {};
   };
 
@@ -126,8 +126,8 @@ struct Controller final : public Base<Controller>,
   uint16_t stream_id_ = {};
   // streams
   Rest rest_;
-  utils::unordered_map<std::string, OrderEntryRR> order_entry_;
-  utils::unordered_map<std::string, std::unique_ptr<DropCopy>> drop_copy_;
+  utils::unordered_map<std::string, std::unique_ptr<OrderEntry>> order_entry_;
+  utils::unordered_map<std::string, DropCopyRR> drop_copy_;
   std::vector<std::unique_ptr<MarketData>> market_data_;
 };
 

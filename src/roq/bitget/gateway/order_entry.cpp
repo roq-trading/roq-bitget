@@ -85,8 +85,8 @@ struct create_metrics final : public utils::metrics::Factory {
 
 // === IMPLEMENTATION ===
 
-OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request, bool master)
-    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)}, master_{master},
+OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request)
+    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)},
       connection_{create_connection(*this, shared.settings, context, shared)}, decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
@@ -137,9 +137,7 @@ void OrderEntry::operator()(Trace<Timer> const &event) {
     if (ready()) {
       try {
         send_heartbeat(trace_info);
-        if (master_) {
-          check_request_queue(trace_info);
-        }
+        check_request_queue(trace_info);
       } catch (NotConnected &) {
         // note! ok
       }
@@ -1143,9 +1141,6 @@ void OrderEntry::send_heartbeat(TraceInfo const &trace_info) {
 }
 
 void OrderEntry::check_request_queue(TraceInfo const &trace_info) {
-  if (!master_) {
-    return;
-  }
   request_.account.check_pending(trace_info, [this](auto &trace_info) { get_account_settings(trace_info); });
   request_.balances.check_pending(trace_info, [this](auto &trace_info) { get_account_assets(trace_info); });
   request_.positions.check_pending(trace_info, [this](auto &trace_info) { get_current_positions(trace_info); });

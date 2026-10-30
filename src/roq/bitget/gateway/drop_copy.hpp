@@ -33,7 +33,7 @@ namespace gateway {
 struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream, public web::socket::Client::Handler, protocol::json::Parser::Handler {
   struct Handler {};
 
-  DropCopy(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &, Request &);
+  DropCopy(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &, Request &, bool master);
 
   // protected:
   friend base_type;
@@ -138,6 +138,7 @@ struct DropCopy final : public Base<DropCopy>, public server::OrderActionStream,
   // config
   uint16_t const stream_id_;
   std::string const name_;
+  bool const master_;
   // web socket
   std::unique_ptr<web::socket::Client> connection_;
   // buffers

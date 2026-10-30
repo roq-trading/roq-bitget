@@ -87,8 +87,8 @@ struct create_metrics final : public utils::metrics::Factory {
 
 // === IMPLEMENTATION ===
 
-DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request)
-    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)},
+DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request, bool master)
+    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account)}, master_{master},
       connection_{create_connection(*this, shared.settings, context, shared)}, decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
@@ -152,7 +152,7 @@ void DropCopy::operator()(Trace<ConnectionStatus> const &event, std::string_view
       .transport = Transport::TCP,
       .protocol = Protocol::WS,
       .encoding = {Encoding::JSON},
-      .priority = Priority::PRIMARY,
+      .priority = master_ ? Priority::PRIMARY : Priority::SECONDARY,
       .connection_status = connection_status_,
       .reason = reason,
       .interface = (*connection_).get_interface(),
@@ -350,6 +350,8 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
     case CREATE_ORDER:
     case MODIFY_ORDER:
     case CANCEL_ORDER: {
+      (*connection_).close();
+      return;
       auto response = server::oms::Response{
           .request_type = request_type,
           .origin = Origin::EXCHANGE,
@@ -417,7 +419,11 @@ void DropCopy::operator()(Trace<protocol::json::Login> const &event) {
   if (login.code != 0) {
     log::fatal("Unexpected: login={}"sv, login);
   }
-  download_.begin(trace_info);
+  if (master_) {
+    download_.begin(trace_info);
+  } else {
+    create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);
+  }
 }
 
 // note! snapshot + incremental
@@ -619,6 +625,8 @@ void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
 }
 
 void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
+  (*connection_).close();
+  return;
   auto &[trace_info, place_order] = event;
   log::info<2>("place_order={}"sv, place_order);
   auto [request_type, request_id] = protocol::json::Encoder::parse_id(place_order.id);

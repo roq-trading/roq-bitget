@@ -41,7 +41,7 @@ namespace gateway {
 struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStream, public web::rest::Client::Handler {
   struct Handler {};
 
-  OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &, Request &, bool master);
+  OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &, Request &);
 
   // protected:
   friend base_type;
@@ -174,7 +174,6 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   // config
   uint16_t const stream_id_;
   std::string const name_;
-  bool const master_;
   // connection
   std::unique_ptr<web::rest::Client> connection_;
   // buffers
