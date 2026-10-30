@@ -1143,6 +1143,9 @@ void OrderEntry::send_heartbeat(TraceInfo const &trace_info) {
 }
 
 void OrderEntry::check_request_queue(TraceInfo const &trace_info) {
+  if (!master_) {
+    return;
+  }
   request_.account.check_pending(trace_info, [this](auto &trace_info) { get_account_settings(trace_info); });
   request_.balances.check_pending(trace_info, [this](auto &trace_info) { get_account_assets(trace_info); });
   request_.positions.check_pending(trace_info, [this](auto &trace_info) { get_current_positions(trace_info); });

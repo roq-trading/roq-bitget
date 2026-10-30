@@ -350,7 +350,6 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
     case CREATE_ORDER:
     case MODIFY_ORDER:
     case CANCEL_ORDER: {
-      log::warn("DEBUG request_type={}, request_id={}"sv, request_type, request_id);
       auto response = server::oms::Response{
           .request_type = request_type,
           .origin = Origin::EXCHANGE,
