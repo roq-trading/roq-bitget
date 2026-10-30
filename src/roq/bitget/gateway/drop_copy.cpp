@@ -771,7 +771,6 @@ void DropCopy::check_request_queue(TraceInfo const &trace_info) {
   }
 }
 
-// XXX FIXME TODO collect list of order ids => request => download
 void DropCopy::check_stale_orders() {
   if (!std::empty(request_.details_lost_orders)) {
     for (auto &[client_order_id, external_order_id] : request_.details_lost_orders) {
