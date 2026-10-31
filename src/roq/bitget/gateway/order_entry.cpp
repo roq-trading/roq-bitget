@@ -711,7 +711,7 @@ void OrderEntry::get_trade_fills_ack(Trace<web::rest::Response> const &event) {
       }
     };
     process_response(event, handle_error, handle_success);
-    request_.fills.commit(trace_info);
+    request_.trades.commit(trace_info);
   });
 }
 
@@ -1147,13 +1147,17 @@ void OrderEntry::check_request_queue(TraceInfo const &trace_info) {
   request_.open_orders.check_pending(trace_info, [this](auto &trace_info) { get_unfilled_orders(trace_info); });
   request_.lost_orders.check_pending(trace_info, [this](auto &trace_info) {
     // XXX FIXME TODO throttle requests
-    for (auto &[client_order_id, external_order_id] : request_.details_lost_orders) {
-      get_order_details(trace_info, client_order_id, external_order_id);
-      ++download_lost_orders_counter_;
+    auto helper = [&](auto &order) { get_order_details(trace_info, order.client_order_id, order.external_order_id); };
+    for (auto &[user_id, order_id] : request_.details_lost_orders) {
+      if (shared_.dispatcher.find_order(user_id, order_id, helper)) {
+        ++download_lost_orders_counter_;
+      } else {
+        log::warn("Unexpected: user_id={}, order_id={}"sv, user_id, order_id);
+      }
     }
     request_.details_lost_orders.clear();
   });
-  request_.fills.check_pending(trace_info, [this](auto &trace_info) { get_trade_fills(trace_info); });
+  request_.trades.check_pending(trace_info, [this](auto &trace_info) { get_trade_fills(trace_info); });
 }
 
 void OrderEntry::process_response(Trace<web::rest::Response> const &event, auto error_handler, auto success_handler) {

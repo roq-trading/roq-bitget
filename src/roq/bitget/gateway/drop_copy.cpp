@@ -25,22 +25,29 @@ namespace gateway {
 namespace {
 auto const NAME = "ex"sv;
 
-auto const SUPPORTS = Mask{
-    SupportType::ORDER,
-    SupportType::TRADE,
+auto const SUPPORTS_PRIMARY = Mask{
     SupportType::FUNDS,
     SupportType::POSITION,
+    SupportType::ORDER,
+    SupportType::TRADE,
 };
 
-auto const SUPPORTS_WS_API = Mask{
+auto const SUPPORTS_PRIMARY_WS_API = Mask{
+    SupportType::FUNDS,
+    SupportType::POSITION,
+    SupportType::ORDER,
+    SupportType::TRADE,
     SupportType::CREATE_ORDER,
     SupportType::MODIFY_ORDER,
     SupportType::CANCEL_ORDER,
     SupportType::ORDER_ACK,
-    SupportType::ORDER,
-    SupportType::TRADE,
-    SupportType::FUNDS,
-    SupportType::POSITION,
+};
+
+auto const SUPPORTS_SECONDARY_WS_API = Mask{
+    SupportType::CREATE_ORDER,
+    SupportType::MODIFY_ORDER,
+    SupportType::CANCEL_ORDER,
+    SupportType::ORDER_ACK,
 };
 
 auto const PING = "ping"sv;
@@ -85,6 +92,22 @@ auto create_connection(auto &handler, auto &settings, auto &context, auto &share
 struct create_metrics final : public utils::metrics::Factory {
   create_metrics(auto &settings, auto &group, auto const &function) : utils::metrics::Factory{settings.app.name, group, function} {}
 };
+
+auto get_supports(auto master, auto ws_api) {
+  if (master) {
+    if (ws_api) {
+      return SUPPORTS_PRIMARY_WS_API;
+    } else {
+      return SUPPORTS_PRIMARY;
+    }
+  } else {
+    if (ws_api) {
+      return SUPPORTS_SECONDARY_WS_API;
+    } else [[unlikely]] {
+      log::fatal("Unexpected"sv);
+    }
+  }
+}
 }  // namespace
 
 // === IMPLEMENTATION ===
@@ -151,7 +174,7 @@ void DropCopy::operator()(Trace<ConnectionStatus> const &event, std::string_view
   auto stream_status = StreamStatus{
       .stream_id = stream_id_,
       .account = account_.name,
-      .supports = shared_.settings.ws_api ? SUPPORTS_WS_API : SUPPORTS,
+      .supports = get_supports(master_, shared_.settings.ws_api),
       .transport = Transport::TCP,
       .protocol = Protocol::WS,
       .encoding = {Encoding::JSON},
@@ -310,14 +333,14 @@ int32_t DropCopy::download(Trace<State> const &event) {
         request_.lost_orders.request(trace_info);
         return 1;
       }
-    case SUBSCRIBE_FILLS:
-      helper("subscribe-fills"sv);
+    case SUBSCRIBE_TRADES:
+      helper("subscribe-trades"sv);
       subscribe("fill"sv);
       return 1;
-    case GET_FILLS:
+    case GET_TRADES:
       if (shared_.settings.download.trades_lookback.count()) {
-        helper("get-fills"sv);
-        request_.fills.request(trace_info);
+        helper("get-trades"sv);
+        request_.trades.request(trace_info);
         return 1;
       } else {
         return 0;
@@ -397,7 +420,7 @@ void DropCopy::operator()(Trace<protocol::json::Subscribe> const &event) {
       download_.check(trace_info, State::SUBSCRIBE_ORDERS);
       break;
     case FILL:
-      download_.check(trace_info, State::SUBSCRIBE_FILLS);
+      download_.check(trace_info, State::SUBSCRIBE_TRADES);
       break;
   }
 }
@@ -670,6 +693,8 @@ void DropCopy::operator()(Trace<protocol::json::ModifyOrder> const &event) {
 }
 
 void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
+  (*connection_).close();
+  return;
   auto &[trace_info, cancel_order] = event;
   log::info<2>("cancel_order={}"sv, cancel_order);
   auto [request_type, request_id] = protocol::json::Encoder::parse_id(cancel_order.id);
@@ -767,10 +792,10 @@ void DropCopy::check_request_queue(TraceInfo const &trace_info) {
         download_.check(trace_info, state);
       }
       break;
-    case SUBSCRIBE_FILLS:
+    case SUBSCRIBE_TRADES:
       break;
-    case GET_FILLS:
-      if (request_.fills.has_response()) {
+    case GET_TRADES:
+      if (request_.trades.has_response()) {
         download_.check(trace_info, state);
       }
       break;
@@ -782,7 +807,8 @@ void DropCopy::check_request_queue(TraceInfo const &trace_info) {
 bool DropCopy::check_stale_orders() {
   size_t counter = 0;
   auto helper = [&](auto &order) {
-    auto res = request_.details_lost_orders.try_emplace(order.client_order_id, order.external_order_id);
+    auto key = std::make_pair(order.user_id, order.order_id);
+    auto res = request_.details_lost_orders.insert(key);
     if (res.second) {
       log::warn(
           R"(DEBUG stale order: )"
