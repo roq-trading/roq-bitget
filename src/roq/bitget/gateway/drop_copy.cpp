@@ -291,55 +291,55 @@ void DropCopy::operator()(Trace<web::socket::Binary> const &) {
 
 int32_t DropCopy::download(Trace<State> const &event) {
   auto &[trace_info, state] = event;
-  auto helper = [&](std::string_view const &reason) { create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, reason); };
+  auto publish_downloading = [&]() { create_trace_and_dispatch_2(trace_info, ConnectionStatus::DOWNLOADING, magic_enum::enum_name(state)); };
   switch (state) {
     using enum State;
     case UNDEFINED:
       assert(false);
       break;
     case GET_ACCOUNT:
-      helper("get-account"sv);
+      publish_downloading();
       request_.account.request(trace_info);
       return 1;
     case SUBSCRIBE_BALANCES:
-      helper("subscribe-balances"sv);
+      publish_downloading();
       subscribe("account"sv);
       return 1;
     case GET_BALANCES:
-      helper("get-balances"sv);
+      publish_downloading();
       request_.balances.request(trace_info);
       return 1;
     case SUBSCRIBE_POSITIONS:
-      helper("subscribe-positions"sv);
+      publish_downloading();
       subscribe("position"sv);
       return 1;
     case GET_CURRENT_POSITIONS:
-      helper("get-positions"sv);
+      publish_downloading();
       request_.positions.request(trace_info);
       return 1;
     case SUBSCRIBE_ORDERS:
-      helper("subscribe-orders"sv);
+      publish_downloading();
       subscribe("order"sv);
       return 1;
     case GET_OPEN_ORDERS:
-      helper("get-open-orders"sv);
+      publish_downloading();
       request_.open_orders.request(trace_info);
       return 1;
     case GET_LOST_ORDERS:
       if (std::empty(request_.details_lost_orders)) {
         return 0;
       } else {
-        helper("get-lost-orders"sv);
+        publish_downloading();
         request_.lost_orders.request(trace_info);
         return 1;
       }
     case SUBSCRIBE_TRADES:
-      helper("subscribe-trades"sv);
+      publish_downloading();
       subscribe("fill"sv);
       return 1;
     case GET_TRADES:
       if (shared_.settings.download.trades_lookback.count()) {
-        helper("get-trades"sv);
+        publish_downloading();
         request_.trades.request(trace_info);
         return 1;
       } else {
