@@ -693,8 +693,6 @@ void DropCopy::operator()(Trace<protocol::json::ModifyOrder> const &event) {
 }
 
 void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
-  (*connection_).close();
-  return;
   auto &[trace_info, cancel_order] = event;
   log::info<2>("cancel_order={}"sv, cancel_order);
   auto [request_type, request_id] = protocol::json::Encoder::parse_id(cancel_order.id);
