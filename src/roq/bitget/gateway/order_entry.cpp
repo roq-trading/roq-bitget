@@ -605,14 +605,14 @@ void OrderEntry::get_order_details_ack(Trace<web::rest::Response> const &event, 
       process_response(event, handle_error, handle_success);
     }
     //
-    if (download_lost_orders_counter_) {
-      --download_lost_orders_counter_;
+    if (download_stale_orders_counter_) {
+      --download_stale_orders_counter_;
     } else {
       log::fatal("Unexpected"sv);
     }
-    log::warn("DEBUG remaining orders: {}"sv, download_lost_orders_counter_);
-    if (download_lost_orders_counter_ == 0) {
-      request_.lost_orders.commit(trace_info);
+    log::warn("DEBUG remaining orders: {}"sv, download_stale_orders_counter_);
+    if (download_stale_orders_counter_ == 0) {
+      request_.stale_orders.commit(trace_info);
     }
   });
 }
@@ -1145,17 +1145,17 @@ void OrderEntry::check_request_queue(TraceInfo const &trace_info) {
   request_.balances.check_pending(trace_info, [this](auto &trace_info) { get_account_assets(trace_info); });
   request_.positions.check_pending(trace_info, [this](auto &trace_info) { get_current_positions(trace_info); });
   request_.open_orders.check_pending(trace_info, [this](auto &trace_info) { get_unfilled_orders(trace_info); });
-  request_.lost_orders.check_pending(trace_info, [this](auto &trace_info) {
+  request_.stale_orders.check_pending(trace_info, [this](auto &trace_info) {
     // XXX FIXME TODO throttle requests
     auto helper = [&](auto &order) { get_order_details(trace_info, order.client_order_id, order.external_order_id); };
-    for (auto &[user_id, order_id] : request_.details_lost_orders) {
+    for (auto &[user_id, order_id] : request_.details_stale_orders) {
       if (shared_.dispatcher.find_order(user_id, order_id, helper)) {
-        ++download_lost_orders_counter_;
+        ++download_stale_orders_counter_;
       } else {
         log::warn("Unexpected: user_id={}, order_id={}"sv, user_id, order_id);
       }
     }
-    request_.details_lost_orders.clear();
+    request_.details_stale_orders.clear();
   });
   request_.trades.check_pending(trace_info, [this](auto &trace_info) { get_trade_fills(trace_info); });
 }

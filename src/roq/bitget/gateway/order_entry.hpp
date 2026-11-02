@@ -208,7 +208,7 @@ struct OrderEntry final : public Base<OrderEntry>, public server::OrderActionStr
   std::string encode_buffer_;
   std::chrono::nanoseconds next_heartbeat_ = {};
   //
-  size_t download_lost_orders_counter_ = {};
+  size_t download_stale_orders_counter_ = {};
 };
 
 }  // namespace gateway
