@@ -133,14 +133,10 @@ void OrderEntry::operator()(Trace<Stop> const &) {
 
 void OrderEntry::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
-  if ((*connection_).refresh(timer.now)) {
+  if ((*connection_).refresh(trace_info)) {
     if (ready()) {
-      try {
-        send_heartbeat(trace_info);
-        check_request_queue(trace_info);
-      } catch (NotConnected &) {
-        // note! ok
-      }
+      send_heartbeat(trace_info);
+      check_request_queue(trace_info);
     }
   }
 }
