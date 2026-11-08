@@ -18,8 +18,6 @@ FLAGFILE="../../../share/flags/prod/flags.cfg"
 
 API="COIN-FUTURES"
 
-WS_API=true
-
 $PREFIX ./roq-bitget \
   --name "$NAME" \
   --config_file "$CONFIG_FILE" \
@@ -29,5 +27,4 @@ $PREFIX ./roq-bitget \
   --client_listen_address "$HOME/run/$NAME.sock" \
   --service_listen_address "$HOME/run/metrics/${NAME}.sock" \
   --api "$API" \
-  --ws_api=$WS_API \
   $@

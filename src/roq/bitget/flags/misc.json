@@ -48,10 +48,10 @@
       "description": "Number of order-entry connections"
     },
     {
-      "name": "paptrading",
+      "name": "disable_ws_api",
       "type": "std/bool",
       "default": false,
-      "description": "Paper trading?"
+      "description": "Disable WebSocket API?"
     }
   ]
 }

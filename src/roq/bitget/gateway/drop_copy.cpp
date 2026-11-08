@@ -91,18 +91,18 @@ struct create_metrics final : public utils::metrics::Factory {
   create_metrics(auto &settings, auto &group, auto const &function) : utils::metrics::Factory{settings.app.name, group, function} {}
 };
 
-auto get_supports(auto master, auto ws_api) {
+auto get_supports(auto master, auto disable_ws_api) {
   if (master) {
-    if (ws_api) {
-      return SUPPORTS_PRIMARY_WS_API;
-    } else {
+    if (disable_ws_api) {
       return SUPPORTS_PRIMARY;
+    } else {
+      return SUPPORTS_PRIMARY_WS_API;
     }
   } else {
-    if (ws_api) {
-      return SUPPORTS_SECONDARY_WS_API;
-    } else [[unlikely]] {
+    if (disable_ws_api) {
       log::fatal("Unexpected"sv);
+    } else {
+      return SUPPORTS_SECONDARY_WS_API;
     }
   }
 }
@@ -174,7 +174,7 @@ void DropCopy::operator()(Trace<ConnectionStatus> const &event, std::string_view
   auto stream_status = StreamStatus{
       .stream_id = stream_id_,
       .account = account_.name,
-      .supports = get_supports(master_, shared_.settings.ws_api),
+      .supports = get_supports(master_, shared_.settings.misc.disable_ws_api),
       .transport = Transport::TCP,
       .protocol = Protocol::WS,
       .encoding = {Encoding::JSON},

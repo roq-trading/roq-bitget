@@ -6,6 +6,7 @@ All notable changes will be documented in this file.
 
 ### Changed
 
+* Drop `--ws_api` (#658)
 * Review `OrderAck` and `OrderUpdate` following disconnect (#657)
 
 ### Fixed

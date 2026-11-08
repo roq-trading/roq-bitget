@@ -182,10 +182,10 @@ uint16_t Controller::operator()(
     Event<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
   auto &[message_info, create_order] = event;
   assert(!std::empty(create_order.account));
-  if (shared_.settings.ws_api) {
-    return get_drop_copy(create_order.account)(event, order, ref_data, request_id);
-  } else {
+  if (shared_.settings.misc.disable_ws_api) {
     return get_order_entry(create_order.account)(event, order, ref_data, request_id);
+  } else {
+    return get_drop_copy(create_order.account)(event, order, ref_data, request_id);
   }
 }
 
@@ -198,10 +198,10 @@ uint16_t Controller::operator()(
   auto &[message_info, modify_order] = event;
   assert(!std::empty(modify_order.account));
   assert(modify_order.account == order.account);
-  if (shared_.settings.ws_api) {
-    return get_drop_copy(modify_order.account)(event, order, ref_data, request_id, previous_request_id);
-  } else {
+  if (shared_.settings.misc.disable_ws_api) {
     return get_order_entry(modify_order.account)(event, order, ref_data, request_id, previous_request_id);
+  } else {
+    return get_drop_copy(modify_order.account)(event, order, ref_data, request_id, previous_request_id);
   }
 }
 
@@ -214,10 +214,10 @@ uint16_t Controller::operator()(
   auto &[message_info, cancel_order] = event;
   assert(!std::empty(cancel_order.account));
   assert(cancel_order.account == order.account);
-  if (shared_.settings.ws_api) {
-    return get_drop_copy(cancel_order.account)(event, order, ref_data, request_id, previous_request_id);
-  } else {
+  if (shared_.settings.misc.disable_ws_api) {
     return get_order_entry(cancel_order.account)(event, order, ref_data, request_id, previous_request_id);
+  } else {
+    return get_drop_copy(cancel_order.account)(event, order, ref_data, request_id, previous_request_id);
   }
 }
 

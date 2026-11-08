@@ -13,7 +13,7 @@ namespace gateway {
 // === IMPLEMENTATION ===
 
 Account::Account(Settings const &settings, Config const &config, std::string_view const &name)
-    : name(name), crypto_(config.get_api_key(name), config.get_secret(name), config.get_passphrase(name), settings.misc.paptrading) {
+    : name(name), crypto_(config.get_api_key(name), config.get_secret(name), config.get_passphrase(name), settings.paptrading) {
 }
 
 std::string Account::create_ws_login(TraceInfo const &trace_info) {

@@ -178,7 +178,7 @@ void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_vi
   auto stream_status = StreamStatus{
       .stream_id = stream_id_,
       .account = account_.name,
-      .supports = shared_.settings.ws_api ? SUPPORTS_WS_API : SUPPORTS,
+      .supports = shared_.settings.misc.disable_ws_api ? SUPPORTS : SUPPORTS_WS_API,
       .transport = Transport::TCP,
       .protocol = Protocol::HTTP,
       .encoding = {Encoding::JSON},
