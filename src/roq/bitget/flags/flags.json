@@ -14,12 +14,6 @@
       "type": "std/string",
       "required": true,
       "description": "API (:code:`SPOT`, :code:`MARGIN`, :code:`USDT-FUTURES`, :code:`USDC-FUTURES`, :code:`COIN-FUTURES`)"
-    },
-    {
-      "name": "paptrading",
-      "type": "std/bool",
-      "default": false,
-      "description": "Paper trading?"
     }
   ]
 }
