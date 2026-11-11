@@ -8,7 +8,7 @@
     },
     {
       "name": "code",
-      "type": "std/int64"
+      "type": "std/int32"
     },
     {
       "name": "msg",

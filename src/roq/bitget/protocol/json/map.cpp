@@ -2,6 +2,8 @@
 
 #include "roq/bitget/protocol/json/map.hpp"
 
+#include "roq/logging.hpp"
+
 using namespace std::literals;
 
 namespace roq {
@@ -12,6 +14,36 @@ using Helper = detail::MapHelper<Args...>;
 }
 
 // bitget::json => roq
+
+// int32_t => roq::Error
+
+template <>
+template <>
+constexpr Helper<int32_t>::operator std::optional<roq::Error>() const {
+  auto value = std::get<0>(args_);
+  switch (value) {
+    case 200:
+      return Error::UNDEFINED;
+    case 429:  // Too Many Requests
+      return Error::REQUEST_RATE_LIMIT_REACHED;
+    case 22001:  // XXX cancel "no orders to cancel"
+      return Error::TOO_LATE_TO_MODIFY_OR_CANCEL;
+    case 25202:  // Insufficient balance
+      return Error::INSUFFICIENT_FUNDS;
+    case 25203:  // Insufficient margin
+      return Error::INSUFFICIENT_FUNDS;
+  }
+  log::warn("DEBUG unable to map error_code={}"sv, value);
+  return Error::UNKNOWN;
+}
+
+static_assert(Helper{int32_t{200}} == roq::Error::UNDEFINED);
+
+template <>
+template <>
+std::optional<roq::Error> Map<int32_t>::helper() const {
+  return Helper{args_};
+}
 
 // bitget::protocol::json::Action => roq::MarginMode
 

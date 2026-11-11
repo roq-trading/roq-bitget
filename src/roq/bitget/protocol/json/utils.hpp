@@ -24,8 +24,6 @@ inline void update(std::chrono::milliseconds &result, core::json::Value const &v
   result = core::json::get<result_type>(value);
 }
 
-extern roq::Error guess_error(int32_t code);
-
 extern bool is_logon_error(int32_t code);
 
 }  // namespace json

@@ -230,7 +230,8 @@ void Rest::get_instruments_ack(Trace<web::rest::Response> const &event, uint32_t
           create_trace_and_dispatch_2(trace_info, instruments_ack);
           download_.check(trace_info, state);
         } else {
-          handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, protocol::json::guess_error(instruments_ack.code), instruments_ack.msg);
+          auto error = map(instruments_ack.code).template get<Error>();
+          handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, error, instruments_ack.msg);
         }
       }
     };
@@ -368,7 +369,8 @@ void Rest::process_response(Trace<web::rest::Response> const &event, auto error_
             [[fallthrough]];
           default: {
             protocol::json::Message error{body};
-            error_handler(Origin::EXCHANGE, RequestStatus::REJECTED, protocol::json::guess_error(error.code), error.msg);
+            auto error_2 = map(error.code).template get<Error>();
+            error_handler(Origin::EXCHANGE, RequestStatus::REJECTED, error_2, error.msg);
           }
         }
         break;
