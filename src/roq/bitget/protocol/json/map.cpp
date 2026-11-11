@@ -22,6 +22,8 @@ template <>
 constexpr Helper<int32_t>::operator std::optional<roq::Error>() const {
   auto value = std::get<0>(args_);
   switch (value) {
+    case 0:
+      return Error::UNDEFINED;
     case 200:
       return Error::UNDEFINED;
     case 429:  // Too Many Requests
@@ -37,6 +39,7 @@ constexpr Helper<int32_t>::operator std::optional<roq::Error>() const {
   return Error::UNKNOWN;
 }
 
+static_assert(Helper{int32_t{0}} == roq::Error::UNDEFINED);
 static_assert(Helper{int32_t{200}} == roq::Error::UNDEFINED);
 
 template <>
