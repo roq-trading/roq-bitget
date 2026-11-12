@@ -32,12 +32,16 @@ constexpr Helper<int32_t>::operator std::optional<roq::Error>() const {
       return Error::UNDEFINED;
     case 429:  // Too Many Requests
       return Error::REQUEST_RATE_LIMIT_REACHED;
-    case 22001:  // XXX cancel "no orders to cancel"
+    case 22'001:  // XXX cancel "no orders to cancel" ???
       return Error::TOO_LATE_TO_MODIFY_OR_CANCEL;
-    case 25202:  // Insufficient balance
+    case 25'202:  // Insufficient balance
       return Error::INSUFFICIENT_FUNDS;
-    case 25203:  // Insufficient margin
+    case 25'203:  // Insufficient margin
       return Error::INSUFFICIENT_FUNDS;
+    case 25'204:  // Order does not exist
+      return Error::TOO_LATE_TO_MODIFY_OR_CANCEL;
+    case 43'001:  // Order does not exist
+      return Error::TOO_LATE_TO_MODIFY_OR_CANCEL;
   }
   LOG_ONCE("error_code"sv, value);
   return Error::UNKNOWN;
