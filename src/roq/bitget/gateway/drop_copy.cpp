@@ -533,6 +533,7 @@ void DropCopy::operator()(Trace<protocol::json::Order> const &event) {
         .execution_destination = {},
         .create_time_utc = item.created_time,
         .update_time_utc = item.updated_time,
+        .external_trace_id = {},
         .external_account = {},
         .external_order_id = item.order_id,
         .client_order_id = item.client_oid,
