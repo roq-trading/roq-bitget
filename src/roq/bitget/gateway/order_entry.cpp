@@ -197,14 +197,26 @@ void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_vi
 
 // server::OrderActionStream
 
+void OrderEntry::operator()(Trace<server::oms::OrderActionBatchBegin> const &) {
+  throw server::oms::NotSupported{"not supported"sv};
+}
+
+void OrderEntry::operator()(Trace<server::oms::OrderActionBatchCommit> const &) {
+  throw server::oms::NotSupported{"not supported"sv};
+}
+
+void OrderEntry::operator()(Trace<server::oms::OrderActionBatchRollback> const &) {
+  throw server::oms::NotSupported{"not supported"sv};
+}
+
 uint16_t OrderEntry::operator()(
-    Event<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
+    Trace<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
   place_order(event, order, ref_data, request_id);
   return stream_id_;
 }
 
 uint16_t OrderEntry::operator()(
-    Event<ModifyOrder> const &event,
+    Trace<ModifyOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
@@ -214,7 +226,7 @@ uint16_t OrderEntry::operator()(
 }
 
 uint16_t OrderEntry::operator()(
-    Event<CancelOrder> const &event,
+    Trace<CancelOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
@@ -223,7 +235,7 @@ uint16_t OrderEntry::operator()(
   return stream_id_;
 }
 
-uint16_t OrderEntry::operator()(Event<CancelAllOrders> const &event, std::string_view const &request_id) {
+uint16_t OrderEntry::operator()(Trace<CancelAllOrders> const &event, std::string_view const &request_id) {
   cancel_all_orders(event, request_id);
   return stream_id_;
 }
@@ -813,17 +825,17 @@ void OrderEntry::operator()(Trace<protocol::json::TradeFillsAck> const &event) {
 // place-order
 
 void OrderEntry::place_order(
-    Event<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
+    Trace<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
   profile_.place_order([&]() {
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, create_order] = event;
+    auto &[trace_info, create_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.place_order;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::place_order(encode_buffer_, create_order, order, ref_data, request_id, shared_.api.category);
-    auto headers = account_.create_headers(message_info, method, path, query, body);
+    auto headers = account_.create_headers(trace_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -834,7 +846,7 @@ void OrderEntry::place_order(
         .body = body,
         .quality_of_service = {},
     };
-    auto callback = [this, user_id = message_info.source, order_id = create_order.order_id](auto &event, [[maybe_unused]] auto &request_id) {
+    auto callback = [this, user_id = order.user_id, order_id = order.order_id](auto &event, [[maybe_unused]] auto &request_id) {
       uint32_t version = 1;
       place_order_ack(event, user_id, order_id, version);
     };
@@ -888,7 +900,7 @@ void OrderEntry::operator()(
 // modify-order
 
 void OrderEntry::modify_order(
-    Event<ModifyOrder> const &event,
+    Trace<ModifyOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
@@ -897,12 +909,12 @@ void OrderEntry::modify_order(
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, modify_order] = event;
+    auto &[trace_info, modify_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.modify_order;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::modify_order(encode_buffer_, modify_order, order, ref_data, request_id);
-    auto headers = account_.create_headers(message_info, method, path, query, body);
+    auto headers = account_.create_headers(trace_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -913,8 +925,9 @@ void OrderEntry::modify_order(
         .body = body,
         .quality_of_service = {},
     };
-    auto callback = [this, user_id = message_info.source, order_id = modify_order.order_id, version = modify_order.version](
-                        auto &event, [[maybe_unused]] auto &request_id) { modify_order_ack(event, user_id, order_id, version); };
+    auto callback = [this, user_id = order.user_id, order_id = order.order_id, version = modify_order.version](auto &event, [[maybe_unused]] auto &request_id) {
+      modify_order_ack(event, user_id, order_id, version);
+    };
     (*connection_)(request, callback, request_id);
   });
 }
@@ -965,7 +978,7 @@ void OrderEntry::operator()(
 // cancel-order
 
 void OrderEntry::cancel_order(
-    Event<CancelOrder> const &event,
+    Trace<CancelOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
@@ -974,12 +987,12 @@ void OrderEntry::cancel_order(
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, cancel_order] = event;
+    auto &[trace_info, cancel_order] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.cancel_order;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::cancel_order(encode_buffer_, cancel_order, order, ref_data, request_id);
-    auto headers = account_.create_headers(message_info, method, path, query, body);
+    auto headers = account_.create_headers(trace_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -990,8 +1003,9 @@ void OrderEntry::cancel_order(
         .body = body,
         .quality_of_service = {},
     };
-    auto callback = [this, user_id = message_info.source, order_id = cancel_order.order_id, version = cancel_order.version](
-                        auto &event, [[maybe_unused]] auto &request_id) { cancel_order_ack(event, user_id, order_id, version); };
+    auto callback = [this, user_id = order.user_id, order_id = order.order_id, version = cancel_order.version](auto &event, [[maybe_unused]] auto &request_id) {
+      cancel_order_ack(event, user_id, order_id, version);
+    };
     (*connection_)(request, callback, request_id);
   });
 }
@@ -1041,17 +1055,17 @@ void OrderEntry::operator()(
 
 // cancel-all-orders
 
-void OrderEntry::cancel_all_orders(Event<CancelAllOrders> const &event, std::string_view const &request_id) {
+void OrderEntry::cancel_all_orders(Trace<CancelAllOrders> const &event, std::string_view const &request_id) {
   profile_.cancel_all_orders([&]() {
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, cancel_all_orders] = event;
+    auto &[trace_info, cancel_all_orders] = event;
     auto method = web::http::Method::POST;
     auto path = shared_.api.order_management.cancel_all_orders;
     auto query = fmt::format("?category={}"sv, shared_.api.category);
     auto body = protocol::json::Encoder::cancel_all_orders(encode_buffer_, cancel_all_orders, request_id, shared_.api.category);
-    auto headers = account_.create_headers(message_info, method, path, query, body);
+    auto headers = account_.create_headers(trace_info, method, path, query, body);
     auto request = web::rest::Request{
         .method = method,
         .path = path,
@@ -1062,12 +1076,12 @@ void OrderEntry::cancel_all_orders(Event<CancelAllOrders> const &event, std::str
         .body = body,
         .quality_of_service = {},
     };
-    auto callback = [this, user_id = message_info.source](auto &event, [[maybe_unused]] auto &request_id) { cancel_all_orders_ack(event, user_id); };
+    auto callback = [this](auto &event, [[maybe_unused]] auto &request_id) { cancel_all_orders_ack(event); };
     (*connection_)(request, callback, request_id);
   });
 }
 
-void OrderEntry::cancel_all_orders_ack(Trace<web::rest::Response> const &event, [[maybe_unused]] uint8_t user_id) {
+void OrderEntry::cancel_all_orders_ack(Trace<web::rest::Response> const &event) {
   profile_.cancel_all_orders_ack([&]() {
     auto &[trace_info, response] = event;
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
@@ -1099,14 +1113,14 @@ void OrderEntry::cancel_all_orders_ack(Trace<web::rest::Response> const &event, 
         auto error = map(cancel_all_orders_ack.code).template get<Error>();
         handle_error(Origin::EXCHANGE, RequestStatus::REJECTED, error, cancel_all_orders_ack.msg);
       } else {
-        create_trace_and_dispatch_2(trace_info, cancel_all_orders_ack, user_id);
+        create_trace_and_dispatch_2(trace_info, cancel_all_orders_ack);
       }
     };
     process_response(event, handle_error, handle_success);
   });
 }
 
-void OrderEntry::operator()(Trace<protocol::json::CancelAllOrdersAck> const &event, [[maybe_unused]] uint8_t user_id) {
+void OrderEntry::operator()(Trace<protocol::json::CancelAllOrdersAck> const &event) {
   [[maybe_unused]] auto &[trace_info, cancel_all_orders_ack] = event;
 }
 

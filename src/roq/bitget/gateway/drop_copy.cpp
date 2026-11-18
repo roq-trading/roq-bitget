@@ -193,13 +193,25 @@ void DropCopy::operator()(Trace<ConnectionStatus> const &event, std::string_view
 
 // server::OrderActionStream
 
+void DropCopy::operator()(Trace<server::oms::OrderActionBatchBegin> const &) {
+  throw server::oms::NotSupported{"not supported"sv};
+}
+
+void DropCopy::operator()(Trace<server::oms::OrderActionBatchCommit> const &) {
+  throw server::oms::NotSupported{"not supported"sv};
+}
+
+void DropCopy::operator()(Trace<server::oms::OrderActionBatchRollback> const &) {
+  throw server::oms::NotSupported{"not supported"sv};
+}
+
 uint16_t DropCopy::operator()(
-    Event<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
+    Trace<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
   profile_.place_order([&]() {
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, create_order] = event;
+    auto &[trace_info, create_order] = event;
     auto message = protocol::json::Encoder::place_order_ws(encode_buffer_, create_order, order, ref_data, request_id, shared_.api.inst_type);
     (*connection_).send_text(message);
   });
@@ -207,7 +219,7 @@ uint16_t DropCopy::operator()(
 }
 
 uint16_t DropCopy::operator()(
-    Event<ModifyOrder> const &event,
+    Trace<ModifyOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
@@ -216,7 +228,7 @@ uint16_t DropCopy::operator()(
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, modify_order] = event;
+    auto &[trace_info, modify_order] = event;
     auto message =
         protocol::json::Encoder::modify_order_ws(encode_buffer_, modify_order, order, ref_data, request_id, previous_request_id, shared_.api.inst_type);
     (*connection_).send_text(message);
@@ -225,7 +237,7 @@ uint16_t DropCopy::operator()(
 }
 
 uint16_t DropCopy::operator()(
-    Event<CancelOrder> const &event,
+    Trace<CancelOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
@@ -234,7 +246,7 @@ uint16_t DropCopy::operator()(
     if (!ready()) {
       throw server::oms::NotReady{"not ready"sv};
     }
-    auto &[message_info, cancel_order] = event;
+    auto &[trace_info, cancel_order] = event;
     auto message = protocol::json::Encoder::cancel_order_ws(encode_buffer_, cancel_order, order, ref_data, request_id, previous_request_id);
     (*connection_).send_text(message);
   });
@@ -720,7 +732,7 @@ void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
   }
 }
 
-uint16_t DropCopy::operator()(Event<CancelAllOrders> const &, [[maybe_unused]] std::string_view const &request_id) {
+uint16_t DropCopy::operator()(Trace<CancelAllOrders> const &, [[maybe_unused]] std::string_view const &request_id) {
   throw server::oms::NotSupported{"not supported"sv};
 }
 
