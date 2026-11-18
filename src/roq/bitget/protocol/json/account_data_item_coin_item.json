@@ -45,6 +45,14 @@
     {
       "name": "baseDebt",
       "type": "std/double"
+    },
+    {
+      "name": "collateralLimitStatus",
+      "type": "std/string_view"
+    },
+    {
+      "name": "isSssPair",
+      "type": "std/bool"
     }
   ]
 }

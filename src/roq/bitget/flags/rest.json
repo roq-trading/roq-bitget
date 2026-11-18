@@ -35,53 +35,6 @@
       "validator": "roq/flags/validators/TimePeriod",
       "default": "30s",
       "description": "Request timeout"
-    },
-    {
-      "name": "download_orders_page_size",
-      "type": "std/uint32",
-      "required": true,
-      "default": 500,
-      "description": "Page size used when downloading orders"
-    },
-    {
-      "name": "download_orders_begin",
-      "type": "std/nanoseconds",
-      "validator": "roq/flags/validators/TimePeriod",
-      "default": "24h",
-      "description": "Download orders since (now - begin)"
-    },
-    {
-      "name": "download_only_active_orders",
-      "type": "std/bool",
-      "default": false,
-      "description": "Download only active orders?"
-    },
-    {
-      "name": "download_fills_page_size",
-      "type": "std/uint32",
-      "required": true,
-      "default": 500,
-      "description": "Page size used when downloading fills"
-    },
-    {
-      "name": "download_fills_begin",
-      "type": "std/nanoseconds",
-      "validator": "roq/flags/validators/TimePeriod",
-      "default": "24h",
-      "description": "Download fills since (now - begin)"
-    },
-    {
-      "name": "token_refresh_freq",
-      "type": "std/nanoseconds",
-      "validator": "roq/flags/validators/TimePeriod",
-      "default": "8h",
-      "description": "Token refresh frequency"
-    },
-    {
-      "name": "cancel_on_disconnect",
-      "type": "std/bool",
-      "default": false,
-      "description": "Auto-cancel orders on disconnect?"
     }
   ]
 }

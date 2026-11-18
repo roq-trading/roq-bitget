@@ -35,19 +35,6 @@
       "required": true,
       "default": 100,
       "description": "Maximum number of symbols per connection"
-    },
-    {
-      "name": "mbp_request_delay",
-      "type": "std/nanoseconds",
-      "validator": "roq/flags/validators/TimePeriod",
-      "default": "500ms",
-      "description": "Request delay"
-    },
-    {
-      "name": "mbp_request_max_retries",
-      "type": "std/uint32",
-      "default": 3,
-      "description": "Request max retries"
     }
   ]
 }

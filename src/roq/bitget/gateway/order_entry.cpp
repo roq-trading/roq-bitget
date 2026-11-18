@@ -691,9 +691,9 @@ void OrderEntry::operator()(Trace<protocol::json::OrderDetailsAck> const &event,
 // trade-fills
 
 void OrderEntry::get_trade_fills(TraceInfo const &trace_info) {
-  assert(shared_.settings.rest.download_fills_begin.count() > 0);
+  assert(shared_.settings.download.trades_lookback.count() > 0);
   profile_.trade_fills([&]() {
-    auto start_time = std::chrono::duration_cast<std::chrono::milliseconds>(trace_info.origin_create_time_utc - shared_.settings.rest.download_fills_begin);
+    auto start_time = std::chrono::duration_cast<std::chrono::milliseconds>(trace_info.origin_create_time_utc - shared_.settings.download.trades_lookback);
     auto method = web::http::Method::GET;
     auto path = shared_.api.order_management.trade_fills;
     auto query = fmt::format("?category={}&startTime={}"sv, shared_.api.category, start_time.count());
@@ -1143,6 +1143,7 @@ void OrderEntry::countdown_cancel_all(TraceInfo const &trace_info) {
         .body = body,
         .quality_of_service = {},
     };
+    log::warn("DEBUG request={}"sv, request);
     auto callback = [this](auto &event, [[maybe_unused]] auto &request_id) { countdown_cancel_all_ack(event); };
     (*connection_)(request, callback, "countdown_cancel_all"sv);
   });
@@ -1161,7 +1162,8 @@ void OrderEntry::countdown_cancel_all_ack(Trace<web::rest::Response> const &even
 // helpers
 
 void OrderEntry::send_heartbeat(TraceInfo const &trace_info) {
-  if (shared_.settings.rest.cancel_on_disconnect && next_heartbeat_ < trace_info.origin_create_time) {
+  // note! doesn't work in simulated trading
+  if (!shared_.settings.app.simulated_trading && !shared_.settings.app.disable_cancel_on_disconnect && next_heartbeat_ < trace_info.origin_create_time) {
     next_heartbeat_ = trace_info.origin_create_time + (shared_.settings.rest.ping_freq / 3);
     countdown_cancel_all(trace_info);
   }

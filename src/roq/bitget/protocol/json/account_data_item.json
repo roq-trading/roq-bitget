@@ -34,6 +34,10 @@
       "name": "coin",
       "type": "roq/bitget/protocol/json/AccountDataItemCoinItem",
       "array": "std/span"
+    },
+    {
+      "name": "stablecoinDepegExtraMargin",
+      "type": "std/double"
     }
   ]
 }
