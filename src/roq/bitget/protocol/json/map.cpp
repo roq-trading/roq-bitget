@@ -40,6 +40,8 @@ constexpr Helper<int32_t>::operator std::optional<roq::Error>() const {
       return Error::INSUFFICIENT_FUNDS;
     case 25'204:  // Order does not exist
       return Error::TOO_LATE_TO_MODIFY_OR_CANCEL;
+    case 25'567:  // Exceeded the maximum quantity of contract orders
+      return Error::UNKNOWN;
     case 43'001:  // Order does not exist
       return Error::TOO_LATE_TO_MODIFY_OR_CANCEL;
   }

@@ -201,6 +201,10 @@
     {
       "name": "marketRegion",
       "type": "std/string_view"
+    },
+    {
+      "name": "unrealizedProfitLimit",
+      "type": "std/string_view"
     }
   ]
 }
