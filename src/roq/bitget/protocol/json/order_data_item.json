@@ -150,6 +150,26 @@
     {
       "name": "matchType",
       "type": "std/string_view"
+    },
+    {
+      "name": "expirationDate",
+      "type": "std/string_view"
+    },
+    {
+      "name": "optionType",
+      "type": "std/string_view"
+    },
+    {
+      "name": "multiplier",
+      "type": "std/double"
+    },
+    {
+      "name": "usdcToUsdtRate",
+      "type": "std/double"
+    },
+    {
+      "name": "optionSymbol",
+      "type": "std/string_view"
     }
   ]
 }

@@ -53,6 +53,22 @@
     {
       "name": "isSssPair",
       "type": "std/bool"
+    },
+    {
+      "name": "hasOption",
+      "type": "std/bool"
+    },
+    {
+      "name": "optionBalance",
+      "type": "std/double"
+    },
+    {
+      "name": "optionFrozen",
+      "type": "std/double"
+    },
+    {
+      "name": "optionPositionValue",
+      "type": "std/double"
     }
   ]
 }
