@@ -123,17 +123,17 @@ OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_i
 
 // server::Stream
 
-void OrderEntry::operator()(Trace<Start> const &) {
-  (*connection_).start();
+void OrderEntry::operator()(Trace<Start> const &event) {
+  (*connection_)(event);
 }
 
-void OrderEntry::operator()(Trace<Stop> const &) {
-  (*connection_).stop();
+void OrderEntry::operator()(Trace<Stop> const &event) {
+  (*connection_)(event);
 }
 
 void OrderEntry::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
-  if ((*connection_).refresh(trace_info)) {
+  if ((*connection_)(event)) {
     if (ready()) {
       send_heartbeat(trace_info);
       check_request_queue(trace_info);
@@ -210,35 +210,31 @@ void OrderEntry::operator()(Trace<server::oms::OrderActionBatchRollback> const &
   throw server::oms::NotSupported{"not supported"sv};
 }
 
-uint16_t OrderEntry::operator()(
+void OrderEntry::operator()(
     Trace<CreateOrder> const &event, server::oms::Order const &order, server::oms::RefData const &ref_data, std::string_view const &request_id) {
   place_order(event, order, ref_data, request_id);
-  return stream_id();
 }
 
-uint16_t OrderEntry::operator()(
+void OrderEntry::operator()(
     Trace<ModifyOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
     std::string_view const &previous_request_id) {
   modify_order(event, order, ref_data, request_id, previous_request_id);
-  return stream_id();
 }
 
-uint16_t OrderEntry::operator()(
+void OrderEntry::operator()(
     Trace<CancelOrder> const &event,
     server::oms::Order const &order,
     server::oms::RefData const &ref_data,
     std::string_view const &request_id,
     std::string_view const &previous_request_id) {
   cancel_order(event, order, ref_data, request_id, previous_request_id);
-  return stream_id();
 }
 
-uint16_t OrderEntry::operator()(Trace<CancelAllOrders> const &event, std::string_view const &request_id) {
+void OrderEntry::operator()(Trace<CancelAllOrders> const &event, std::string_view const &request_id) {
   cancel_all_orders(event, request_id);
-  return stream_id();
 }
 
 // web::rest::Client::Handler
