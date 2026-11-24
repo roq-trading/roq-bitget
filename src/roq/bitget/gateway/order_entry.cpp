@@ -86,8 +86,9 @@ struct create_metrics final : public utils::metrics::Factory {
 // === IMPLEMENTATION ===
 
 OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request)
-    : server::OrderActionStream{stream_id}, handler_{handler}, name_{create_name(stream_id, account)},
-      connection_{create_connection(*this, shared.settings, context, shared)}, decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
+    : server::OrderActionStream{stream_id, account.name, shared.settings.misc.disable_ws_api ? SUPPORTS : SUPPORTS_WS_API}, handler_{handler},
+      name_{create_name(stream_id, account)}, connection_{create_connection(*this, shared.settings, context, shared)},
+      decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
       },
@@ -176,9 +177,9 @@ void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_vi
   auto &[trace_info, connection_status] = event;
   if (update(connection_status, reason)) {
     auto stream_status = StreamStatus{
-        .stream_id = stream_id(),
-        .account = account_.name,
-        .supports = shared_.settings.misc.disable_ws_api ? SUPPORTS : SUPPORTS_WS_API,
+        .stream_id = stream_id,
+        .account = account,
+        .supports = supports,
         .transport = Transport::TCP,
         .protocol = Protocol::HTTP,
         .encoding = {Encoding::JSON},
@@ -254,7 +255,7 @@ void OrderEntry::operator()(Trace<web::rest::Disconnected> const &event) {
 void OrderEntry::operator()(Trace<web::rest::Latency> const &event) {
   auto &[trace_info, latency] = event;
   auto external_latency = ExternalLatency{
-      .stream_id = stream_id(),
+      .stream_id = stream_id,
       .account = account_.name,
       .latency = latency.sample,
   };
@@ -373,7 +374,7 @@ void OrderEntry::operator()(Trace<protocol::json::AccountAssetsAck> const &event
   for (auto &item : account_assets_ack.data.assets) {
     log::info<2>("item={}"sv, item);
     auto funds_update = FundsUpdate{
-        .stream_id = stream_id(),
+        .stream_id = stream_id,
         .account = account_.name,
         .currency = item.coin,
         .margin_mode = {},
@@ -453,7 +454,7 @@ void OrderEntry::operator()(Trace<protocol::json::CurrentPositionsAck> const &ev
       return 0.0;
     }();
     auto position_update = PositionUpdate{
-        .stream_id = stream_id(),
+        .stream_id = stream_id,
         .account = account_.name,
         .exchange = shared_.settings.exchange,
         .symbol = item.symbol,
@@ -558,7 +559,7 @@ void OrderEntry::operator()(Trace<protocol::json::UnfilledOrdersAck> const &even
         .update_type = UpdateType::SNAPSHOT,
         .sending_time_utc = unfilled_orders_ack.request_time,
     };
-    create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id());
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id);
   }
 }
 
@@ -682,7 +683,7 @@ void OrderEntry::operator()(Trace<protocol::json::OrderDetailsAck> const &event,
       .update_type = UpdateType::SNAPSHOT,
       .sending_time_utc = order_details_ack.request_time,
   };
-  create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id());
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id);
 }
 
 // trade-fills
@@ -742,7 +743,7 @@ void OrderEntry::operator()(Trace<protocol::json::TradeFillsAck> const &event) {
   auto dispatch = [&]() {
     if (!std::empty(shared_.fills)) {
       auto trade_update = TradeUpdate{
-          .stream_id = stream_id(),
+          .stream_id = stream_id,
           .account = account_.name,
           .order_id = {},
           .exchange = shared_.settings.exchange,
@@ -870,7 +871,7 @@ void OrderEntry::place_order_ack(Trace<web::rest::Response> const &event, uint8_
           .quantity = NaN,
           .price = NaN,
       };
-      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id(), user_id, order_id);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id, user_id, order_id);
     };
     auto handle_success = [&](auto &body) {
       protocol::json::PlaceOrderAck place_order_ack{body, decode_buffer_};
@@ -948,7 +949,7 @@ void OrderEntry::modify_order_ack(Trace<web::rest::Response> const &event, uint8
           .quantity = NaN,
           .price = NaN,
       };
-      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id(), user_id, order_id);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id, user_id, order_id);
     };
     auto handle_success = [&](auto &body) {
       protocol::json::ModifyOrderAck modify_order_ack{body, decode_buffer_};
@@ -1026,7 +1027,7 @@ void OrderEntry::cancel_order_ack(Trace<web::rest::Response> const &event, uint8
           .quantity = NaN,
           .price = NaN,
       };
-      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id(), user_id, order_id);
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id, user_id, order_id);
     };
     auto handle_success = [&](auto &body) {
       protocol::json::CancelOrderAck cancel_order_ack{body, decode_buffer_};
@@ -1084,7 +1085,7 @@ void OrderEntry::cancel_all_orders_ack(Trace<web::rest::Response> const &event) 
     auto handle_error = [&](auto origin, auto status, auto error, auto const &text) {
       log::warn(R"(origin={}, error={}, status={}, text="{}")"sv, origin, error, status, text);
       auto cancel_all_orders_ack = CancelAllOrdersAck{
-          .stream_id = stream_id(),
+          .stream_id = stream_id,
           .account = account_.name,
           .order_id = {},
           .exchange = shared_.settings.exchange,

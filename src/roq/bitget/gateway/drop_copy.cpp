@@ -111,8 +111,9 @@ auto get_supports(auto master, auto disable_ws_api) {
 // === IMPLEMENTATION ===
 
 DropCopy::DropCopy(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared, Request &request, bool master)
-    : server::OrderActionStream{stream_id}, handler_{handler}, name_{create_name(stream_id, account)}, master_{master},
-      connection_{create_connection(*this, shared.settings, context, shared)}, decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
+    : server::OrderActionStream{stream_id, account.name, get_supports(master, shared.settings.misc.disable_ws_api)}, handler_{handler},
+      name_{create_name(stream_id, account)}, master_{master}, connection_{create_connection(*this, shared.settings, context, shared)},
+      decode_buffer_{shared.settings.misc.decode_buffer_size, MAX_DECODE_BUFFER_DEPTH},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
       },
@@ -172,8 +173,8 @@ void DropCopy::operator()(Trace<ConnectionStatus> const &event, std::string_view
   auto &[trace_info, connection_status] = event;
   if (update(connection_status, reason)) {
     auto stream_status = StreamStatus{
-        .stream_id = stream_id(),
-        .account = account_.name,
+        .stream_id = stream_id,
+        .account = account,
         .supports = get_supports(master_, shared_.settings.misc.disable_ws_api),
         .transport = Transport::TCP,
         .protocol = Protocol::WS,
@@ -285,7 +286,7 @@ void DropCopy::operator()(Trace<web::socket::Close> const &event) {
 void DropCopy::operator()(Trace<web::socket::Latency> const &event) {
   auto &[trace_info, latency] = event;
   auto external_latency = ExternalLatency{
-      .stream_id = stream_id(),
+      .stream_id = stream_id,
       .account = account_.name,
       .latency = latency.sample,
   };
@@ -404,7 +405,7 @@ void DropCopy::operator()(Trace<protocol::json::Error> const &event) {
           .quantity = NaN,
           .price = NaN,
       };
-      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id());
+      create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id);
       break;
     }
   }
@@ -472,7 +473,7 @@ void DropCopy::operator()(Trace<protocol::json::Account> const &event) {
   for (auto &item : account.data) {
     for (auto &item_2 : item.coin) {
       auto funds_update = FundsUpdate{
-          .stream_id = stream_id(),
+          .stream_id = stream_id,
           .account = account_.name,
           .currency = item_2.coin,
           .margin_mode = {},
@@ -509,7 +510,7 @@ void DropCopy::operator()(Trace<protocol::json::Position> const &event) {
       return 0.0;
     }();
     auto position_update = PositionUpdate{
-        .stream_id = stream_id(),
+        .stream_id = stream_id,
         .account = account_.name,
         .exchange = shared_.settings.exchange,
         .symbol = item.symbol,
@@ -570,7 +571,7 @@ void DropCopy::operator()(Trace<protocol::json::Order> const &event) {
         .update_type = map(order.action),
         .sending_time_utc = order.ts,
     };
-    create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id());
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, order_update, stream_id);
   }
 }
 
@@ -586,7 +587,7 @@ void DropCopy::operator()(Trace<protocol::json::Fill> const &event) {
   auto dispatch = [&]() {
     if (!std::empty(shared_.fills)) {
       auto trade_update = TradeUpdate{
-          .stream_id = stream_id(),
+          .stream_id = stream_id,
           .account = account_.name,
           .order_id = {},
           .exchange = shared_.settings.exchange,
@@ -683,7 +684,7 @@ void DropCopy::operator()(Trace<protocol::json::PlaceOrder> const &event) {
         .quantity = NaN,
         .price = NaN,
     };
-    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id());
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id);
   }
 }
 
@@ -706,7 +707,7 @@ void DropCopy::operator()(Trace<protocol::json::ModifyOrder> const &event) {
         .quantity = NaN,
         .price = NaN,
     };
-    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id());
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id);
   }
 }
 
@@ -729,7 +730,7 @@ void DropCopy::operator()(Trace<protocol::json::CancelOrder> const &event) {
         .quantity = NaN,
         .price = NaN,
     };
-    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id());
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, response, stream_id);
   }
 }
 

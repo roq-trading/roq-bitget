@@ -296,7 +296,7 @@ uint16_t Controller::dispatch_order_action(Trace<T> const &event, Args &&...args
     }
     auto &stream = dynamic_cast<server::OrderActionStream &>(*(*iter).second);
     stream(event, args...);
-    return stream.stream_id();
+    return stream.stream_id;
   } else {
     auto iter = drop_copy_.find(value.account);
     if (iter == std::end(drop_copy_)) {
@@ -304,7 +304,7 @@ uint16_t Controller::dispatch_order_action(Trace<T> const &event, Args &&...args
     }
     auto &stream = (*iter).second.get_next();
     stream(event, args...);
-    return stream.stream_id();
+    return stream.stream_id;
   }
 }
 
