@@ -124,24 +124,6 @@ OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_i
 
 // server::Stream
 
-void OrderEntry::operator()(Trace<Start> const &event) {
-  (*connection_)(event);
-}
-
-void OrderEntry::operator()(Trace<Stop> const &event) {
-  (*connection_)(event);
-}
-
-void OrderEntry::operator()(Trace<Timer> const &event) {
-  auto &[trace_info, timer] = event;
-  if ((*connection_)(event)) {
-    if (ready()) {
-      send_heartbeat(trace_info);
-      check_request_queue(trace_info);
-    }
-  }
-}
-
 void OrderEntry::operator()(metrics::Writer &writer) const {
   writer
       // counter
@@ -171,6 +153,24 @@ void OrderEntry::operator()(metrics::Writer &writer) const {
       .write(profile_.countdown_cancel_all_ack, metrics::Type::PROFILE)
       // latency
       .write(latency_.ping, metrics::Type::LATENCY);
+}
+
+void OrderEntry::operator()(Trace<Start> const &event) {
+  (*connection_)(event);
+}
+
+void OrderEntry::operator()(Trace<Stop> const &event) {
+  (*connection_)(event);
+}
+
+void OrderEntry::operator()(Trace<Timer> const &event) {
+  auto &[trace_info, timer] = event;
+  if ((*connection_)(event)) {
+    if (ready()) {
+      send_heartbeat(trace_info);
+      check_request_queue(trace_info);
+    }
+  }
 }
 
 void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
